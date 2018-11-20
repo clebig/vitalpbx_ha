@@ -44,10 +44,25 @@ e.- Gateway: Your gateway<br>
 f.- Primary DNS: Your primary DNS<br>
 g.- Secundary DNS: Your secundary DNS<br>
 
-4.- Install on both srrvers<br>
+4.- Now we connect by means of ssh to each of the servers.<br>
+a.- Initialize the partition to assign the remainder of the hard disk in both servers<br>
+fdisk /dev/sda<br>
+Command (m for help): <bold>n</bold><br>
+Select (default e): <bold>p</bold><br>
+Selected partition <bold>x</bold> (take note of the assigned partition number as we will need it later)<br>
+<bold>[Enter]</bold><br>
+<bold>[Enter]</bold><br>
+Command (m for help): <bold>w</bold><br>
+<bold>reboot</bold><br>
+
+b.- Now we will proceed to format the new partition with the following command on both servers
+mke2fs -j /dev/sda<bold>x</bold> (replace the x with the partition number assigned in the previous point)
+dd if=/dev/zero bs=1M count=500 of=/dev/sda4; sync
+
+5.- Install on both srrvers<br>
 yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
 
-5.- install the script<br>
+6.- install the script<br>
 cd /<br>
 wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vital_ha.sh<br>
 chmod +x vital_ha.sh<br>
