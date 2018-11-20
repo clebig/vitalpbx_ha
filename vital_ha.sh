@@ -5,6 +5,7 @@ set -e
 #
 # Support:      rcuadra@aplitel.com
 # License:      GNU General Public License (GPL)
+#
 echo -e "\n"
 echo -e "************************************************************"
 echo -e "*  Welcome to the VitalPBX high availability installation  *"
@@ -278,6 +279,7 @@ ssh root@$ip_slave 'rm -rf /etc/my.cnf'
 ssh root@$ip_slave 'ln -s /mnt/mysql/my.cnf /etc/'
 pcs cluster unstandby
 ssh root@$ip_slave 'pcs cluster standby'
+ssh root@$ip_slave 'pcs cluster unstandby'
 
 echo -e "************************************************************"
 echo -e "*    Create resource for the use of MariaDB in Master      *"
