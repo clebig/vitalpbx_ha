@@ -3,16 +3,16 @@ italPBX Hih Availability
 
 Example:<br>
 Master<br>
+Host Name Master: vitalpbx1.local<br>
 IP Master: 192.168.30.10<br>
 Netmask: 255.255.248.0<br>
 Gateway: 192.168.24.1<br>
 Primary DNS: 8.8.8.8<br>
 Secundary DNS: 8.8.4.4<br>
-Host Name Master: vitalpbx1.local<br>
 
 Slave<br>
-IP Slave: 192.168.30.20<br>
 Host name Slave: vitalpbx2.local<br>
+IP Slave: 192.168.30.20<br>
 Netmask: 255.255.248.0<br>
 Gateway: 192.168.24.1<br>
 Primary DNS: 8.8.8.8<br>
@@ -40,7 +40,7 @@ a.- Hostname: Your hostname (then press check button) <br>
 b.- DHCP: No<br>
 c.- IP Address: Your IP<br>
 d.- Netmask: Yor netmask<br>
-e.- Gateway: Your gateway<br><br>
+e.- Gateway: Your gateway<br>
 f.- Primary DNS: Your primary DNS<br>
 g.- Secundary DNS: Your secundary DNS<br>
 
