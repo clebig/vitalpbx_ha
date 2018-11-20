@@ -47,8 +47,8 @@ g.- Secundary DNS: Your secundary DNS<br>
 4.- Install on both srrvers<br>
 yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
 
-5.- install the script
-cd /
-wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vital_ha.sh
-chmod +x vital_ha.sh
-./vital_ha.sh
+5.- install the script<br>
+cd /<br>
+wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vital_ha.sh<br>
+chmod +x vital_ha.sh<br>
+./vital_ha.sh<br>
