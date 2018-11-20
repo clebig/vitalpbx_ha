@@ -47,13 +47,13 @@ g.- Secundary DNS: Your secundary DNS<br>
 4.- Now we connect by means of ssh to each of the servers.<br>
 a.- Initialize the partition to assign the remainder of the hard disk in both servers<br>
 fdisk /dev/sda<br>
-Command (m for help): <bold>n</bold><br>
-Select (default e): <bold>p</bold><br>
-Selected partition <bold>x</bold> (take note of the assigned partition number as we will need it later)<br>
-<bold>[Enter]</bold><br>
-<bold>[Enter]</bold><br>
-Command (m for help): <bold>w</bold><br>
-<bold>reboot</bold><br>
+Command (m for help): <strong>n</strong><br>
+Select (default e): <strong>p</strong><br>
+Selected partition <strong>x</strong> (take note of the assigned partition number as we will need it later)<br>
+<strong>[Enter]</strong><br>
+<strong>[Enter]</strong><br>
+Command (m for help): <strong>w</strong><br>
+<strong>reboot</strong><br>
 
 b.- Now we will proceed to format the new partition with the following command on both servers
 mke2fs -j /dev/sda<bold>x</bold> (replace the x with the partition number assigned in the previous point)
