@@ -1,5 +1,10 @@
 #!/bin/bash
 set -e
+# Authors:      Rodrigo Cuadra
+#               Jose Miguel Rivera
+#
+# Support:      rcuadra@aplitel.com
+# License:      GNU General Public License (GPL)
 echo -e "\n"
 echo -e "************************************************************"
 echo -e "*  Welcome to the VitalPBX high availability installation  *"
@@ -73,12 +78,6 @@ fi
 ssh-copy-id root@$ip_slave
 
 echo -e "************************************************************"
-echo -e "*                 Install drbd in Master                   *"
-echo -e "************************************************************"
-#yum install drbd90-utils kmod-drbd90 -y
-echo -e "*** Done ***"
-
-echo -e "************************************************************"
 echo -e "*               Creating hosts name in Master              *"
 echo -e "************************************************************"
 echo -e "$ip_master \t$host_master \n$ip_slave \t$host_slave" >> /etc/hosts
@@ -101,9 +100,8 @@ echo -e "*** Done ***"
 echo -e "************************************************************"
 echo -e "*         Configure drbr resources in Master               *"
 echo -e "************************************************************"
-#mv /etc/drbd.d/global_common.conf /etc/drbd.d/global_common.conf.orig
-#echo -e "global { \n\tusage-count no; \n} \ncommon { \n\tnet { \n\tprotocol C; \n\t} \n}"  > /etc/drbd.d/global_common.conf
-#echo -e "resource drbd0 { \n\tdisk /dev/$disk; \n\tdevice /dev/drbd0; \n\tmeta-disk internal; \n\ton $host_master { \n\t\taddress $ip_master:7789; \n\t} \n\ton $host_slave { \n\t\taddress $ip_slave:7789; \n\t} \n}" > /etc/drbd.d/drbd0.res
+mv /etc/drbd.d/global_common.conf /etc/drbd.d/global_common.conf.orig
+echo -e "global { \n\tusage-count no; \n} \ncommon { \n\tnet { \n\tprotocol C; \n\t} \n}"  > /etc/drbd.d/global_common.conf
 echo -e "resource drbd0 {" 			> /etc/drbd.d/drbd0.res
 echo -e "protocol C;" 				>> /etc/drbd.d/drbd0.res
 echo -e "on $host_master {" 			>> /etc/drbd.d/drbd0.res
@@ -133,12 +131,6 @@ mount /dev/drbd0 /mnt
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
-echo -e "*      Install pcs, pacemaker and corosync in Master       *"
-echo -e "************************************************************"
-#yum -y install corosync pacemaker pcs
-echo -e "*** Done ***"
-
-echo -e "************************************************************"
 echo -e "*        Create password for hacluster in Master           *"
 echo -e "************************************************************"
 echo $hapassword | passwd --stdin hacluster
@@ -154,12 +146,6 @@ systemctl enable pacemaker.service
 echo -e "*** Done ***"
 
 ###### SLAVE ######
-echo -e "************************************************************"
-echo -e "*                 Install drbd in Slave                    *"
-echo -e "************************************************************"
-#ssh root@$ip_slave 'yum install drbd90-utils kmod-drbd90 -y'
-echo -e "*** Done ***"
-
 echo -e "************************************************************"
 echo -e "*             Creating hosts name in Slave                 *"
 echo -e "************************************************************"
@@ -184,8 +170,8 @@ echo -e "*** Done ***"
 echo -e "************************************************************"
 echo -e "*         Configure drbr resources in Slave                *"
 echo -e "************************************************************"
-#ssh root@$ip_slave "mv /etc/drbd.d/global_common.conf /etc/drbd.d/global_common.conf.orig"
-#scp /etc/drbd.d/global_common.conf root@$ip_slave:/etc/drbd.d/global_common.conf
+ssh root@$ip_slave "mv /etc/drbd.d/global_common.conf /etc/drbd.d/global_common.conf.orig"
+scp /etc/drbd.d/global_common.conf root@$ip_slave:/etc/drbd.d/global_common.conf
 scp /etc/drbd.d/drbd0.res root@$ip_slave:/etc/drbd.d/drbd0.res
 ssh root@$ip_slave 'drbdadm create-md drbd0'
 ssh root@$ip_slave 'systemctl enable drbd'
@@ -240,7 +226,6 @@ echo -e "*** Done ***"
 echo -e "************************************************************"
 echo -e "*            Creating Floating IP in Master                *"
 echo -e "************************************************************"
-#Create Floating IP
 pcs resource create virtual_ip ocf:heartbeat:IPaddr2 ip=$ip_floating cidr_netmask=$ip_floating_mask op monitor interval=30s on-fail=restart
 echo -e "*** Done ***"
 
@@ -254,7 +239,6 @@ echo -e "*** Done ***"
 echo -e "************************************************************"
 echo -e "*        Creating Resources for drbd in Master             *"
 echo -e "************************************************************"
-#create Resources for drbd
 pcs -f drbd_cfg resource create DrbdData ocf:linbit:drbd drbd_resource=drbd0 op monitor interval=60s
 pcs -f drbd_cfg resource master DrbdDataClone DrbdData master-max=1 master-node-max=1 clone-max=2 clone-node-max=1 notify=true
 pcs cluster cib-push drbd_cfg
@@ -379,7 +363,6 @@ pcs -f fs_cfg constraint colocation add vpbx-monitor with virtual_ip INFINITY
 pcs -f fs_cfg constraint order asterisk then vpbx-monitor
 pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
-
 
 echo -e "************************************************************"
 echo -e "*                VitalPBX Cluster OK                       *"
