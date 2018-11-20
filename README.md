@@ -46,24 +46,24 @@ g.- Secundary DNS: Your secundary DNS<br>
 
 4.- Now we connect by means of ssh to each of the servers.<br>
 a.- Initialize the partition to assign the remainder of the hard disk in both servers<br>
-fdisk /dev/sda<br>
+[root@vitalpbx1-2 ~]#  fdisk /dev/sda<br>
 Command (m for help): <strong>n</strong><br>
 Select (default e): <strong>p</strong><br>
 Selected partition <strong>x</strong> (take note of the assigned partition number as we will need it later)<br>
 <strong>[Enter]</strong><br>
 <strong>[Enter]</strong><br>
 Command (m for help): <strong>w</strong><br>
-<strong>reboot</strong><br>
+[root@vitalpbx1-2 ~]#  <strong>reboot</strong><br>
 
 b.- Now we will proceed to format the new partition with the following command on both servers<br>
-mke2fs -j /dev/sda<strong>x</strong> (replace the x with the partition number assigned in the previous point)<br>
-dd if=/dev/zero bs=1M count=500 of=/dev/sda4; sync<br>
+[root@vitalpbx1-2 ~]#  mke2fs -j /dev/sda<strong>x</strong> (replace the x with the partition number assigned in the previous point)<br>
+[root@vitalpbx1-2 ~]#  dd if=/dev/zero bs=1M count=500 of=/dev/sda4; sync<br>
 
 5.- Install on both srrvers<br>
-yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
+[root@vitalpbx1-2 ~]#  yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
 
 6.- install the script<br>
-cd /<br>
-wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vital_ha.sh<br>
-chmod +x vital_ha.sh<br>
-./vital_ha.sh<br>
+[root@vitalpbx1 ~]#  cd /<br>
+[root@vitalpbx1 ~]#  wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vital_ha.sh<br>
+[root@vitalpbx1 ~]#  chmod +x vital_ha.sh<br>
+[root@vitalpbx1 ~]#  ./vital_ha.sh<br>
