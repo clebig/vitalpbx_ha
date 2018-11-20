@@ -55,9 +55,9 @@ Selected partition <strong>x</strong> (take note of the assigned partition numbe
 Command (m for help): <strong>w</strong><br>
 <strong>reboot</strong><br>
 
-b.- Now we will proceed to format the new partition with the following command on both servers
-mke2fs -j /dev/sda<bold>x</bold> (replace the x with the partition number assigned in the previous point)
-dd if=/dev/zero bs=1M count=500 of=/dev/sda4; sync
+b.- Now we will proceed to format the new partition with the following command on both servers<br>
+mke2fs -j /dev/sda<bold>x</bold> (replace the x with the partition number assigned in the previous point)<br>
+dd if=/dev/zero bs=1M count=500 of=/dev/sda4; sync<br>
 
 5.- Install on both srrvers<br>
 yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
