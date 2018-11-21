@@ -31,10 +31,41 @@ c.- At the time of installation leave the largest amount of space on the hard dr
 
 ## Installation
 We are going to start installing VitalPBX on two servers<br>
-a.- When starting the installation go to "INSTALLATION DESTINATION (Custom partitioning selected)".<br>
-b.- Select "I will configurate partitioning" and press "Done" button.<br>
-b.- Select the "/" partition, change the "Desired Capacity" to 20GB (we need enough space for operating system and its applications in the future), click Modify button, select disk and press "Select" button and "Update Settings" button.<br>
-e.- Finally we press the "Done" button and press "Accept Changes" button and continue with the installation.<br>
+a.- When starting the installation go to:<br>
+<pre>
+"INSTALLATION DESTINATION (Custom partitioning selected)".<br>
+</pre>
+b.- Select:
+<pre>
+"I will configurate partitioning"
+</pre>
+and press "Done" button.<br>
+b.- Select the partition:
+<pre>
+"/" 
+</pre>
+Change the capacity to:
+<pre>
+"Desired Capacity" to 20GB
+</pre>
+we need enough space for operating system and its applications in the future<br>
+Then click
+<pre>
+Modify button
+</pre>
+select disk and press 
+<pre>
+"Select" button and "Update Settings" button.
+</pre>
+e.- Finally we press the button:
+<pre>
+"Done"
+</pre>
+and press the button
+</pre>
+"Accept Changes"
+</pre>
+and continue with the installation.<br>
 
 ## Configurations
 We will configure each server the IP address and the host name. Go to the web interface to: Admin/System Settinngs/Network Settings.<br>
