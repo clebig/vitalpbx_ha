@@ -69,14 +69,29 @@ else
     	exit;
 fi
 
-#Check if we have the SSH key generated
+echo -e "************************************************************"
+echo -e "*          Copy Authorization key to slave server          *"
+echo -e "************************************************************"
 sshKeyFile=/root/.ssh/id_rsa
 if [ ! -f $sshKeyFile ]; then
 	ssh-keygen -f /root/.ssh/id_rsa -t rsa -N '' >/dev/null
 fi
-
-#Copy Authorization key to slave server
 ssh-copy-id root@$ip_slave
+echo -e "*** Done ***"
+
+echo -e "************************************************************"
+echo -e "*                Format new drive in Master                *"
+echo -e "************************************************************"
+mke2fs -j /dev/$disk
+dd if=/dev/zero bs=1M count=500 of=/dev/sda4; sync
+echo -e "*** Done ***"
+
+echo -e "************************************************************"
+echo -e "*                Format new drive in Slave                *"
+echo -e "************************************************************"
+ssh root@$ip_slave 'mke2fs -j /dev/$disk'
+ssh root@$ip_slave 'dd if=/dev/zero bs=1M count=500 of=/dev/sda4; sync'
+echo -e "*** Done ***"
 
 echo -e "************************************************************"
 echo -e "*               Creating hosts name in Master              *"
