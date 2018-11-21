@@ -1,6 +1,5 @@
-# vitalpbx_ha
-
 VitalPBX Hih Availability
+=====
 
 Example:<br>
 Master<br>
