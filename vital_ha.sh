@@ -151,29 +151,17 @@ echo -e "*              Formating drbd disk in Master               *"
 echo -e "*           Wait, this process may take a while            *"
 echo -e "************************************************************"
 mkfs.xfs /dev/drbd0
-echo -e "*** Format Done ***"
 mount /dev/drbd0 /mnt
-echo -e "*** Mount Done ***"
 touch /mnt/testfile1
-echo -e "*** Touch testfile1 Done ***"
 umount /mnt
-echo -e "*** umount Done ***"
 drbdadm secondary drbd0
-echo -e "*** set secondary Done ***"
 ssh root@$ip_slave "drbdadm primary drbd0 --force"
-echo -e "*** Set primary in slave Done ***"
 ssh root@$ip_slave "mount /dev/drbd0 /mnt"
-echo -e "*** mount in slave Done ***"
 ssh root@$ip_slave "touch /mnt/testfile2"
-echo -e "*** touch testfile2 in slave Done ***"
 ssh root@$ip_slave "umount /mnt"
-echo -e "*** umount in slave Done ***"
 ssh root@$ip_slave "drbdadm secondary drbd0"
-echo -e "*** set secondary in slave Done ***"
 drbdadm primary drbd0
-echo -e "*** set primary Done ***"
 mount /dev/drbd0 /mnt
-echo -e "*** mount Done ***"
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
@@ -200,7 +188,6 @@ echo -e "*** Done ***"
 echo -e "************************************************************"
 echo -e "*            Server Authenticate in Master                 *"
 echo -e "************************************************************"
-echo $hapassword
 pcs cluster auth $host_master $host_slave -u hacluster -p $hapassword
 echo -e "*** Done ***"
 
@@ -244,13 +231,15 @@ echo -e "************************************************************"
 echo -e "* Create FILESYSTEM resource for the automated mount point *"
 echo -e "************************************************************"
 pcs cluster cib fs_cfg
-pcs  -f fs_cfg resource create DrbdFS Filesystem device="/dev/drbd0" directory="/mnt" fstype="xfs" 
-pcs  -f fs_cfg constraint colocation add DrbdFS with DrbdDataClone INFINITY with-rsc-role=Master 
-pcs  -f fs_cfg constraint order promote DrbdDataClone then start DrbdFS
+pcs -f fs_cfg resource create DrbdFS Filesystem device="/dev/drbd0" directory="/mnt" fstype="xfs" 
+pcs -f fs_cfg constraint colocation add DrbdFS with DrbdDataClone INFINITY with-rsc-role=Master 
+pcs -f fs_cfg constraint order promote DrbdDataClone then start DrbdFS
 pcs -f fs_cfg constraint colocation add DrbdFS with virtual_ip INFINITY
 pcs -f fs_cfg constraint order virtual_ip then DrbdFS
 pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
+
+exit;
 
 echo -e "************************************************************"
 echo -e "*    Create resource for the use of MariaDB in Master      *"
