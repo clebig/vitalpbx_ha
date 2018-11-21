@@ -83,14 +83,14 @@ echo -e "************************************************************"
 echo -e "*                Format new drive in Master                *"
 echo -e "************************************************************"
 mke2fs -j /dev/$disk
-dd if=/dev/zero bs=1M count=500 of=/dev/sda4; sync
+dd if=/dev/zero bs=1M count=500 of=/dev/$disk; sync
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
 echo -e "*                Format new drive in Slave                *"
 echo -e "************************************************************"
-ssh root@$ip_slave 'mke2fs -j /dev/$disk'
-ssh root@$ip_slave 'dd if=/dev/zero bs=1M count=500 of=/dev/sda4; sync'
+ssh root@$ip_slave "mke2fs -j /dev/$disk"
+ssh root@$ip_slave "dd if=/dev/zero bs=1M count=500 of=/dev/$disk; sync"
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
