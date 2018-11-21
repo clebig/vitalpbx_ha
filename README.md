@@ -51,12 +51,11 @@ Change the capacity to:
 <pre>
 Desired Capacity: 20GB
 </pre>
-we need enough space for operating system and its applications in the future<br>
-Then click
+We need enough space for operating system and its applications in the future, then click<br>
 <pre>
 Modify button
 </pre>
-select disk and press the bttons 
+Select disk and press the bttons 
 <pre>
 Select
 Update Settings
@@ -65,11 +64,11 @@ e.- Finally we press the button:
 <pre>
 Done
 </pre>
-and press the button
+And press the button
 </pre>
 Accept Changes
 </pre>
-and continue with the installation.<br>
+And continue with the installation.<br>
 
 ## Configurations
 We will configure each server the IP address and the host name. Go to the web interface to: Admin/System Settinngs/Network Settings.<br>
