@@ -1,5 +1,6 @@
 VitalPBX High Availability
 =====
+![VitalPBX HA](https://github.com/VitalPBX/vitalpbx_ha/blob/master/VitalPBX_HA.png)
 
 Example:<br>
 Master<br>
