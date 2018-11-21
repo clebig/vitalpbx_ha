@@ -144,9 +144,8 @@ ssh root@$ip_slave "drbdadm create-md drbd0"
 drbdadm up drbd0
 ssh root@$ip_slave "drbdadm up drbd0"
 drbdadm primary drbd0 --force
+sleep 3
 echo -e "*** Done ***"
-
-exit;
 
 echo -e "************************************************************"
 echo -e "*              Formating drbd disk in Master               *"
@@ -242,8 +241,6 @@ pcs -f fs_cfg constraint colocation add DrbdFS with virtual_ip INFINITY
 pcs -f fs_cfg constraint order virtual_ip then DrbdFS
 pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
-
-exit;
 
 echo -e "************************************************************"
 echo -e "*    Create resource for the use of MariaDB in Master      *"
