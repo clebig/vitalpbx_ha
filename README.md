@@ -97,6 +97,20 @@ root@192.168.30.20's password: <strong>The root password of Slave Server</strong
 
 ## Test<br>
 
+To see the status of the cluster use the following command:<br>
+
+[root@vitalpbx1 /]# <strong>pcs status resources</strong><br>
+
+If all is well, you will see the following<br>
+
+ virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx1.local<br>
+ Master/Slave Set: DrbdDataClone [DrbdData]<br>
+     Masters: [ vitalpbx1.local ]<br>
+     Slaves: [ vitalpbx2.local ]<br>
+ DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx1.local<br>
+ mysql  (ocf::heartbeat:mysql): Started vitalpbx1.local<br>
+ asterisk       (ocf::heartbeat:asterisk):      Started vitalpbx1.local<br>
+ vpbx-monitor   (service:vpbx-monitor): Started vitalpbx1.local<br>
 
 
 
