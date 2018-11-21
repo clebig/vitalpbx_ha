@@ -123,13 +123,13 @@ echo -e "on $host_master {" 			>> /etc/drbd.d/drbd0.res
 echo -e "device /dev/drbd0;" 			>> /etc/drbd.d/drbd0.res
 echo -e "   	disk /dev/sda4;" 		>> /etc/drbd.d/drbd0.res
 echo -e "   	address $ip_master:7789;" 	>> /etc/drbd.d/drbd0.res
-echo -e "meta-disk internal;" 			>> /etc/drbd.d/drbd0.res
+echo -e "	meta-disk internal;"		>> /etc/drbd.d/drbd0.res
 echo -e "}" 					>> /etc/drbd.d/drbd0.res
 echo -e "on $host_slave {" 			>> /etc/drbd.d/drbd0.res
 echo -e "device /dev/drbd0;" 			>> /etc/drbd.d/drbd0.res
 echo -e "   	disk /dev/sda4;" 		>> /etc/drbd.d/drbd0.res
 echo -e "   	address $ip_slave:7789;" 	>> /etc/drbd.d/drbd0.res
-echo -e "meta-disk internal;" 			>> /etc/drbd.d/drbd0.res
+echo -e "	meta-disk internal;" 		>> /etc/drbd.d/drbd0.res
 echo -e "   	}" 				>> /etc/drbd.d/drbd0.res
 echo -e "}" 					>> /etc/drbd.d/drbd0.res
 drbdadm create-md drbd0
