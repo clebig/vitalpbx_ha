@@ -72,6 +72,7 @@ Install the necessary applications on both servers<br>
 [root@vitalpbx1-2 ~]#  yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
 
 ## Script
+Now copy and run the following script<br>
 [root@vitalpbx1 ~]#  cd /<br>
 [root@vitalpbx1 ~]#  wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vital_ha.sh<br>
 [root@vitalpbx1 ~]#  chmod +x vital_ha.sh<br>
