@@ -1,10 +1,9 @@
 #!/bin/bash
 set -e
 # Authors:      Rodrigo Cuadra
-#               Jose Miguel Rivera
+#               with Colaboration of Jose Miguel Rivera
 #
 # Support:      rcuadra@aplitel.com
-# License:      GNU General Public License (GPL)
 #
 echo -e "\n"
 echo -e "************************************************************"
