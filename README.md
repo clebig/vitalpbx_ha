@@ -33,13 +33,16 @@ c.- At the time of installation leave the largest amount of space on the hard dr
 We are going to start installing VitalPBX on two servers<br>
 a.- When starting the installation go to:<br>
 <pre>
-"INSTALLATION DESTINATION (Custom partitioning selected)".<br>
+INSTALLATION DESTINATION (Custom partitioning selected)
 </pre>
 b.- Select:
 <pre>
-"I will configurate partitioning"
+I will configurate partitioning
 </pre>
-and press "Done" button.<br>
+and press the button
+<pre>
+Done
+</pre>
 b.- Select the partition:
 <pre>
 "/" 
@@ -53,17 +56,18 @@ Then click
 <pre>
 Modify button
 </pre>
-select disk and press 
+select disk and press the bttons 
 <pre>
-"Select" button and "Update Settings" button.
+Select
+Update Settings
 </pre>
 e.- Finally we press the button:
 <pre>
-"Done"
+Done
 </pre>
 and press the button
 </pre>
-"Accept Changes"
+Accept Changes
 </pre>
 and continue with the installation.<br>
 
