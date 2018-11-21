@@ -243,10 +243,12 @@ pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
-echo -e "*    Create resource for the use of MariaDB in Master      *"
+echo -e "*  Create resource for the use of MariaDB in Master/Slave  *"
 echo -e "************************************************************"
 systemctl stop mariadb
 systemctl disable mariadb
+ssh root@$ip_slave "stop mariadb"
+ssh root@$ip_slave "systemctl disable mariadb"
 mkdir /mnt/mysql
 mkdir /mnt/mysql/data
 cd /mnt/mysql
@@ -260,11 +262,11 @@ echo -e "************************************************************"
 echo -e "*     Create resource for the use of MariaDB in Slave      *"
 echo -e "************************************************************"
 pcs cluster standby
-ssh root@$ip_slave 'rm -rf /etc/my.cnf'
-ssh root@$ip_slave 'ln -s /mnt/mysql/my.cnf /etc/'
+ssh root@$ip_slave "rm -rf /etc/my.cnf"
+ssh root@$ip_slave "ln -s /mnt/mysql/my.cnf /etc/"
 pcs cluster unstandby
-ssh root@$ip_slave 'pcs cluster standby'
-ssh root@$ip_slave 'pcs cluster unstandby'
+ssh root@$ip_slave "pcs cluster standby"
+ssh root@$ip_slave "pcs cluster unstandby"
 
 echo -e "************************************************************"
 echo -e "*    Create resource for the use of MariaDB in Master      *"
