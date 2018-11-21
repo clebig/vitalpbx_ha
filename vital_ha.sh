@@ -93,9 +93,12 @@ ssh root@$ip_slave "dd if=/dev/zero bs=1M count=500 of=/dev/$disk; sync"
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
-echo -e "*               Creating hosts name in Master              *"
+echo -e "*            Creating hosts name in Master/Slave           *"
 echo -e "************************************************************"
-echo -e "$ip_master \t$host_master \n$ip_slave \t$host_slave" >> /etc/hosts
+echo -e '$ip_master \t$host_master' >> /etc/hosts
+echo -e '$ip_slave \t$host_slave' >> /etc/hosts
+ssh root@$ip_slave "echo -e '$ip_master \t$host_master' >> /etc/hosts"
+ssh root@$ip_slave "echo -e '$ip_slave \t$host_slave' >> /etc/hosts"
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
@@ -128,13 +131,13 @@ scp /etc/drbd.d/global_common.conf root@$ip_slave:/etc/drbd.d/global_common.conf
 echo -e "resource drbd0 {" 			> /etc/drbd.d/drbd0.res
 echo -e "protocol C;" 				>> /etc/drbd.d/drbd0.res
 echo -e "on $host_master {" 			>> /etc/drbd.d/drbd0.res
-echo -e "device /dev/drbd0;" 			>> /etc/drbd.d/drbd0.res
+echo -e "	device /dev/drbd0;" 		>> /etc/drbd.d/drbd0.res
 echo -e "   	disk /dev/sda4;" 		>> /etc/drbd.d/drbd0.res
 echo -e "   	address $ip_master:7789;" 	>> /etc/drbd.d/drbd0.res
 echo -e "	meta-disk internal;"		>> /etc/drbd.d/drbd0.res
 echo -e "	}" 				>> /etc/drbd.d/drbd0.res
 echo -e "on $host_slave {" 			>> /etc/drbd.d/drbd0.res
-echo -e "device /dev/drbd0;" 			>> /etc/drbd.d/drbd0.res
+echo -e "	device /dev/drbd0;" 		>> /etc/drbd.d/drbd0.res
 echo -e "   	disk /dev/sda4;" 		>> /etc/drbd.d/drbd0.res
 echo -e "   	address $ip_slave:7789;" 	>> /etc/drbd.d/drbd0.res
 echo -e "	meta-disk internal;" 		>> /etc/drbd.d/drbd0.res
@@ -142,10 +145,10 @@ echo -e "   	}" 				>> /etc/drbd.d/drbd0.res
 echo -e "}" 					>> /etc/drbd.d/drbd0.res
 scp /etc/drbd.d/drbd0.res root@$ip_slave:/etc/drbd.d/drbd0.res
 drbdadm create-md drbd0
-ssh root@$ip_slave 'drbdadm create-md drbd0'
+ssh root@$ip_slave "drbdadm create-md drbd0"
 drbdadm up drbd0
 drbdadm primary drbd0 --force
-ssh root@$ip_slave 'drbdadm up drbd0'
+ssh root@$ip_slave "drbdadm up drbd0"
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
@@ -153,50 +156,32 @@ echo -e "*              Formating drbd disk in Master               *"
 echo -e "************************************************************"
 mkfs.xfs /dev/drbd0
 mount /dev/drbd0 /mnt
-touch /mnt/testfile1.txt
+touch /mnt/testfile1
 umount /mnt
 drbdadm secondary drbd0
-ssh root@$ip_slave 'drbdadm primary drbd0 --force'
-ssh root@$ip_slave 'mount /dev/drbd0 /mnt'
-ssh root@$ip_slave 'touch /mnt/testfile2.txt'
-ssh root@$ip_slave 'umount /mnt'
-ssh root@$ip_slave 'drbdadm secondary drbd0'
+ssh root@$ip_slave "drbdadm primary drbd0 --force"
+ssh root@$ip_slave "mount /dev/drbd0 /mnt"
+ssh root@$ip_slave "touch /mnt/testfile2"
+ssh root@$ip_slave "umount /mnt"
+ssh root@$ip_slave "drbdadm secondary drbd0"
 drbdadm primary drbd0
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
-echo -e "*        Create password for hacluster in Master           *"
+echo -e "*     Create password for hacluster in Master/Slave        *"
 echo -e "************************************************************"
 echo $hapassword | passwd --stdin hacluster
-echo -e "*** Done ***"
-
-echo -e "************************************************************"
-echo -e "*            Starting pcsd services in Master              *"
-echo -e "************************************************************"
-systemctl start pcsd 
-systemctl enable pcsd.service 
-systemctl enable corosync.service 
-systemctl enable pacemaker.service
-echo -e "*** Done ***"
-
-###### SLAVE ######
-echo -e "************************************************************"
-echo -e "*             Creating hosts name in Slave                 *"
-echo -e "************************************************************"
-ssh root@$ip_slave "echo -e '$ip_master \t$host_master' >> /etc/hosts"
-ssh root@$ip_slave "echo -e '$ip_slave \t$host_slave' >> /etc/hosts"
-echo -e "*** Done ***"
-
-echo -e "************************************************************"
-echo -e "*        Create password for hacluster in Slave            *"
-echo -e "************************************************************"
 ssh root@$ip_slave "echo $hapassword | passwd --stdin hacluster"
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
-echo -e "*            Starting pcsd services in Slave               *"
+echo -e "*          Starting pcsd services in Master/Slave          *"
 echo -e "************************************************************"
+systemctl start pcsd
 ssh root@$ip_slave 'systemctl start pcsd'
+systemctl enable pcsd.service 
+systemctl enable corosync.service 
+systemctl enable pacemaker.service
 ssh root@$ip_slave 'systemctl enable pcsd.service'
 ssh root@$ip_slave 'systemctl enable corosync.service' 
 ssh root@$ip_slave 'systemctl enable pacemaker.service'
