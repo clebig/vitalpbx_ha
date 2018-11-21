@@ -1,4 +1,4 @@
-VitalPBX Hih Availability
+VitalPBX High Availability
 =====
 
 Example:<br>
