@@ -107,16 +107,21 @@ firewall-cmd --reload
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
-echo -e "*                   Loading drbd in Master                 *"
+echo -e "*               Loading drbd in Master/Slave               *"
 echo -e "************************************************************"
 modprobe drbd
+ssh root@$ip_slave 'modprobe drbd'
+systemctl enable drbd.service
+ssh root@$ip_slave 'systemctl enable drbd.service'
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
-echo -e "*         Configure drbr resources in Master               *"
+echo -e "*       Configure drbr resources in Master/Slave           *"
 echo -e "************************************************************"
 mv /etc/drbd.d/global_common.conf /etc/drbd.d/global_common.conf.orig
+ssh root@$ip_slave "mv /etc/drbd.d/global_common.conf /etc/drbd.d/global_common.conf.orig"
 echo -e "global { \n\tusage-count no; \n} \ncommon { \n\tnet { \n\tprotocol C; \n\t} \n}"  > /etc/drbd.d/global_common.conf
+scp /etc/drbd.d/global_common.conf root@$ip_slave:/etc/drbd.d/global_common.conf
 echo -e "resource drbd0 {" 			> /etc/drbd.d/drbd0.res
 echo -e "protocol C;" 				>> /etc/drbd.d/drbd0.res
 echo -e "on $host_master {" 			>> /etc/drbd.d/drbd0.res
@@ -124,7 +129,7 @@ echo -e "device /dev/drbd0;" 			>> /etc/drbd.d/drbd0.res
 echo -e "   	disk /dev/sda4;" 		>> /etc/drbd.d/drbd0.res
 echo -e "   	address $ip_master:7789;" 	>> /etc/drbd.d/drbd0.res
 echo -e "	meta-disk internal;"		>> /etc/drbd.d/drbd0.res
-echo -e "}" 					>> /etc/drbd.d/drbd0.res
+echo -e "	}" 				>> /etc/drbd.d/drbd0.res
 echo -e "on $host_slave {" 			>> /etc/drbd.d/drbd0.res
 echo -e "device /dev/drbd0;" 			>> /etc/drbd.d/drbd0.res
 echo -e "   	disk /dev/sda4;" 		>> /etc/drbd.d/drbd0.res
@@ -132,10 +137,12 @@ echo -e "   	address $ip_slave:7789;" 	>> /etc/drbd.d/drbd0.res
 echo -e "	meta-disk internal;" 		>> /etc/drbd.d/drbd0.res
 echo -e "   	}" 				>> /etc/drbd.d/drbd0.res
 echo -e "}" 					>> /etc/drbd.d/drbd0.res
+scp /etc/drbd.d/drbd0.res root@$ip_slave:/etc/drbd.d/drbd0.res
 drbdadm create-md drbd0
-systemctl enable drbd
+ssh root@$ip_slave 'drbdadm create-md drbd0'
 drbdadm up drbd0
 drbdadm primary drbd0 --force
+ssh root@$ip_slave 'drbdadm up drbd0'
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
@@ -180,24 +187,6 @@ echo -e "************************************************************"
 echo -e "*                 Loading drbd in Slave                    *"
 echo -e "************************************************************"
 ssh root@$ip_slave 'modprobe drbd'
-echo -e "*** Done ***"
-
-echo -e "************************************************************"
-echo -e "*         Configure drbr resources in Slave                *"
-echo -e "************************************************************"
-ssh root@$ip_slave "mv /etc/drbd.d/global_common.conf /etc/drbd.d/global_common.conf.orig"
-scp /etc/drbd.d/global_common.conf root@$ip_slave:/etc/drbd.d/global_common.conf
-scp /etc/drbd.d/drbd0.res root@$ip_slave:/etc/drbd.d/drbd0.res
-ssh root@$ip_slave 'drbdadm create-md drbd0'
-ssh root@$ip_slave 'systemctl enable drbd'
-ssh root@$ip_slave 'drbdadm up drbd0'
-ssh root@$ip_slave 'drbdadm secondary drbd0'
-echo -e "*** Done ***"
-
-echo -e "************************************************************"
-echo -e "*      Install pcs, pacemaker and corosync in Slave        *"
-echo -e "************************************************************"
-#ssh root@$ip_slave "yum -y install corosync pacemaker pcs"
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
