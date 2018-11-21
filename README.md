@@ -78,10 +78,10 @@ Now copy and run the following script<br>
 [root@vitalpbx1 ~]#  chmod +x vital_ha.sh<br>
 [root@vitalpbx1 ~]#  ./vital_ha.sh<br>
 
-'************************************************************<br>
-'*  Welcome to the VitalPBX high availability installation  *<br>
-'*                All options are mandatory                 *<br>
-'************************************************************<br>
+"************************************************************"<br>
+"*  Welcome to the VitalPBX high availability installation  *"<br>
+"*                All options are mandatory                 *"<br>
+"************************************************************"<br>
 IP Master......... > 192.168.30.10<br>
 Host Name Master.. > vitalpbx1.local<br>
 IP Slave.......... > 192.168.30.20<br>
