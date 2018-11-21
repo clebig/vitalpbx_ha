@@ -78,7 +78,7 @@ Now copy and run the following script<br>
 [root@vitalpbx1 ~]#  chmod +x vital_ha.sh<br>
 [root@vitalpbx1 ~]#  ./vital_ha.sh<br>
 
-<p style="font-family:Courier; color:Blue; font-size: 20px;">
+font-family: Ubuntu Mono
 IP Master......... > <strong>192.168.30.10</strong><br>
 Host Name Master.. > <strong>vitalpbx1.loca</strong><br>
 IP Slave.......... > <strong>192.168.30.20</strong><br>
@@ -89,7 +89,6 @@ Disk (sdax)....... > <strong>sda4</strong><br>
 hacluster password > <strong>mypassword</strong><br>
 </p>
 
-Are you sure to continue with this settings? (yes,no) > <strong>yes</strong><br>
 
 
 
