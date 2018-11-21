@@ -146,8 +146,6 @@ drbdadm primary drbd0 --force
 ssh root@$ip_slave "drbdadm up drbd0"
 echo -e "*** Done ***"
 
-exit;
-
 echo -e "************************************************************"
 echo -e "*              Formating drbd disk in Master               *"
 echo -e "************************************************************"
@@ -162,9 +160,8 @@ ssh root@$ip_slave "touch /mnt/testfile2"
 ssh root@$ip_slave "umount /mnt"
 ssh root@$ip_slave "drbdadm secondary drbd0"
 drbdadm primary drbd0
+mount /dev/drbd0 /mnt
 echo -e "*** Done ***"
-
-exit;
 
 echo -e "************************************************************"
 echo -e "*     Create password for hacluster in Master/Slave        *"
