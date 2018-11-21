@@ -90,8 +90,8 @@ echo -e "*** Done ***"
 echo -e "************************************************************"
 echo -e "*            Creating hosts name in Master/Slave           *"
 echo -e "************************************************************"
-echo -e '$ip_master \t$host_master' >> /etc/hosts
-echo -e '$ip_slave \t$host_slave' >> /etc/hosts
+echo -e "$ip_master \t$host_master" >> /etc/hosts
+echo -e "$ip_slave \t$host_slave" >> /etc/hosts
 ssh root@$ip_slave "echo -e '$ip_master \t$host_master' >> /etc/hosts"
 ssh root@$ip_slave "echo -e '$ip_slave \t$host_slave' >> /etc/hosts"
 echo -e "*** Done ***"
@@ -150,17 +150,29 @@ echo -e "************************************************************"
 echo -e "*              Formating drbd disk in Master               *"
 echo -e "************************************************************"
 mkfs.xfs /dev/drbd0
+echo -e "*** Format Done ***"
 mount /dev/drbd0 /mnt
+echo -e "*** Mount Done ***"
 touch /mnt/testfile1
+echo -e "*** Touch testfile1 Done ***"
 umount /mnt
+echo -e "*** umount Done ***"
 drbdadm secondary drbd0
+echo -e "*** set secondary Done ***"
 ssh root@$ip_slave "drbdadm primary drbd0 --force"
+echo -e "*** Set primary in slave Done ***"
 ssh root@$ip_slave "mount /dev/drbd0 /mnt"
+echo -e "*** mount in slave Done ***"
 ssh root@$ip_slave "touch /mnt/testfile2"
+echo -e "*** touch testfile2 in slave Done ***"
 ssh root@$ip_slave "umount /mnt"
+echo -e "*** umount in slave Done ***"
 ssh root@$ip_slave "drbdadm secondary drbd0"
+echo -e "*** set secondary in slave Done ***"
 drbdadm primary drbd0
+echo -e "*** set primary Done ***"
 mount /dev/drbd0 /mnt
+echo -e "*** mount Done ***"
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
