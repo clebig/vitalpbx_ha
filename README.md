@@ -71,6 +71,7 @@ And continue with the installation.<br>
 
 ## Configurations
 We will configure each server the IP address and the host name. Go to the web interface to: Admin/System Settinngs/Network Settings.<br>
+
 | Name          | Master           | Slave            |
 | ------------- | ---------------- | ---------------- |
 | Host Name     | vitalpbx1.local  | vitalpbx2.local  |
