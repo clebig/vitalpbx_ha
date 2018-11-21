@@ -146,6 +146,8 @@ ssh root@$ip_slave "drbdadm up drbd0"
 drbdadm primary drbd0 --force
 echo -e "*** Done ***"
 
+exit;
+
 echo -e "************************************************************"
 echo -e "*              Formating drbd disk in Master               *"
 echo -e "*           Wait, this process may take a while            *"
@@ -155,11 +157,13 @@ mount /dev/drbd0 /mnt
 touch /mnt/testfile1
 umount /mnt
 drbdadm secondary drbd0
+sleep 2
 ssh root@$ip_slave "drbdadm primary drbd0 --force"
 ssh root@$ip_slave "mount /dev/drbd0 /mnt"
 ssh root@$ip_slave "touch /mnt/testfile2"
 ssh root@$ip_slave "umount /mnt"
 ssh root@$ip_slave "drbdadm secondary drbd0"
+sleep 2
 drbdadm primary drbd0
 mount /dev/drbd0 /mnt
 echo -e "*** Done ***"
