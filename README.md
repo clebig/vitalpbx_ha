@@ -39,7 +39,7 @@ b.- Select:
 <pre>
 I will configurate partitioning
 </pre>
-and press the button
+And press the button
 <pre>
 Done
 </pre>
