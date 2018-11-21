@@ -21,7 +21,7 @@ Secundary DNS: 8.8.4.4<br>
 Floating IP: 192.168.30.30<br>
 Netmask: 21<br>
 
-
+-----------------
 1.- Prerequisites
 In order to install VitalPBX in high availability you need the following:<br>
 a.- 3 IP addresses.<br>
