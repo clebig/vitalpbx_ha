@@ -78,7 +78,6 @@ Now copy and run the following script<br>
 [root@vitalpbx1 ~]#  chmod +x vital_ha.sh<br>
 [root@vitalpbx1 ~]#  ./vital_ha.sh<br>
 
-font-family: Ubuntu Mono
 IP Master......... > <strong>192.168.30.10</strong><br>
 Host Name Master.. > <strong>vitalpbx1.loca</strong><br>
 IP Slave.......... > <strong>192.168.30.20</strong><br>
@@ -88,6 +87,8 @@ Floating IP Mask.. > <strong>21</strong><br>
 Disk (sdax)....... > <strong>sda4</strong><br>
 hacluster password > <strong>mypassword</strong><br>
 </p>
+
+:+1:
 
 
 
