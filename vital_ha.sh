@@ -111,9 +111,9 @@ echo -e "************************************************************"
 echo -e "*               Loading drbd in Master/Slave               *"
 echo -e "************************************************************"
 modprobe drbd
-ssh root@$ip_slave 'modprobe drbd'
+ssh root@$ip_slave "modprobe drbd"
 systemctl enable drbd.service
-ssh root@$ip_slave 'systemctl enable drbd.service'
+ssh root@$ip_slave "systemctl enable drbd.service"
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
@@ -142,8 +142,8 @@ scp /etc/drbd.d/drbd0.res root@$ip_slave:/etc/drbd.d/drbd0.res
 drbdadm create-md drbd0
 ssh root@$ip_slave "drbdadm create-md drbd0"
 drbdadm up drbd0
-drbdadm primary drbd0 --force
 ssh root@$ip_slave "drbdadm up drbd0"
+drbdadm primary drbd0 --force
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
@@ -175,13 +175,13 @@ echo -e "************************************************************"
 echo -e "*          Starting pcsd services in Master/Slave          *"
 echo -e "************************************************************"
 systemctl start pcsd
-ssh root@$ip_slave 'systemctl start pcsd'
+ssh root@$ip_slave "systemctl start pcsd"
 systemctl enable pcsd.service 
 systemctl enable corosync.service 
 systemctl enable pacemaker.service
-ssh root@$ip_slave 'systemctl enable pcsd.service'
-ssh root@$ip_slave 'systemctl enable corosync.service' 
-ssh root@$ip_slave 'systemctl enable pacemaker.service'
+ssh root@$ip_slave "systemctl enable pcsd.service"
+ssh root@$ip_slave "systemctl enable corosync.service 
+ssh root@$ip_slave "systemctl enable pacemaker.service"
 echo -e "*** Done ***"
 
 ###### MASTER #####
