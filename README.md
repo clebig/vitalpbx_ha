@@ -123,7 +123,44 @@ If all is well, you will see the following<br>
  vpbx-monitor   (service:vpbx-monitor): Started vitalpbx1.local
 </pre>
 
+Poweroff the Server1 vitalpbx1.local, and check the server2 vitalpbx2.local<br>
+<pre>
+[root@vitalpbx2 /]# <strong>pcs status resources</strong>
+ virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx2.local
+ Master/Slave Set: DrbdDataClone [DrbdData]
+     Masters: [ vitalpbx2.local ]
+     Stopped: [ vitalpbx1.local ]
+ DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx2.local
+ mysql  (ocf::heartbeat:mysql): Started vitalpbx2.local
+ asterisk       (ocf::heartbeat:asterisk):      Started vitalpbx2.local
+ vpbx-monitor   (service:vpbx-monitor): Started vitalpbx2.local
+</pre>
 
+All services moved to server2.<br>
+
+Now turn on the server1. You will see that the services continue on the server2. To return everything to normal on server2, execute the following command:<br>
+<pre>
+[root@vitalpbx2 /]# <strong>pcs cluster standby vitalpbx2.local</strong>
+</pre>
+
+The server1 takes control again. <br>
+<pre>
+[root@vitalpbx1 ~]# pcs status resources
+ virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx1.local
+ Master/Slave Set: DrbdDataClone [DrbdData]
+     Masters: [ vitalpbx1.local ]
+     <strong>Stopped</strong>: [ vitalpbx2.local ]
+ DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx1.local
+ mysql  (ocf::heartbeat:mysql): Started vitalpbx1.local
+ asterisk       (ocf::heartbeat:asterisk):      Started vitalpbx1.local
+ vpbx-monitor   (service:vpbx-monitor): Started vitalpbx1.local
+</pre>
+
+We see that the server2 is in the stop state, this is why we must return it to normal state again by applying the following command:<br>
+
+<pre>
+[root@vitalpbx2 /]# <strong>pcs cluster unstandby vitalpbx2.local</strong>
+</pre>
 
 
 
