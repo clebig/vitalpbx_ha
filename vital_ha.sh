@@ -146,6 +146,8 @@ drbdadm primary drbd0 --force
 ssh root@$ip_slave "drbdadm up drbd0"
 echo -e "*** Done ***"
 
+exit;
+
 echo -e "************************************************************"
 echo -e "*              Formating drbd disk in Master               *"
 echo -e "************************************************************"
