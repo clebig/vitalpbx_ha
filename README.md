@@ -7,24 +7,19 @@ High-availability cluster out of any pair of VitalPBX servers. VitalPBX can dete
 ![VitalPBX HA](https://github.com/VitalPBX/vitalpbx_ha/blob/master/VitalPBX_HA.png)
 
 ## Example:<br>
-### Master<br>
-Host Name Master: vitalpbx1.local<br>
-IP Master: 192.168.30.10<br>
-Netmask: 255.255.248.0<br>
-Gateway: 192.168.24.1<br>
-Primary DNS: 8.8.8.8<br>
-Secundary DNS: 8.8.4.4<br>
+| Name          | Master           | Slave            |
+| ------------- | ---------------- | ---------------- |
+| Host Name     | vitalpbx1.local  | vitalpbx2.local  |
+| IP Address    | 192.168.30.10    | 192.168.30.20    |
+| Netmask       | 255.255.248.0    | 255.255.248.0    |
+| Gateway       | 192.168.24.1     | 192.168.24.1     |
+| Primary DNS   | 8.8.8.8          | 8.8.8.8          |
+| Secundary DNS | 8.8.4.4          | 8.8.4.4          |
 
-### Slave<br>
-Host name Slave: vitalpbx2.local<br>
-IP Slave: 192.168.30.20<br>
-Netmask: 255.255.248.0<br>
-Gateway: 192.168.24.1<br>
-Primary DNS: 8.8.8.8<br>
-Secundary DNS: 8.8.4.4<br>
+| Floating IP     | Netmask   |
+| --------------- | --------- |
+| 192.168.30.30   | 21        |
 
-Floating IP: 192.168.30.30<br>
-Netmask: 21<br>
 
 -----------------
 ## Prerequisites
