@@ -78,23 +78,15 @@ Now copy and run the following script<br>
 [root@vitalpbx1 ~]#  chmod +x vital_ha.sh<br>
 [root@vitalpbx1 ~]#  ./vital_ha.sh<br>
 
-"************************************************************"<br>
-"*  Welcome to the VitalPBX high availability installation  *"<br>
-"*                All options are mandatory                 *"<br>
-"************************************************************"<br>
-IP Master......... > 192.168.30.10<br>
-Host Name Master.. > vitalpbx1.local<br>
-IP Slave.......... > 192.168.30.20<br>
-Host Name Slave... > vitalpbx2.local<br>
-Floating IP....... > 192.168.30.30<br>
-Floating IP Mask.. > 21<br>
-Disk (sdax)....... > sda4<br>
-hacluster password > mypassword<br>
+IP Master......... > <strong>192.168.30.10</strong><br>
+Host Name Master.. > <strong>vitalpbx1.loca</strong>l<br>
+IP Slave.......... > <strong>192.168.30.20</strong><br>
+Host Name Slave... > <strong>vitalpbx2.local</strong><br>
+Floating IP....... > <strong>192.168.30.30</strong><br>
+Floating IP Mask.. > <strong>21</strong><br>
+Disk (sdax)....... > <strong>sda4</strong><br>
+hacluster password > <strong>mypassword</strong><br>
 
-'************************************************************<br>
-'*                   Check Information                      *<br>
-'*        Make sure you have internet on both servers       *<br>
-'************************************************************<br>
 Are you sure to continue with this settings? (yes,no) > <strong>yes</strong><br>
 
 
