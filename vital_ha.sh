@@ -247,7 +247,7 @@ echo -e "*  Create resource for the use of MariaDB in Master/Slave  *"
 echo -e "************************************************************"
 systemctl stop mariadb
 systemctl disable mariadb
-ssh root@$ip_slave "stop mariadb"
+ssh root@$ip_slave "systemctl stop mariadb"
 ssh root@$ip_slave "systemctl disable mariadb"
 mkdir /mnt/mysql
 mkdir /mnt/mysql/data
@@ -282,8 +282,10 @@ echo -e "*** Done ***"
 echo -e "************************************************************"
 echo -e "*            Create resource for Asterisk                  *"
 echo -e "************************************************************"
-service asterisk stop
+systemctl stop asterisk
 systemctl disable asterisk
+ssh root@$ip_slave "systemctl stop asterisk"
+ssh root@$ip_slave "systemctl disable asterisk"
 cd /usr/lib/ocf/resource.d/heartbeat
 wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/asterisk 
 chmod 755 asterisk
@@ -344,8 +346,10 @@ echo -e "*** Done ***"
 echo -e "************************************************************"
 echo -e "*                    VitalPBX Service                      *"
 echo -e "************************************************************"
-service vpbx-monitor stop
+systemctl stop vpbx-monitor
 systemctl disable vpbx-monitor
+ssh root@$ip_slave "systemctl stop vpbx-monitor"
+ssh root@$ip_slave "systemctl disable vpbx-monitor"
 pcs resource create vpbx-monitor service:vpbx-monitor op monitor interval=30s
 pcs cluster cib fs_cfg
 pcs -f fs_cfg constraint colocation add vpbx-monitor with virtual_ip INFINITY
