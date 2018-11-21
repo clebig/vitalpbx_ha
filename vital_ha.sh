@@ -99,11 +99,14 @@ echo -e "$ip_master \t$host_master \n$ip_slave \t$host_slave" >> /etc/hosts
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
-echo -e "*            Update Firewall in Master                     *"
+echo -e "*            Update Firewall in Master/Slave               *"
 echo -e "************************************************************"
 firewall-cmd --permanent --add-service=high-availability
 firewall-cmd --permanent --add-rich-rule="rule family="ipv4" source address="$ip_slave" port port="7789" protocol="tcp" accept"
 firewall-cmd --reload
+ssh root@$ip_slave "firewall-cmd --permanent --add-service=high-availability"
+ssh root@$ip_slave "firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="$ip_master" port port="7789" protocol="tcp" accept'"
+ssh root@$ip_slave "firewall-cmd --reload"
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
@@ -143,6 +146,15 @@ ssh root@$ip_slave 'drbdadm create-md drbd0'
 drbdadm up drbd0
 drbdadm primary drbd0 --force
 ssh root@$ip_slave 'drbdadm up drbd0'
+touch /mnt/testfile1.txt
+umount /mnt
+drbdadm secondary drbd0
+ssh root@$ip_slave 'drbdadm primary drbd0 --force'
+ssh root@$ip_slave 'mount /dev/drbd0 /mnt'
+ssh root@$ip_slave 'touch /mnt/testfile2.txt'
+ssh root@$ip_slave 'umount /mnt'
+ssh root@$ip_slave 'drbdadm secondary drbd0'
+drbdadm primary drbd0
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
@@ -173,20 +185,6 @@ echo -e "*             Creating hosts name in Slave                 *"
 echo -e "************************************************************"
 ssh root@$ip_slave "echo -e '$ip_master \t$host_master' >> /etc/hosts"
 ssh root@$ip_slave "echo -e '$ip_slave \t$host_slave' >> /etc/hosts"
-echo -e "*** Done ***"
-
-echo -e "************************************************************"
-echo -e "*              Update Firewall in Slave                    *"
-echo -e "************************************************************"
-ssh root@$ip_slave "firewall-cmd --permanent --add-service=high-availability"
-ssh root@$ip_slave "firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="$ip_master" port port="7789" protocol="tcp" accept'"
-ssh root@$ip_slave "firewall-cmd --reload"
-echo -e "*** Done ***"
-
-echo -e "************************************************************"
-echo -e "*                 Loading drbd in Slave                    *"
-echo -e "************************************************************"
-ssh root@$ip_slave 'modprobe drbd'
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
