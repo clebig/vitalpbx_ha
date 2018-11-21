@@ -113,14 +113,14 @@ To see the status of the cluster use the following command:<br>
 If all is well, you will see the following<br>
 
 <pre>
- virtual_ip     (ocf::'heartbeat':IPaddr2):       Started vitalpbx1.local<br>
- Master/Slave Set: DrbdDataClone [DrbdData]<br>
-     Masters: [ vitalpbx1.local ]<br>
-     Slaves: [ vitalpbx2.local ]<br>
- DrbdFS (ocf::'heartbeat':Filesystem):    Started vitalpbx1.local<br>
- mysql  (ocf::'heartbeat':mysql): Started vitalpbx1.local<br>
- asterisk       (ocf::'heartbeat':asterisk):      Started vitalpbx1.local<br>
- vpbx-monitor   (service:vpbx-monitor): Started vitalpbx1.local<br>
+ virtual_ip     (ocf::'heartbeat':IPaddr2):       Started vitalpbx1.local
+ Master/Slave Set: DrbdDataClone [DrbdData]
+     Masters: [ vitalpbx1.local ]
+     Slaves: [ vitalpbx2.local ]
+ DrbdFS (ocf::'heartbeat':Filesystem):    Started vitalpbx1.local
+ mysql  (ocf::'heartbeat':mysql): Started vitalpbx1.local
+ asterisk       (ocf::'heartbeat':asterisk):      Started vitalpbx1.local
+ vpbx-monitor   (service:vpbx-monitor): Started vitalpbx1.local
 </pre>
 
 
