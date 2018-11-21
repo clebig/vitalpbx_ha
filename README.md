@@ -49,7 +49,7 @@ b.- Select the root partition:
 </pre>
 Change the capacity to:
 <pre>
-"Desired Capacity" to 20GB
+Desired Capacity: 20GB
 </pre>
 we need enough space for operating system and its applications in the future<br>
 Then click
