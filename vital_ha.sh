@@ -146,6 +146,13 @@ ssh root@$ip_slave 'drbdadm create-md drbd0'
 drbdadm up drbd0
 drbdadm primary drbd0 --force
 ssh root@$ip_slave 'drbdadm up drbd0'
+echo -e "*** Done ***"
+
+echo -e "************************************************************"
+echo -e "*              Formating drbd disk in Master               *"
+echo -e "************************************************************"
+mkfs.xfs /dev/drbd0
+mount /dev/drbd0 /mnt
 touch /mnt/testfile1.txt
 umount /mnt
 drbdadm secondary drbd0
@@ -155,13 +162,6 @@ ssh root@$ip_slave 'touch /mnt/testfile2.txt'
 ssh root@$ip_slave 'umount /mnt'
 ssh root@$ip_slave 'drbdadm secondary drbd0'
 drbdadm primary drbd0
-echo -e "*** Done ***"
-
-echo -e "************************************************************"
-echo -e "*              Formating drbd disk in Master               *"
-echo -e "************************************************************"
-mkfs.xfs /dev/drbd0
-mount /dev/drbd0 /mnt
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
