@@ -180,7 +180,7 @@ systemctl enable pcsd.service
 systemctl enable corosync.service 
 systemctl enable pacemaker.service
 ssh root@$ip_slave "systemctl enable pcsd.service"
-ssh root@$ip_slave "systemctl enable corosync.service 
+ssh root@$ip_slave "systemctl enable corosync.service"
 ssh root@$ip_slave "systemctl enable pacemaker.service"
 echo -e "*** Done ***"
 
