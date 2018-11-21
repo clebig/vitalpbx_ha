@@ -88,6 +88,8 @@ Disk (sdax)....... > <strong>sda4</strong><br>
 hacluster password > <strong>mypassword</strong><br>
 </p>
 
+Are you sure to continue with this settings? (yes,no) > <strong>yes</strong><br>
+
 :+1:
 
 
