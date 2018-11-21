@@ -89,6 +89,10 @@ hacluster password. > <strong>mypassword</strong><br>
 
 Are you sure to continue with this settings? (yes,no) > <strong>yes</strong><br>
 
+Are you sure you want to continue connecting (yes/no)? <strong>yes</strong><br>
+
+root@192.168.30.20's password: <strong>The root password of Slave Server</strong><br>
+
 :+1:
 
 
