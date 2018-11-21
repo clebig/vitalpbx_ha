@@ -43,9 +43,9 @@ and press the button
 <pre>
 Done
 </pre>
-b.- Select the partition:
+b.- Select the root partition:
 <pre>
-"/" 
+/ 
 </pre>
 Change the capacity to:
 <pre>
