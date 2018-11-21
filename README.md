@@ -1,6 +1,4 @@
 # vitalpbx_ha
-https://github.com/VitalPBX/vitalpbx_ha/blob/master/VitalPBX_HA.png
-
 
 VitalPBX Hih Availability
 
