@@ -148,6 +148,7 @@ echo -e "*** Done ***"
 
 echo -e "************************************************************"
 echo -e "*              Formating drbd disk in Master               *"
+echo -e "*           Wait, this process may take a while            *"
 echo -e "************************************************************"
 mkfs.xfs /dev/drbd0
 echo -e "*** Format Done ***"
