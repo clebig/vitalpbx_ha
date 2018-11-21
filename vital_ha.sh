@@ -79,15 +79,10 @@ ssh-copy-id root@$ip_slave
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
-echo -e "*                Format new drive in Master                *"
+echo -e "*             Format new drive in Master/Slave             *"
 echo -e "************************************************************"
 mke2fs -j /dev/$disk
 dd if=/dev/zero bs=1M count=500 of=/dev/$disk; sync
-echo -e "*** Done ***"
-
-echo -e "************************************************************"
-echo -e "*                Format new drive in Slave                *"
-echo -e "************************************************************"
 ssh root@$ip_slave "mke2fs -j /dev/$disk"
 ssh root@$ip_slave "dd if=/dev/zero bs=1M count=500 of=/dev/$disk; sync"
 echo -e "*** Done ***"
@@ -166,6 +161,8 @@ ssh root@$ip_slave "umount /mnt"
 ssh root@$ip_slave "drbdadm secondary drbd0"
 drbdadm primary drbd0
 echo -e "*** Done ***"
+
+exit;
 
 echo -e "************************************************************"
 echo -e "*     Create password for hacluster in Master/Slave        *"
