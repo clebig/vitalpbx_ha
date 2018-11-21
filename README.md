@@ -71,10 +71,11 @@ And continue with the installation.<br>
 
 ## Configurations
 We will configure each server the IP address and the host name. Go to the web interface to: Admin/System Settinngs/Network Settings.<br>
-
+Firs change the Hostname, remember press the Chech button.<br>
+Disable the DHCP option and set this values<br>
 | Name          | Master           | Slave            |
 | ------------- | ---------------- | ---------------- |
-| Host Name     | vitalpbx1.local  | vitalpbx2.local  |
+| Hostname      | vitalpbx1.local  | vitalpbx2.local  |
 | IP Address    | 192.168.30.10    | 192.168.30.20    |
 | Netmask       | 255.255.248.0    | 255.255.248.0    |
 | Gateway       | 192.168.24.1     | 192.168.24.1     |
