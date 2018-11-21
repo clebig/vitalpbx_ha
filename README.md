@@ -58,18 +58,22 @@ g.- Secundary DNS: <strong>8.8.4.4</strong><br>
 ## Create Disk
 Now we connect with ssh to each of the servers.<br>
 a.- Initialize the partition to allocate the available space on the hard disk. Do these on both servers.<br>
-[root@vitalpbx1-2 ~]#  fdisk /dev/sda<br>
-Command (m for help): <strong>n</strong><br>
+<pre>
+[root@vitalpbx1-2 ~]#  fdisk /dev/sda
+Command (m for help): <strong>n</strong>
 Select (default e): <strong>p</strong><br>
-Selected partition <strong>x</strong> (take note of the assigned partition number as we will need it later)<br>
-<strong>[Enter]</strong><br>
-<strong>[Enter]</strong><br>
-Command (m for help): <strong>w</strong><br>
-[root@vitalpbx1-2 ~]#  <strong>reboot</strong><br>
+Selected partition <strong>x</strong> (take note of the assigned partition number as we will need it later)
+<strong>[Enter]</strong>
+<strong>[Enter]</strong>
+Command (m for help): <strong>w</strong>
+[root@vitalpbx1-2 ~]#  <strong>reboot</strong>
+</pre>
 
 ## Install Apps
 Install the necessary applications on both servers<br>
+<pre>
 [root@vitalpbx1-2 ~]#  yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
+</pre>
 
 ## Script
 Now copy and run the following script<br>
@@ -89,24 +93,26 @@ Floating IP........ > <strong>192.168.30.30</strong>
 Floating IP Mask... > <strong>21</strong>
 Disk (sdax)........ > <strong>sda4</strong>
 hacluster password. > <strong>mypassword</strong>
+
+Are you sure to continue with this settings? (yes,no) > <strong>yes</strong>
+
+Are you sure you want to continue connecting (yes/no)? <strong>yes</strong>
+
+root@192.168.30.20's password: <strong>The root password of Slave Server</strong>
 </pre>
-
-Are you sure to continue with this settings? (yes,no) > <strong>yes</strong><br>
-
-Are you sure you want to continue connecting (yes/no)? <strong>yes</strong><br>
-
-root@192.168.30.20's password: <strong>The root password of Slave Server</strong><br>
 
 :+1:
 
 ## Test<br>
 
 To see the status of the cluster use the following command:<br>
-
-[root@vitalpbx1 /]# <strong>pcs status resources</strong><br>
+<pre>
+[root@vitalpbx1 /]# <strong>pcs status resources</strong>
+</pre>
 
 If all is well, you will see the following<br>
 
+<pre>
  virtual_ip     (ocf::'heartbeat':IPaddr2):       Started vitalpbx1.local<br>
  Master/Slave Set: DrbdDataClone [DrbdData]<br>
      Masters: [ vitalpbx1.local ]<br>
@@ -115,7 +121,7 @@ If all is well, you will see the following<br>
  mysql  (ocf::'heartbeat':mysql): Started vitalpbx1.local<br>
  asterisk       (ocf::'heartbeat':asterisk):      Started vitalpbx1.local<br>
  vpbx-monitor   (service:vpbx-monitor): Started vitalpbx1.local<br>
-
+</pre>
 
 
 
