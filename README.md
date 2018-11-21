@@ -57,7 +57,7 @@ g.- Secundary DNS: <strong>8.8.4.4</strong><br>
 
 ## Create Disk
 Now we connect with ssh to each of the servers.<br>
-a.- Initialize the partition to assign the remainder of the hard disk in both servers<br>
+a.- Initialize the partition to allocate the available space on the hard disk. Do these on both servers.<br>
 [root@vitalpbx1-2 ~]#  fdisk /dev/sda<br>
 Command (m for help): <strong>n</strong><br>
 Select (default e): <strong>p</strong><br>
@@ -68,7 +68,7 @@ Command (m for help): <strong>w</strong><br>
 [root@vitalpbx1-2 ~]#  <strong>reboot</strong><br>
 
 ## Install Apps
-Install on both srrvers<br>
+Install the necessary applications on both servers<br>
 [root@vitalpbx1-2 ~]#  yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
 
 ## Script
