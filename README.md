@@ -73,19 +73,23 @@ Install the necessary applications on both servers<br>
 
 ## Script
 Now copy and run the following script<br>
-[root@vitalpbx1 ~]#  cd /<br>
-[root@vitalpbx1 ~]#  wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vital_ha.sh<br>
-[root@vitalpbx1 ~]#  chmod +x vital_ha.sh<br>
-[root@vitalpbx1 ~]#  ./vital_ha.sh<br>
+<pre>
+[root@vitalpbx1 ~]#  cd /
+[root@vitalpbx1 ~]#  wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vital_ha.sh
+[root@vitalpbx1 ~]#  chmod +x vital_ha.sh
+[root@vitalpbx1 ~]#  ./vital_ha.sh
+</pre>
 
-IP Master.......... > <strong>192.168.30.10</strong><br>
-Host Name Master... > <strong>vitalpbx1.loca</strong><br>
-IP Slave........... > <strong>192.168.30.20</strong><br>
-Host Name Slave.... > <strong>vitalpbx2.local</strong><br>
-Floating IP........ > <strong>192.168.30.30</strong><br>
-Floating IP Mask... > <strong>21</strong><br>
-Disk (sdax)........ > <strong>sda4</strong><br>
-hacluster password. > <strong>mypassword</strong><br>
+<pre>
+IP Master.......... > <strong>192.168.30.10</strong>
+Host Name Master... > <strong>vitalpbx1.loca</strong>
+IP Slave........... > <strong>192.168.30.20</strong>
+Host Name Slave.... > <strong>vitalpbx2.local</strong>
+Floating IP........ > <strong>192.168.30.30</strong>
+Floating IP Mask... > <strong>21</strong>
+Disk (sdax)........ > <strong>sda4</strong>
+hacluster password. > <strong>mypassword</strong>
+</pre>
 
 Are you sure to continue with this settings? (yes,no) > <strong>yes</strong><br>
 
