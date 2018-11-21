@@ -1,5 +1,8 @@
 # vitalpbx_ha
-italPBX Hih Availability
+https://github.com/VitalPBX/vitalpbx_ha/blob/master/VitalPBX_HA.png
+
+
+VitalPBX Hih Availability
 
 Example:<br>
 Master<br>
