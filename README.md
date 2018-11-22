@@ -129,6 +129,24 @@ Are you sure you want to continue connecting (yes/no)? <strong>yes</strong>
 root@192.168.30.20's password: <strong>The root password from Slave Server</strong>
 </pre>
 
+At the end of the installation you have to see the following message
+
+<pre>
+************************************************************
+*                VitalPBX Cluster OK                       *
+************************************************************
+ virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx1.local
+ Master/Slave Set: DrbdDataClone [DrbdData]
+     Masters: [ vitalpbx1.local ]
+     Slaves: [ vitalpbx2.local ]
+ DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx1.local
+ mysql  (ocf::heartbeat:mysql): Started vitalpbx1.local
+ asterisk       (ocf::heartbeat:asterisk):      Started vitalpbx1.local
+ fail2ban       (service:fail2ban):     Started vitalpbx1.local
+ vpbx-monitor   (service:vpbx-monitor): Started vitalpbx1.local
+*** Done ***
+</pre>
+
 :+1:
 
 ## Test<br>
@@ -148,6 +166,7 @@ If all is well, you will see the following<br>
  DrbdFS (ocf::'heartbeat':Filesystem):    Started vitalpbx1.local
  mysql  (ocf::'heartbeat':mysql): Started vitalpbx1.local
  asterisk       (ocf::'heartbeat':asterisk):      Started vitalpbx1.local
+ fail2ban       (service:fail2ban):     Started vitalpbx1.local
  vpbx-monitor   (service:vpbx-monitor): Started vitalpbx1.local
 </pre>
 
@@ -161,6 +180,7 @@ Poweroff the Server1 vitalpbx1.local, and check the server2 vitalpbx2.local<br>
  DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx2.local
  mysql  (ocf::heartbeat:mysql): Started vitalpbx2.local
  asterisk       (ocf::heartbeat:asterisk):      Started vitalpbx2.local
+ fail2ban       (service:fail2ban):     Started vitalpbx1.local
  vpbx-monitor   (service:vpbx-monitor): Started vitalpbx2.local
 </pre>
 
@@ -181,6 +201,7 @@ Server1 takes control again. <br>
  DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx1.local
  mysql  (ocf::heartbeat:mysql): Started vitalpbx1.local
  asterisk       (ocf::heartbeat:asterisk):      Started vitalpbx1.local
+ fail2ban       (service:fail2ban):     Started vitalpbx1.local
  vpbx-monitor   (service:vpbx-monitor): Started vitalpbx1.local
 </pre>
 
