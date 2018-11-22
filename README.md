@@ -1,8 +1,8 @@
 VitalPBX High Availability
 =====
-High availability is a characteristic of a system, which aims to ensure an agreed level of operational performance, usually uptime, for a higher than normal period.<br>
+High availability is a characteristic of a system which aims to ensure an agreed level of operational performance, usually uptime, for a higher than normal period.<br>
 
-High-availability cluster out of any pair of VitalPBX servers. VitalPBX can detect a range of failures on one VitalPBX server and automatically transfer control to the other server, resulting in a telephony environment with minimal down time.<br>
+make a High-availability cluster out of any pair of VitalPBX servers. VitalPBX can detect a range of failures on one VitalPBX server and automatically transfer control to the other server, resulting in a telephony environment with minimal down time.<br>
 
 ![VitalPBX HA](https://github.com/VitalPBX/vitalpbx_ha/blob/master/VitalPBX_HA.png)
 
@@ -29,14 +29,14 @@ b.- Install VitalPBX on two servers with similar characteristics.<br>
 c.- At the time of installation leave the largest amount of space on the hard drive to store the variable data on both servers.<br>
 
 ## Installation
-We are going to start installing VitalPBX on two servers<br>
+We are going to start by installing VitalPBX on two servers<br>
 a.- When starting the installation go to:<br>
 <pre>
 INSTALLATION DESTINATION (Custom partitioning selected)
 </pre>
 b.- Select:
 <pre>
-I will configurate partitioning
+I will configure partitioning
 </pre>
 And press the button
 <pre>
@@ -50,16 +50,16 @@ Change the capacity to:
 <pre>
 Desired Capacity: 20GB
 </pre>
-We need enough space for operating system and its applications in the future, then click<br>
+We need enough space for the operating system and its applications in the future; then click<br>
 <pre>
 Modify button
 </pre>
-Select disk and press the bttons 
+Select disk and press the buttons 
 <pre>
 Select
 Update Settings
 </pre>
-e.- Finally we press the button:
+e.- Finally, we press the button:
 <pre>
 Done
 </pre>
@@ -70,9 +70,9 @@ Accept Changes
 And continue with the installation.<br>
 
 ## Configurations
-We will configure each server the IP address and the host name. Go to the web interface to: Admin/System Settinngs/Network Settings.<br>
-Firs change the Hostname, remember press the Chech button.<br>
-Disable the DHCP option and set this values<br>
+We will configure in each server the IP address and the host name. Go to the web interface to: Admin>System Settinngs>Network Settings.<br>
+First change the Hostname, remember press the Check button.<br>
+Disable the DHCP option and set these values<br>
 
 | Name          | Master           | Slave            |
 | ------------- | ---------------- | ---------------- |
@@ -81,10 +81,10 @@ Disable the DHCP option and set this values<br>
 | Netmask       | 255.255.248.0    | 255.255.248.0    |
 | Gateway       | 192.168.24.1     | 192.168.24.1     |
 | Primary DNS   | 8.8.8.8          | 8.8.8.8          |
-| Secundary DNS | 8.8.4.4          | 8.8.4.4          |
+| Secondary DNS | 8.8.4.4          | 8.8.4.4          |
 
 ## Create Disk
-Now we connect with ssh to each of the servers.<br>
+Now we connect through ssh to each of the servers.<br>
 a.- Initialize the partition to allocate the available space on the hard disk. Do these on both servers.<br>
 <pre>
 [root@vitalpbx1-2 ~]#  fdisk /dev/sda
@@ -98,7 +98,7 @@ Command (m for help): <strong>w</strong>
 </pre>
 
 ## Install Apps
-Install the necessary applications on both servers<br>
+Install the necessary dependencies on both servers<br>
 <pre>
 [root@vitalpbx1-2 ~]#  yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
 </pre>
@@ -122,11 +122,11 @@ Floating IP Mask... > <strong>21</strong>
 Disk (sdax)........ > <strong>sda4</strong>
 hacluster password. > <strong>mypassword</strong>
 
-Are you sure to continue with this settings? (yes,no) > <strong>yes</strong>
+Are you sure to continue with these settings? (yes,no) > <strong>yes</strong>
 
 Are you sure you want to continue connecting (yes/no)? <strong>yes</strong>
 
-root@192.168.30.20's password: <strong>The root password of Slave Server</strong>
+root@192.168.30.20's password: <strong>The root password from Slave Server</strong>
 </pre>
 
 :+1:
@@ -166,12 +166,12 @@ Poweroff the Server1 vitalpbx1.local, and check the server2 vitalpbx2.local<br>
 
 All services moved to server2.<br>
 
-Now turn on the server1. You will see that the services continue on the server2. To return everything to normal on server2, execute the following command:<br>
+Now turn on server1. You will see that the services continue on server2. To return everything to normal on server2, execute the following command:<br>
 <pre>
 [root@vitalpbx2 /]# <strong>pcs cluster standby vitalpbx2.local</strong>
 </pre>
 
-The server1 takes control again. <br>
+Server1 takes control again. <br>
 <pre>
 [root@vitalpbx1 ~]# pcs status resources
  virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx1.local
@@ -184,7 +184,7 @@ The server1 takes control again. <br>
  vpbx-monitor   (service:vpbx-monitor): Started vitalpbx1.local
 </pre>
 
-We see that the server2 is in the stop state, this is why we must return it to normal state again by applying the following command:<br>
+We see that the server2 is in the stop state, therefore we must return it to normal state again by applying the following command:<br>
 
 <pre>
 [root@vitalpbx2 /]# <strong>pcs cluster unstandby vitalpbx2.local</strong>
