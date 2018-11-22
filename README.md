@@ -177,7 +177,7 @@ The server1 takes control again. <br>
  virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx1.local
  Master/Slave Set: DrbdDataClone [DrbdData]
      Masters: [ vitalpbx1.local ]
-     ![#f03c15]<strong>Stopped</strong>: [ vitalpbx2.local ]
+     <strong>Stopped</strong>: [ vitalpbx2.local ]
  DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx1.local
  mysql  (ocf::heartbeat:mysql): Started vitalpbx1.local
  asterisk       (ocf::heartbeat:asterisk):      Started vitalpbx1.local
