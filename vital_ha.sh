@@ -68,11 +68,6 @@ else
     	exit;
 fi
 
-echo -e "host_master= `hostname -f`"
-echo -e "$host_master"
-ssh root@$ip_slave 'echo -e "host_slave= `hostname -f`"'
-echo -e "$host_slave"
-
 echo -e "************************************************************"
 echo -e "*          Copy Authorization key to slave server          *"
 echo -e "************************************************************"
@@ -81,6 +76,15 @@ if [ ! -f $sshKeyFile ]; then
 	ssh-keygen -f /root/.ssh/id_rsa -t rsa -N '' >/dev/null
 fi
 ssh-copy-id root@$ip_slave
+echo -e "*** Done ***"
+
+echo -e "************************************************************"
+echo -e "*            Get the hostname in Master and Slave          *"
+echo -e "************************************************************"
+echo -e "host_master= `hostname -f`"
+ssh root@$ip_slave 'echo -e "host_slave= `hostname -f`"'
+echo -e "$host_master"
+echo -e "$host_slave"
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
