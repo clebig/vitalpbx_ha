@@ -147,8 +147,6 @@ At the end of the installation you have to see the following message
 *** Done ***
 </pre>
 
-:+1:
-
 ## Test<br>
 
 To see the status of the cluster use the following command:<br>
@@ -211,6 +209,8 @@ We see that the server2 is in the stop state, therefore we must return it to nor
 [root@vitalpbx2 /]# <strong>pcs cluster unstandby vitalpbx2.local</strong>
 </pre>
 
+Congratulations, you have installed and tested the high availability in VitalPBX
+:+1:
 
 
 
