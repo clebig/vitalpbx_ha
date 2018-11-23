@@ -347,21 +347,6 @@ ssh root@$ip_slave 'ln -s /mnt/etc/asterisk /etc/asterisk'
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
-echo -e "*                    fail2ban Service                      *"
-echo -e "************************************************************"
-systemctl stop fail2ban
-systemctl disable fail2ban
-ssh root@$ip_slave "systemctl stop fail2ban"
-ssh root@$ip_slave "systemctl disable fail2ban"
-pcs resource create fail2ban service:fail2ban op monitor interval=30s
-pcs cluster cib fs_cfg
-pcs -f fs_cfg constraint colocation add fail2ban with virtual_ip INFINITY
-pcs -f fs_cfg constraint order vpbx-monitor then fail2ban
-sleep 1
-pcs cluster cib-push fs_cfg
-echo -e "*** Done ***"
-
-echo -e "************************************************************"
 echo -e "*                    VitalPBX Service                      *"
 echo -e "************************************************************"
 systemctl stop vpbx-monitor
@@ -372,6 +357,21 @@ pcs resource create vpbx-monitor service:vpbx-monitor op monitor interval=30s
 pcs cluster cib fs_cfg
 pcs -f fs_cfg constraint colocation add vpbx-monitor with virtual_ip INFINITY
 pcs -f fs_cfg constraint order asterisk then vpbx-monitor
+sleep 1
+pcs cluster cib-push fs_cfg
+echo -e "*** Done ***"
+
+echo -e "************************************************************"
+echo -e "*                    fail2ban Service                      *"
+echo -e "************************************************************"
+systemctl stop fail2ban
+systemctl disable fail2ban
+ssh root@$ip_slave "systemctl stop fail2ban"
+ssh root@$ip_slave "systemctl disable fail2ban"
+pcs resource create fail2ban service:fail2ban op monitor interval=30s
+pcs cluster cib fs_cfg
+pcs -f fs_cfg constraint colocation add fail2ban with virtual_ip INFINITY
+pcs -f fs_cfg constraint order vpbx-monitor then fail2ban
 sleep 1
 pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
