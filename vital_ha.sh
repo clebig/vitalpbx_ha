@@ -82,7 +82,7 @@ echo -e "************************************************************"
 echo -e "*            Get the hostname in Master and Slave          *"
 echo -e "************************************************************"
 echo -e "host_master= `hostname -f`"
-ssh root@$ip_slave 'echo -e "host_slave= `hostname -f`"'
+ssh root@$ip_slave "echo -e "host_slave= `hostname -f`""
 echo -e "$host_master"
 echo -e "$host_slave"
 echo -e "*** Done ***"
