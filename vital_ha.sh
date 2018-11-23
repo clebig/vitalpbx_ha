@@ -68,8 +68,8 @@ else
     	exit;
 fi
 
-host_master= $(hostname -f)
-ssh root@$ip_slave 'host_slave= $(hostname -f)'
+host_master= hostname -f
+ssh root@$ip_slave 'host_slave= hostname -f'
 
 echo -e "************************************************************"
 echo -e "*          Copy Authorization key to slave server          *"
