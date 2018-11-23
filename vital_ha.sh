@@ -304,7 +304,7 @@ ssh root@$ip_slave "systemctl disable asterisk"
 
 #Test
 pcs resource create asterisk service:asterisk op monitor interval=30s
-pcs cluster cib fs_cfg
+#pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg 
 pcs -f fs_cfg constraint colocation add asterisk with virtual_ip INFINITY
 pcs -f fs_cfg constraint order mysql then asterisk
