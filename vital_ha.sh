@@ -280,7 +280,7 @@ pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg 
 pcs -f fs_cfg constraint colocation add mysql with virtual_ip INFINITY
 pcs -f fs_cfg constraint order DrbdFS then mysql
-pcs cluster cib-push fs_cfg
+#pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
@@ -304,12 +304,12 @@ ssh root@$ip_slave "systemctl disable asterisk"
 
 #Test
 pcs resource create asterisk service:asterisk op monitor interval=30s
-#pcs cluster cib fs_cfg
-#pcs cluster cib-push fs_cfg 
+pcs cluster cib fs_cfg
+pcs cluster cib-push fs_cfg 
 pcs -f fs_cfg constraint colocation add asterisk with virtual_ip INFINITY
 pcs -f fs_cfg constraint order mysql then asterisk
-pcs cluster cib fs_cfg
-pcs cluster cib-push fs_cfg
+#pcs cluster cib fs_cfg
+#pcs cluster cib-push fs_cfg
 #Test END
 
 echo -e "*** Done ***"
@@ -383,8 +383,8 @@ systemctl disable fail2ban
 ssh root@$ip_slave "systemctl stop fail2ban"
 ssh root@$ip_slave "systemctl disable fail2ban"
 pcs resource create fail2ban service:fail2ban op monitor interval=30s
-#pcs cluster cib fs_cfg
-#pcs cluster cib-push fs_cfg
+pcs cluster cib fs_cfg
+pcs cluster cib-push fs_cfg
 pcs -f fs_cfg constraint colocation add fail2ban with virtual_ip INFINITY
 pcs -f fs_cfg constraint order vpbx-monitor then fail2ban
 pcs cluster cib fs_cfg
