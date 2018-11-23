@@ -16,20 +16,20 @@ do
     read -p "IP Master......... > " ip_master 
 done 
 
-while [[ $host_master == '' ]]
-do
-    read -p "Host Name Master.. > " host_master 
-done 
+#while [[ $host_master == '' ]]
+#do
+#    read -p "Host Name Master.. > " host_master 
+#done 
 
 while [[ $ip_slave == '' ]]
 do
     read -p "IP Slave.......... > " ip_slave 
 done 
 
-while [[ $host_slave == '' ]]
-do
-    read -p "Host Name Slave... > " host_slave 
-done 
+#while [[ $host_slave == '' ]]
+#do
+#    read -p "Host Name Slave... > " host_slave 
+#done 
 
 while [[ $ip_floating == '' ]]
 do
@@ -67,6 +67,9 @@ if [ "$veryfy_info" != "${answer#[YESyes]}" ] ;then
 else
     	exit;
 fi
+
+host_master= $(hostname -f)
+ssh root@$ip_slave 'host_slave= $(hostname -f)'
 
 echo -e "************************************************************"
 echo -e "*          Copy Authorization key to slave server          *"
