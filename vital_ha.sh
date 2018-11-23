@@ -213,11 +213,6 @@ echo -e "************************************************************"
 echo -e "*            Creating Floating IP in Master                *"
 echo -e "************************************************************"
 pcs resource create virtual_ip ocf:heartbeat:IPaddr2 ip=$ip_floating cidr_netmask=$ip_floating_mask op monitor interval=30s on-fail=restart
-echo -e "*** Done ***"
-
-echo -e "************************************************************"
-echo -e "*              Updating Cluster in Master                  *"
-echo -e "************************************************************"
 pcs cluster cib drbd_cfg
 pcs cluster cib-push drbd_cfg
 echo -e "*** Done ***"
@@ -227,7 +222,6 @@ echo -e "*        Creating Resources for drbd in Master             *"
 echo -e "************************************************************"
 pcs -f drbd_cfg resource create DrbdData ocf:linbit:drbd drbd_resource=drbd0 op monitor interval=60s
 pcs -f drbd_cfg resource master DrbdDataClone DrbdData master-max=1 master-node-max=1 clone-max=2 clone-node-max=1 notify=true
-pcs cluster cib fs_cfg
 pcs cluster cib-push drbd_cfg
 echo -e "*** Done ***"
 
@@ -240,7 +234,6 @@ pcs -f fs_cfg constraint colocation add DrbdFS with DrbdDataClone INFINITY with-
 pcs -f fs_cfg constraint order promote DrbdDataClone then start DrbdFS
 pcs -f fs_cfg constraint colocation add DrbdFS with virtual_ip INFINITY
 pcs -f fs_cfg constraint order virtual_ip then DrbdFS
-pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
 
@@ -298,7 +291,7 @@ pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg 
 pcs -f fs_cfg constraint colocation add asterisk with virtual_ip INFINITY
 pcs -f fs_cfg constraint order mysql then asterisk
-pcs cluster cib-push fs_cfg 
+pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
