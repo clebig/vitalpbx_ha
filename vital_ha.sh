@@ -273,9 +273,11 @@ echo -e "*    Create resource for the use of MariaDB in Master      *"
 echo -e "************************************************************"
 pcs resource create mysql ocf:heartbeat:mysql binary="/usr/bin/mysqld_safe" config="/etc/my.cnf" datadir="/mnt/mysql/data" pid="/var/lib/mysql/mysql.pid" socket="/var/lib/mysql/mysql.sock" additional_parameters="--bind-address=0.0.0.0" op start timeout=60s op stop timeout=60s op monitor interval=20s timeout=30s on-fail=standby 
 pcs cluster cib fs_cfg
+sleep 1
 pcs cluster cib-push fs_cfg
 pcs -f fs_cfg constraint colocation add mysql with virtual_ip INFINITY
 pcs -f fs_cfg constraint order DrbdFS then mysql
+sleep 1
 pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
 
@@ -295,6 +297,7 @@ pcs resource create asterisk ocf:heartbeat:asterisk user="root" group="root" op 
 pcs cluster cib fs_cfg
 pcs -f fs_cfg constraint colocation add asterisk with virtual_ip INFINITY
 pcs -f fs_cfg constraint order mysql then asterisk
+sleep 1
 pcs cluster cib-push fs_cfg 
 echo -e "*** Done ***"
 
@@ -354,6 +357,7 @@ pcs resource create fail2ban service:fail2ban op monitor interval=30s
 pcs cluster cib fs_cfg
 pcs -f fs_cfg constraint colocation add fail2ban with virtual_ip INFINITY
 pcs -f fs_cfg constraint order vpbx-monitor then fail2ban
+sleep 1
 pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
 
@@ -368,6 +372,7 @@ pcs resource create vpbx-monitor service:vpbx-monitor op monitor interval=30s
 pcs cluster cib fs_cfg
 pcs -f fs_cfg constraint colocation add vpbx-monitor with virtual_ip INFINITY
 pcs -f fs_cfg constraint order asterisk then vpbx-monitor
+sleep 1
 pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
 
