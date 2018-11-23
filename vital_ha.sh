@@ -275,10 +275,9 @@ echo -e "*    Create resource for the use of MariaDB in Master      *"
 echo -e "************************************************************"
 pcs resource create mysql ocf:heartbeat:mysql binary="/usr/bin/mysqld_safe" config="/etc/my.cnf" datadir="/mnt/mysql/data" pid="/var/lib/mysql/mysql.pid" socket="/var/lib/mysql/mysql.sock" additional_parameters="--bind-address=0.0.0.0" op start timeout=60s op stop timeout=60s op monitor interval=20s timeout=30s on-fail=standby 
 pcs cluster cib fs_cfg
-pcs cluster cib-push fs_cfg
+pcs cluster cib-push fs_cfg 
 pcs -f fs_cfg constraint colocation add mysql with virtual_ip INFINITY
 pcs -f fs_cfg constraint order DrbdFS then mysql
-pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
 
@@ -296,9 +295,9 @@ scp /usr/lib/ocf/resource.d/heartbeat/asterisk root@$ip_slave:/usr/lib/ocf/resou
 ssh root@$ip_slave 'chmod 755 /usr/lib/ocf/resource.d/heartbeat/asterisk'
 pcs resource create asterisk ocf:heartbeat:asterisk user="root" group="root" op monitor timeout="30"
 pcs cluster cib fs_cfg
+pcs cluster cib-push fs_cfg 
 pcs -f fs_cfg constraint colocation add asterisk with virtual_ip INFINITY
 pcs -f fs_cfg constraint order mysql then asterisk
-pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg 
 echo -e "*** Done ***"
 
@@ -356,9 +355,9 @@ ssh root@$ip_slave "systemctl stop vpbx-monitor"
 ssh root@$ip_slave "systemctl disable vpbx-monitor"
 pcs resource create vpbx-monitor service:vpbx-monitor op monitor interval=30s
 pcs cluster cib fs_cfg
+pcs cluster cib-push fs_cfg 
 pcs -f fs_cfg constraint colocation add vpbx-monitor with virtual_ip INFINITY
 pcs -f fs_cfg constraint order asterisk then vpbx-monitor
-pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
 
@@ -371,9 +370,9 @@ ssh root@$ip_slave "systemctl stop fail2ban"
 ssh root@$ip_slave "systemctl disable fail2ban"
 pcs resource create fail2ban service:fail2ban op monitor interval=30s
 pcs cluster cib fs_cfg
+pcs cluster cib-push fs_cfg
 pcs -f fs_cfg constraint colocation add fail2ban with virtual_ip INFINITY
 pcs -f fs_cfg constraint order vpbx-monitor then fail2ban
-pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
 
