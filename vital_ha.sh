@@ -305,11 +305,11 @@ ssh root@$ip_slave "systemctl disable asterisk"
 #Test
 pcs resource create asterisk service:asterisk op monitor interval=30s
 pcs cluster cib fs_cfg
-pcs cluster cib-push fs_cfg 
+pcs cluster cib-push fs_cfg --config
 pcs -f fs_cfg constraint colocation add asterisk with virtual_ip INFINITY
 pcs -f fs_cfg constraint order mysql then asterisk
-#pcs cluster cib fs_cfg
-#pcs cluster cib-push fs_cfg
+pcs cluster cib fs_cfg
+pcs cluster cib-push fs_cfg --config
 #Test END
 
 echo -e "*** Done ***"
@@ -372,7 +372,7 @@ pcs cluster cib fs_cfg
 pcs -f fs_cfg constraint colocation add vpbx-monitor with virtual_ip INFINITY
 pcs -f fs_cfg constraint order asterisk then vpbx-monitor
 pcs cluster cib fs_cfg
-pcs cluster cib-push fs_cfg
+pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
@@ -388,7 +388,7 @@ pcs cluster cib fs_cfg
 pcs -f fs_cfg constraint colocation add fail2ban with virtual_ip INFINITY
 pcs -f fs_cfg constraint order vpbx-monitor then fail2ban
 pcs cluster cib fs_cfg
-pcs cluster cib-push fs_cfg
+pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
