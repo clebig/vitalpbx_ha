@@ -69,7 +69,9 @@ else
 fi
 
 host_master= `hostname -f`
+echo -e "$host_master"
 ssh root@$ip_slave 'host_slave= `hostname -f`'
+echo -e "$host_slave"
 
 echo -e "************************************************************"
 echo -e "*          Copy Authorization key to slave server          *"
