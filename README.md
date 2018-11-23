@@ -209,7 +209,7 @@ We see that the server2 is in the stop state, therefore we must return it to nor
 [root@vitalpbx2 /]# <strong>pcs cluster unstandby vitalpbx2.local</strong>
 </pre>
 
-Congratulations, you have installed and tested the high availability in VitalPBX
+<strong>CONGRATULATIONS</strong>, you have installed and tested the high availability in <strong>VitalPBX</strong><br>
 :+1:
 
 
