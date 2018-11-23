@@ -368,7 +368,9 @@ echo -e "*** Done ***"
 echo -e "************************************************************"
 echo -e "*                VitalPBX Cluster OK                       *"
 echo -e "************************************************************"
-ssh root@$ip_slave "reboot"
+ssh root@$ip_slave "pcs cluster stanby  $host_slave"
+sleep 5
+ssh root@$ip_slave "pcs cluster unstanby  $host_slave"
 sleep 5
 pcs status resources
 echo -e "*** Done ***"
