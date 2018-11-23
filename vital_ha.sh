@@ -257,9 +257,11 @@ mkdir /mnt/mysql
 mkdir /mnt/mysql/data
 cd /mnt/mysql
 cp -aR /var/lib/mysql/* /mnt/mysql/data
+sed -i 's/var\/lib\/mysql/mnt\/mysql\/data/g' /etc/my.cnf
+ssh root@$ip_slave "sed -i 's/var\/lib\/mysql/mnt\/mysql\/data/g' /etc/my.cnf"
 mv /etc/my.cnf /mnt/mysql/
 ln -s /mnt/mysql/my.cnf /etc/
-sed -i 's/var\/lib\/mysql/mnt\/mysql\/data/g' /etc/my.cnf
+#sed -i 's/var\/lib\/mysql/mnt\/mysql\/data/g' /etc/my.cnf
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
