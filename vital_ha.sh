@@ -16,20 +16,10 @@ do
     read -p "IP Master......... > " ip_master 
 done 
 
-#while [[ $host_master == '' ]]
-#do
-#    read -p "Host Name Master.. > " host_master 
-#done 
-
 while [[ $ip_slave == '' ]]
 do
     read -p "IP Slave.......... > " ip_slave 
 done 
-
-#while [[ $host_slave == '' ]]
-#do
-#    read -p "Host Name Slave... > " host_slave 
-#done 
 
 while [[ $ip_floating == '' ]]
 do
@@ -261,18 +251,13 @@ sed -i 's/var\/lib\/mysql/mnt\/mysql\/data/g' /etc/my.cnf
 ssh root@$ip_slave "sed -i 's/var\/lib\/mysql/mnt\/mysql\/data/g' /etc/my.cnf"
 mv /etc/my.cnf /mnt/mysql/
 ln -s /mnt/mysql/my.cnf /etc/
-#sed -i 's/var\/lib\/mysql/mnt\/mysql\/data/g' /etc/my.cnf
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
 echo -e "*     Create resource for the use of MariaDB in Slave      *"
 echo -e "************************************************************"
-#pcs cluster standby
 ssh root@$ip_slave "rm -rf /etc/my.cnf"
 ssh root@$ip_slave "ln -s /mnt/mysql/my.cnf /etc/"
-#pcs cluster unstandby
-#ssh root@$ip_slave "pcs cluster standby"
-#ssh root@$ip_slave "pcs cluster unstandby"
 
 echo -e "************************************************************"
 echo -e "*    Create resource for the use of MariaDB in Master      *"
@@ -292,28 +277,17 @@ systemctl stop asterisk
 systemctl disable asterisk
 ssh root@$ip_slave "systemctl stop asterisk"
 ssh root@$ip_slave "systemctl disable asterisk"
-#cd /usr/lib/ocf/resource.d/heartbeat
-#wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/asterisk 
-#chmod 755 asterisk
-#scp /usr/lib/ocf/resource.d/heartbeat/asterisk root@$ip_slave:/usr/lib/ocf/resource.d/heartbeat/asterisk
-#ssh root@$ip_slave 'chmod 755 /usr/lib/ocf/resource.d/heartbeat/asterisk'
-#pcs resource create asterisk ocf:heartbeat:asterisk user="root" group="root" op monitor timeout="30"
-#pcs cluster cib fs_cfg
-#pcs cluster cib-push fs_cfg --config
-#pcs -f fs_cfg constraint colocation add asterisk with virtual_ip INFINITY
-#pcs -f fs_cfg constraint order mysql then asterisk
-#pcs cluster cib-push fs_cfg --config
-
-#Test
-pcs resource create asterisk service:asterisk op monitor interval=30s
+cd /usr/lib/ocf/resource.d/heartbeat
+wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/asterisk 
+chmod 755 asterisk
+scp /usr/lib/ocf/resource.d/heartbeat/asterisk root@$ip_slave:/usr/lib/ocf/resource.d/heartbeat/asterisk
+ssh root@$ip_slave 'chmod 755 /usr/lib/ocf/resource.d/heartbeat/asterisk'
+pcs resource create asterisk ocf:heartbeat:asterisk user="root" group="root" op monitor timeout="30"
 pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg --config
 pcs -f fs_cfg constraint colocation add asterisk with virtual_ip INFINITY
 pcs -f fs_cfg constraint order mysql then asterisk
-pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg --config
-#Test END
-
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
