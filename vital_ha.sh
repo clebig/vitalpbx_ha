@@ -68,9 +68,9 @@ else
     	exit;
 fi
 
-host_master= `hostname -f`
+echo -e "host_master= `hostname -f`"
 echo -e "$host_master"
-ssh root@$ip_slave 'host_slave= `hostname -f`'
+ssh root@$ip_slave 'echo -e "host_slave= `hostname -f`"'
 echo -e "$host_slave"
 
 echo -e "************************************************************"
