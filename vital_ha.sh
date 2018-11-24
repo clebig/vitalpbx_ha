@@ -13,9 +13,9 @@ function jumpto
     exit
 }
 
-$stepFile=step.txt
+stepFile=step.txt
 if [ -f $stepFile ]; then
-	step= `cat $stepFile`
+	step=`cat $stepFile`
 else
 	step=0
 fi
