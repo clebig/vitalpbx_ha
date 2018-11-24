@@ -20,31 +20,39 @@ echo -e "*                All options are mandatory                 *"
 echo -e "************************************************************"
 
 filename='config.txt'
-n=1
-while read line; do
-	case $n in
-		1)
-			ip_master=$line
-  		;;
-		2)
-			ip_slave=$line
-  		;;
-		3)
-			ip_floating=$line
-  		;;
-		4)
-			ip_floating_mask=$line
-  		;;
-		5)
-			disk=$line
-  		;;
-		6)
-			hapassword=$line
-  		;;
-	esac
-	n=$((n+1))
-done < $filename
-
+if [ ! -f $filename ]; then
+	n=1
+	while read line; do
+		case $n in
+			1)
+				ip_master=$line
+  			;;
+			2)
+				ip_slave=$line
+  			;;
+			3)
+				ip_floating=$line
+  			;;
+			4)
+				ip_floating_mask=$line
+  			;;
+			5)
+				disk=$line
+  			;;
+			6)
+				hapassword=$line
+  			;;
+		esac
+		n=$((n+1))
+	done < $filename
+	echo -e "IP Master......... > $ip_master"	
+	echo -e "IP Slave.......... > $ip_slave"
+	echo -e "Floating IP....... > $ip_floating "
+	echo -e "Floating IP Mask.. > $ip_floating_mask"
+	echo -e "Disk (sdax)....... > $disk"
+	echo -e "hacluster password > $hapassword"
+fi
+	
 while [[ $ip_master == '' ]]
 do
     read -p "IP Master......... > " ip_master 
