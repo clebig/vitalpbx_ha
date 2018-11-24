@@ -103,89 +103,91 @@ echo -e "$host_master"
 echo -e "$host_slave"
 echo -e "*** Done ***"
 
+start=${1:-"format_partition"}
 case $step in
 	3)
-		jumpto $format_partition
+		start=${1:-"format_partition"}
   	;;
 	4)
-		jumpto $create_hostname
+		start=${1:-"create_hostname"}
   	;;
 	5)
-		jumpto $update_firewall
+		start=${1:-"update_firewall"}
   	;;
 	6)
-		jumpto $loading_drbd
+		start=${1:-"loading_drbd"}
   	;;
 	7)
-		jumpto $configure_drbd
+		start=${1:-"configure_drbd"}
   	;;
 	8)
-		jumptp $formating_drbd
+		start=${1:-"formating_drbd"}
   	;;
 	9)
-		jumptp $create_hacluster_password
+		start=${1:-"create_hacluster_password"}
   	;;
 	10)
-		jumpto $starting_pcs
+		start=${1:-"starting_pcs"}
   	;;
 	11)
-		jumpto $auth_hacluster
+		start=${1:-"auth_hacluster"}
   	;;
 	12)
-		jumpto $creating_cluster
+		start=${1:-"creating_cluster"}
   	;;
 	13)
-		jumptp $starting_cluster
+		start=${1:-"starting_cluster"}
   	;;
 	14)
-		jumpto $creating_floating_ip
+		start=${1:-"creating_floating_ip"}
   	;;
 	15)
-		jumpto $creating_drbd_resources
+		start=${1:-"creating_drbd_resources"}
   	;;
 	16)
-		jumpto $creating_filesystem
+		start=${1:-"creating_filesystem"}
   	;;
 	17)
-		jumpto $stop_all_services
+		start=${1:-"stop_all_services"}
   	;;
 	18)
-		jumpto $setting_mariadb_resource
+		start=${1:-"setting_mariadb_resource"}
   	;;
 	19)
-		jumpto $creating_mariadb_resource
+		start=${1:-"creating_mariadb_resource"}
   	;;
 	20)
-		jumpto $creating_asterisk_resource
+		start=${1:-"creating_asterisk_resource"}
   	;;
 	21)
-		jumpto $compress_asterisk_files
+		start=${1:-"compress_asterisk_files"}
   	;;
 	22)
-		jumpto $copy_asterisk_files
+		start=${1:-"copy_asterisk_files"}
   	;;
 	23)
-		jumpto $remove_master_asterisk_files
+		start=${1:-"remove_master_asterisk_files"}
   	;;
 	24)
-		jumpto $create_symbolic_linlk_master_asterisk_files
+		start=${1:-"create_symbolic_linlk_master_asterisk_files"}
   	;;
 	25)
-		jumpto $remove_slave_asterisk_files
+		start=${1:-"remove_slave_asterisk_files"}
   	;;
 	26)
-		jumpto $create_symbolic_linlk_slave_asterisk_files
+		start=${1:-"create_symbolic_linlk_slave_asterisk_files"}
   	;;
 	27)
-		jumpto $create_vitalpbx_resource
+		start=${1:-"create_vitalpbx_resource"}
   	;;
 	28)
-		jumpto $create_fail2ban_resource
+		start=${1:-"create_fail2ban_resource"}
   	;;
 	29)
-		jumpto $vitalpbx_cluster_ok
+		start=${1:-"vitalpbx_cluster_ok"}
 	;;
 esac
+jumpto $start
 
 format_partition:
 echo -e "************************************************************"
