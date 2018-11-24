@@ -5,6 +5,14 @@ set -e
 #
 # Support:      rcuadra@aplitel.com
 #
+function jumpto
+{
+    label=$1
+    cmd=$(sed -n "/$label:/{:a;n;p;ba};" $0 | grep -v ':$')
+    eval "$cmd"
+    exit
+}
+
 echo -e "\n"
 echo -e "************************************************************"
 echo -e "*  Welcome to the VitalPBX high availability installation  *"
@@ -89,6 +97,7 @@ echo -e "$host_slave"
 echo -e "*** Done ***"
 echo -e "3"	> step.txt
 
+format_partition:
 echo -e "************************************************************"
 echo -e "*             Format new drive in Master/Slave             *"
 echo -e "************************************************************"
@@ -99,6 +108,7 @@ ssh root@$ip_slave "dd if=/dev/zero bs=1M count=500 of=/dev/$disk; sync"
 echo -e "*** Done ***"
 echo -e "4"	> step.txt
 
+create_hostname:
 echo -e "************************************************************"
 echo -e "*            Creating hosts name in Master/Slave           *"
 echo -e "************************************************************"
@@ -109,6 +119,7 @@ ssh root@$ip_slave "echo -e '$ip_slave \t$host_slave' >> /etc/hosts"
 echo -e "*** Done ***"
 echo -e "5"	> step.txt
 
+update_firewall:
 echo -e "************************************************************"
 echo -e "*            Update Firewall in Master/Slave               *"
 echo -e "************************************************************"
@@ -121,6 +132,7 @@ ssh root@$ip_slave "firewall-cmd --reload"
 echo -e "*** Done ***"
 echo -e "6"	> step.txt
 
+loading_drbd:
 echo -e "************************************************************"
 echo -e "*               Loading drbd in Master/Slave               *"
 echo -e "************************************************************"
@@ -131,6 +143,7 @@ ssh root@$ip_slave "systemctl enable drbd.service"
 echo -e "*** Done ***"
 echo -e "7"	> step.txt
 
+configure_drbd:
 echo -e "************************************************************"
 echo -e "*       Configure drbr resources in Master/Slave           *"
 echo -e "************************************************************"
@@ -163,6 +176,7 @@ sleep 3
 echo -e "*** Done ***"
 echo -e "8"	> step.txt
 
+formating_drbd:
 echo -e "************************************************************"
 echo -e "*              Formating drbd disk in Master               *"
 echo -e "*           Wait, this process may take a while            *"
@@ -184,6 +198,7 @@ mount /dev/drbd0 /mnt
 echo -e "*** Done ***"
 echo -e "9"	> step.txt
 
+create_hacluster_password:
 echo -e "************************************************************"
 echo -e "*     Create password for hacluster in Master/Slave        *"
 echo -e "************************************************************"
@@ -191,6 +206,7 @@ echo $hapassword | passwd --stdin hacluster
 ssh root@$ip_slave "echo $hapassword | passwd --stdin hacluster"
 echo -e "*** Done ***"
 
+starting_pcs:
 echo -e "************************************************************"
 echo -e "*          Starting pcsd services in Master/Slave          *"
 echo -e "************************************************************"
@@ -205,7 +221,7 @@ ssh root@$ip_slave "systemctl enable pacemaker.service"
 echo -e "*** Done ***"
 echo -e "10"	> step.txt
 
-###### MASTER #####
+auth_hacluster:
 echo -e "************************************************************"
 echo -e "*            Server Authenticate in Master                 *"
 echo -e "************************************************************"
@@ -213,6 +229,7 @@ pcs cluster auth $host_master $host_slave -u hacluster -p $hapassword
 echo -e "*** Done ***"
 echo -e "11"	> step.txt
 
+creating_cluster:
 echo -e "************************************************************"
 echo -e "*              Creating Cluster in Master                  *"
 echo -e "************************************************************"
@@ -220,6 +237,7 @@ pcs cluster setup --name cluster_voip $host_master $host_slave
 echo -e "*** Done ***"
 echo -e "12"	> step.txt
 
+starting_cluster:
 echo -e "************************************************************"
 echo -e "*              Starting Cluster in Master                  *"
 echo -e "************************************************************"
@@ -230,6 +248,7 @@ pcs property set no-quorum-policy=ignore
 echo -e "*** Done ***"
 echo -e "13"	> step.txt
 
+creating_floating_ip:
 echo -e "************************************************************"
 echo -e "*            Creating Floating IP in Master                *"
 echo -e "************************************************************"
@@ -239,6 +258,7 @@ pcs cluster cib-push drbd_cfg
 echo -e "*** Done ***"
 echo -e "14"	> step.txt
 
+creating_drbd_resources:
 echo -e "************************************************************"
 echo -e "*        Creating Resources for drbd in Master             *"
 echo -e "************************************************************"
@@ -248,6 +268,7 @@ pcs cluster cib-push drbd_cfg
 echo -e "*** Done ***"
 echo -e "15"	> step.txt
 
+creating_filesystem:
 echo -e "************************************************************"
 echo -e "* Create FILESYSTEM resource for the automated mount point *"
 echo -e "************************************************************"
@@ -261,6 +282,7 @@ pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
 echo -e "16"	> step.txt
 
+stop_all_services:
 echo -e "************************************************************"
 echo -e "*               Stop all services                          *"
 echo -e "************************************************************"
@@ -283,8 +305,9 @@ ssh root@$ip_slave "systemctl disable mariadb"
 echo -e "*** Done ***"
 echo -e "17"	> step.txt
 
+setting_mariadb_resource:
 echo -e "************************************************************"
-echo -e "*  Create resource for the use of MariaDB in Master/Slave  *"
+echo -e "*             Setting MariaDB in Master/Slave              *"
 echo -e "************************************************************"
 mkdir /mnt/mysql
 mkdir /mnt/mysql/data
@@ -294,15 +317,12 @@ sed -i 's/var\/lib\/mysql/mnt\/mysql\/data/g' /etc/my.cnf
 ssh root@$ip_slave "sed -i 's/var\/lib\/mysql/mnt\/mysql\/data/g' /etc/my.cnf"
 mv /etc/my.cnf /mnt/mysql/
 ln -s /mnt/mysql/my.cnf /etc/
-echo -e "*** Done ***"
-echo -e "8"	> step.txt
-
-echo -e "************************************************************"
-echo -e "*     Create resource for the use of MariaDB in Slave      *"
-echo -e "************************************************************"
 ssh root@$ip_slave "rm -rf /etc/my.cnf"
 ssh root@$ip_slave "ln -s /mnt/mysql/my.cnf /etc/"
+echo -e "*** Done ***"
+echo -e "18"	> step.txt
 
+creating_mariadb_resource:
 echo -e "************************************************************"
 echo -e "*    Create resource for the use of MariaDB in Master      *"
 echo -e "************************************************************"
@@ -315,6 +335,7 @@ pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
 echo -e "19"	> step.txt
 
+creating_asterisk_resource:
 echo -e "************************************************************"
 echo -e "*            Create resource for Asterisk                  *"
 echo -e "************************************************************"
@@ -332,6 +353,7 @@ pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
 echo -e "20"	> step.txt
 
+compress_asterisk_files:
 echo -e "************************************************************"
 echo -e "*   Copy folders and files the DRBD partition on Master    *"
 echo -e "************************************************************"
@@ -343,6 +365,7 @@ tar -zcvf var-spool-asterisk.tgz /var/spool/asterisk
 tar -zcvf etc-asterisk.tgz /etc/asterisk
 echo -e "21"	> step.txt
 
+copy_asterisk_files:
 tar xvfz var-asterisk.tgz 
 tar xvfz var-lib-asterisk.tgz 
 tar xvfz usr-lib64-asterisk.tgz 
@@ -350,6 +373,7 @@ tar xvfz var-spool-asterisk.tgz
 tar xvfz etc-asterisk.tgz
 echo -e "22"	> step.txt
 
+remove_master_asterisk_files:
 rm -rf /var/log/asterisk 
 rm -rf /var/lib/asterisk 
 rm -rf /usr/lib64/asterisk/ 
@@ -357,6 +381,7 @@ rm -rf /var/spool/asterisk/
 rm -rf /etc/asterisk
 echo -e "23"	> step.txt
 
+create_symbolic_linlk_master_asterisk_files:
 ln -s /mnt/var/log/asterisk /var/log/asterisk 
 ln -s /mnt/var/lib/asterisk /var/lib/asterisk 
 ln -s /mnt/usr/lib64/asterisk /usr/lib64/asterisk
@@ -365,6 +390,7 @@ ln -s /mnt/etc/asterisk /etc/asterisk
 echo -e "*** Done ***"
 echo -e "24"	> step.txt
 
+remove_slave_asterisk_files:
 echo -e "************************************************************"
 echo -e "*           Configure symbolic links on Slave              *"
 echo -e "************************************************************"
@@ -375,6 +401,7 @@ ssh root@$ip_slave 'rm -rf /var/spool/asterisk/'
 ssh root@$ip_slave 'rm -rf /etc/asterisk'
 echo -e "25"	> step.txt
 
+create_symbolic_linlk_slave_asterisk_files:
 ssh root@$ip_slave 'ln -s /mnt/var/log/asterisk /var/log/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/var/lib/asterisk /var/lib/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/usr/lib64/asterisk /usr/lib64/asterisk'
@@ -383,6 +410,7 @@ ssh root@$ip_slave 'ln -s /mnt/etc/asterisk /etc/asterisk'
 echo -e "*** Done ***"
 echo -e "26"	> step.txt
 
+create_vitalpbx_resource:
 echo -e "************************************************************"
 echo -e "*                    VitalPBX Service                      *"
 echo -e "************************************************************"
@@ -395,6 +423,7 @@ pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
 echo -e "27"	> step.txt
 
+create_fail2ban_resource:
 echo -e "************************************************************"
 echo -e "*                    fail2ban Service                      *"
 echo -e "************************************************************"
