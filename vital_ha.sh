@@ -13,6 +13,13 @@ function jumpto
     exit
 }
 
+$stepFile=step.txt
+if [ -f $stepFile ]; then
+	step=`cat $stepFile`
+else
+	step-0
+fi
+
 echo -e "\n"
 echo -e "************************************************************"
 echo -e "*  Welcome to the VitalPBX high availability installation  *"
@@ -65,6 +72,90 @@ if [ "$veryfy_info" != "${answer#[YESyes]}" ] ;then
 else
     	exit;
 fi
+
+case $step in
+	[2]*)
+		
+  	;;
+	[3]*)
+		jumpto $format_partition
+  	;;
+	[4]*)
+		jumpto $create_hostname
+  	;;
+	[5]*)
+		jumpto $update_firewall
+  	;;
+	[6]*)
+		jumpto $loading_drbd
+  	;;
+	[7]*)
+		jumpto $configure_drbd
+  	;;
+	[8]*)
+		jumptp $formating_drbd
+  	;;
+	[9]*)
+		jumptp $create_hacluster_password
+  	;;
+	[10]*)
+		jumpto $starting_pcs
+  	;;
+	[11]*)
+		jumpto $auth_hacluster
+  	;;
+	[12]*)
+		jumpto $creating_cluster
+  	;;
+	[13]*)
+		jumptp $starting_cluster
+  	;;
+	[14]*)
+		jumpto $creating_floating_ip
+  	;;
+	[15]*)
+		jumpto $creating_drbd_resources
+  	;;
+	[16]*)
+		jumpto $creating_filesystem
+  	;;
+	[17]*)
+		jumpto $stop_all_services
+  	;;
+	[18]*)
+		jumpto $setting_mariadb_resource
+  	;;
+	[19]*)
+		jumpto $creating_mariadb_resource
+  	;;
+	[20]*)
+		jumpto $creating_asterisk_resource
+  	;;
+	[21]*)
+		jumpto $compress_asterisk_files
+  	;;
+	[22]*)
+		jumpto $copy_asterisk_files
+  	;;
+	[23]*)
+		jumpto $remove_master_asterisk_files
+  	;;
+	[24]*)
+		jumpto $create_symbolic_linlk_master_asterisk_files
+  	;;
+	[25]*)
+		jumpto $remove_slave_asterisk_files
+  	;;
+	[26]*)
+		jumpto $create_symbolic_linlk_slave_asterisk_files
+  	;;
+	[27]*)
+		jumpto $create_vitalpbx_resource
+  	;;
+	[28]*)
+		jumpto $create_fail2ban_resource
+  	;;
+esac
 
 echo -e "$ip_master" 		> config.txt
 echo -e "$ip_slave" 		>> config.txt
@@ -205,6 +296,7 @@ echo -e "************************************************************"
 echo $hapassword | passwd --stdin hacluster
 ssh root@$ip_slave "echo $hapassword | passwd --stdin hacluster"
 echo -e "*** Done ***"
+echo -e "10"	> step.txt
 
 starting_pcs:
 echo -e "************************************************************"
@@ -219,7 +311,7 @@ ssh root@$ip_slave "systemctl enable pcsd.service"
 ssh root@$ip_slave "systemctl enable corosync.service"
 ssh root@$ip_slave "systemctl enable pacemaker.service"
 echo -e "*** Done ***"
-echo -e "10"	> step.txt
+echo -e "11"	> step.txt
 
 auth_hacluster:
 echo -e "************************************************************"
@@ -227,7 +319,7 @@ echo -e "*            Server Authenticate in Master                 *"
 echo -e "************************************************************"
 pcs cluster auth $host_master $host_slave -u hacluster -p $hapassword
 echo -e "*** Done ***"
-echo -e "11"	> step.txt
+echo -e "12"	> step.txt
 
 creating_cluster:
 echo -e "************************************************************"
@@ -235,7 +327,7 @@ echo -e "*              Creating Cluster in Master                  *"
 echo -e "************************************************************"
 pcs cluster setup --name cluster_voip $host_master $host_slave
 echo -e "*** Done ***"
-echo -e "12"	> step.txt
+echo -e "13"	> step.txt
 
 starting_cluster:
 echo -e "************************************************************"
@@ -246,7 +338,7 @@ pcs cluster enable --all
 pcs property set stonith-enabled=false
 pcs property set no-quorum-policy=ignore
 echo -e "*** Done ***"
-echo -e "13"	> step.txt
+echo -e "14"	> step.txt
 
 creating_floating_ip:
 echo -e "************************************************************"
@@ -256,7 +348,7 @@ pcs resource create virtual_ip ocf:heartbeat:IPaddr2 ip=$ip_floating cidr_netmas
 pcs cluster cib drbd_cfg
 pcs cluster cib-push drbd_cfg
 echo -e "*** Done ***"
-echo -e "14"	> step.txt
+echo -e "15"	> step.txt
 
 creating_drbd_resources:
 echo -e "************************************************************"
@@ -266,7 +358,7 @@ pcs -f drbd_cfg resource create DrbdData ocf:linbit:drbd drbd_resource=drbd0 op 
 pcs -f drbd_cfg resource master DrbdDataClone DrbdData master-max=1 master-node-max=1 clone-max=2 clone-node-max=1 notify=true
 pcs cluster cib-push drbd_cfg
 echo -e "*** Done ***"
-echo -e "15"	> step.txt
+echo -e "16"	> step.txt
 
 creating_filesystem:
 echo -e "************************************************************"
@@ -280,7 +372,7 @@ pcs -f fs_cfg constraint colocation add DrbdFS with virtual_ip INFINITY
 pcs -f fs_cfg constraint order virtual_ip then DrbdFS
 pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
-echo -e "16"	> step.txt
+echo -e "17"	> step.txt
 
 stop_all_services:
 echo -e "************************************************************"
@@ -303,7 +395,7 @@ systemctl disable mariadb
 ssh root@$ip_slave "systemctl stop mariadb"
 ssh root@$ip_slave "systemctl disable mariadb"
 echo -e "*** Done ***"
-echo -e "17"	> step.txt
+echo -e "18"	> step.txt
 
 setting_mariadb_resource:
 echo -e "************************************************************"
@@ -320,7 +412,7 @@ ln -s /mnt/mysql/my.cnf /etc/
 ssh root@$ip_slave "rm -rf /etc/my.cnf"
 ssh root@$ip_slave "ln -s /mnt/mysql/my.cnf /etc/"
 echo -e "*** Done ***"
-echo -e "18"	> step.txt
+echo -e "19"	> step.txt
 
 creating_mariadb_resource:
 echo -e "************************************************************"
@@ -333,7 +425,7 @@ pcs -f fs_cfg constraint colocation add mysql with virtual_ip INFINITY
 pcs -f fs_cfg constraint order DrbdFS then mysql
 pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
-echo -e "19"	> step.txt
+echo -e "20"	> step.txt
 
 creating_asterisk_resource:
 echo -e "************************************************************"
@@ -351,7 +443,7 @@ pcs -f fs_cfg constraint colocation add asterisk with virtual_ip INFINITY
 pcs -f fs_cfg constraint order mysql then asterisk
 pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
-echo -e "20"	> step.txt
+echo -e "21"	> step.txt
 
 compress_asterisk_files:
 echo -e "************************************************************"
@@ -363,7 +455,7 @@ tar -zcvf var-lib-asterisk.tgz /var/lib/asterisk
 tar -zcvf usr-lib64-asterisk.tgz /usr/lib64/asterisk
 tar -zcvf var-spool-asterisk.tgz /var/spool/asterisk
 tar -zcvf etc-asterisk.tgz /etc/asterisk
-echo -e "21"	> step.txt
+echo -e "22"	> step.txt
 
 copy_asterisk_files:
 tar xvfz var-asterisk.tgz 
@@ -371,7 +463,7 @@ tar xvfz var-lib-asterisk.tgz
 tar xvfz usr-lib64-asterisk.tgz 
 tar xvfz var-spool-asterisk.tgz 
 tar xvfz etc-asterisk.tgz
-echo -e "22"	> step.txt
+echo -e "23"	> step.txt
 
 remove_master_asterisk_files:
 rm -rf /var/log/asterisk 
@@ -379,7 +471,7 @@ rm -rf /var/lib/asterisk
 rm -rf /usr/lib64/asterisk/ 
 rm -rf /var/spool/asterisk/ 
 rm -rf /etc/asterisk
-echo -e "23"	> step.txt
+echo -e "24"	> step.txt
 
 create_symbolic_linlk_master_asterisk_files:
 ln -s /mnt/var/log/asterisk /var/log/asterisk 
@@ -388,7 +480,7 @@ ln -s /mnt/usr/lib64/asterisk /usr/lib64/asterisk
 ln -s /mnt/var/spool/asterisk /var/spool/asterisk
 ln -s /mnt/etc/asterisk /etc/asterisk
 echo -e "*** Done ***"
-echo -e "24"	> step.txt
+echo -e "25"	> step.txt
 
 remove_slave_asterisk_files:
 echo -e "************************************************************"
@@ -399,7 +491,7 @@ ssh root@$ip_slave 'rm -rf /var/lib/asterisk'
 ssh root@$ip_slave 'rm -rf /usr/lib64/asterisk/'
 ssh root@$ip_slave 'rm -rf /var/spool/asterisk/'
 ssh root@$ip_slave 'rm -rf /etc/asterisk'
-echo -e "25"	> step.txt
+echo -e "26"	> step.txt
 
 create_symbolic_linlk_slave_asterisk_files:
 ssh root@$ip_slave 'ln -s /mnt/var/log/asterisk /var/log/asterisk'
@@ -408,7 +500,7 @@ ssh root@$ip_slave 'ln -s /mnt/usr/lib64/asterisk /usr/lib64/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/var/spool/asterisk /var/spool/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/etc/asterisk /etc/asterisk'
 echo -e "*** Done ***"
-echo -e "26"	> step.txt
+echo -e "27"	> step.txt
 
 create_vitalpbx_resource:
 echo -e "************************************************************"
@@ -421,7 +513,7 @@ pcs -f fs_cfg constraint colocation add vpbx-monitor with virtual_ip INFINITY
 pcs -f fs_cfg constraint order asterisk then vpbx-monitor
 pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
-echo -e "27"	> step.txt
+echo -e "28"	> step.txt
 
 create_fail2ban_resource:
 echo -e "************************************************************"
@@ -434,7 +526,7 @@ pcs -f fs_cfg constraint colocation add fail2ban with virtual_ip INFINITY
 pcs -f fs_cfg constraint order vpbx-monitor then fail2ban
 pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
-echo -e "28"	> step.txt
+echo -e "29"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*                VitalPBX Cluster OK                       *"
@@ -445,4 +537,4 @@ ssh root@$ip_slave "pcs cluster unstanby  $host_slave"
 sleep 5
 pcs status resources
 echo -e "*** Done ***"
-echo -e "29"	> step.txt
+echo -e "30"	> step.txt
