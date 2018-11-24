@@ -58,6 +58,16 @@ else
     	exit;
 fi
 
+echo -e "$ip_master" 		> config.txt
+echo -e "$ip_slave" 		>> config.txt
+echo -e "$ip_floating" 		>> config.txt
+echo -e "$ip_floating" 		>> config.txt
+echo -e "$ip_floating_mask" 	>> config.txt
+echo -e "$disk" 		>> config.txt
+echo -e "$hapassword" 		>> config.txt
+
+echo -e "1"	> step.txt
+
 echo -e "************************************************************"
 echo -e "*          Copy Authorization key to slave server          *"
 echo -e "************************************************************"
@@ -67,6 +77,7 @@ if [ ! -f $sshKeyFile ]; then
 fi
 ssh-copy-id root@$ip_slave
 echo -e "*** Done ***"
+echo -e "2"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*            Get the hostname in Master and Slave          *"
@@ -76,6 +87,7 @@ host_slave=`ssh root@$ip_slave 'hostname -f'`
 echo -e "$host_master"
 echo -e "$host_slave"
 echo -e "*** Done ***"
+echo -e "3"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*             Format new drive in Master/Slave             *"
@@ -85,6 +97,7 @@ dd if=/dev/zero bs=1M count=500 of=/dev/$disk; sync
 ssh root@$ip_slave "mke2fs -j /dev/$disk"
 ssh root@$ip_slave "dd if=/dev/zero bs=1M count=500 of=/dev/$disk; sync"
 echo -e "*** Done ***"
+echo -e "4"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*            Creating hosts name in Master/Slave           *"
@@ -94,6 +107,7 @@ echo -e "$ip_slave \t$host_slave" >> /etc/hosts
 ssh root@$ip_slave "echo -e '$ip_master \t$host_master' >> /etc/hosts"
 ssh root@$ip_slave "echo -e '$ip_slave \t$host_slave' >> /etc/hosts"
 echo -e "*** Done ***"
+echo -e "5"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*            Update Firewall in Master/Slave               *"
@@ -105,6 +119,7 @@ ssh root@$ip_slave "firewall-cmd --permanent --add-service=high-availability"
 ssh root@$ip_slave "firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="$ip_master" port port="7789" protocol="tcp" accept'"
 ssh root@$ip_slave "firewall-cmd --reload"
 echo -e "*** Done ***"
+echo -e "6"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*               Loading drbd in Master/Slave               *"
@@ -114,6 +129,7 @@ ssh root@$ip_slave "modprobe drbd"
 systemctl enable drbd.service
 ssh root@$ip_slave "systemctl enable drbd.service"
 echo -e "*** Done ***"
+echo -e "7"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*       Configure drbr resources in Master/Slave           *"
@@ -145,6 +161,7 @@ ssh root@$ip_slave "drbdadm up drbd0"
 drbdadm primary drbd0 --force
 sleep 3
 echo -e "*** Done ***"
+echo -e "8"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*              Formating drbd disk in Master               *"
@@ -165,6 +182,7 @@ sleep 2
 drbdadm primary drbd0
 mount /dev/drbd0 /mnt
 echo -e "*** Done ***"
+echo -e "9"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*     Create password for hacluster in Master/Slave        *"
@@ -185,6 +203,7 @@ ssh root@$ip_slave "systemctl enable pcsd.service"
 ssh root@$ip_slave "systemctl enable corosync.service"
 ssh root@$ip_slave "systemctl enable pacemaker.service"
 echo -e "*** Done ***"
+echo -e "10"	> step.txt
 
 ###### MASTER #####
 echo -e "************************************************************"
@@ -192,12 +211,14 @@ echo -e "*            Server Authenticate in Master                 *"
 echo -e "************************************************************"
 pcs cluster auth $host_master $host_slave -u hacluster -p $hapassword
 echo -e "*** Done ***"
+echo -e "11"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*              Creating Cluster in Master                  *"
 echo -e "************************************************************"
 pcs cluster setup --name cluster_voip $host_master $host_slave
 echo -e "*** Done ***"
+echo -e "12"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*              Starting Cluster in Master                  *"
@@ -207,6 +228,7 @@ pcs cluster enable --all
 pcs property set stonith-enabled=false
 pcs property set no-quorum-policy=ignore
 echo -e "*** Done ***"
+echo -e "13"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*            Creating Floating IP in Master                *"
@@ -215,6 +237,7 @@ pcs resource create virtual_ip ocf:heartbeat:IPaddr2 ip=$ip_floating cidr_netmas
 pcs cluster cib drbd_cfg
 pcs cluster cib-push drbd_cfg
 echo -e "*** Done ***"
+echo -e "14"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*        Creating Resources for drbd in Master             *"
@@ -223,6 +246,7 @@ pcs -f drbd_cfg resource create DrbdData ocf:linbit:drbd drbd_resource=drbd0 op 
 pcs -f drbd_cfg resource master DrbdDataClone DrbdData master-max=1 master-node-max=1 clone-max=2 clone-node-max=1 notify=true
 pcs cluster cib-push drbd_cfg
 echo -e "*** Done ***"
+echo -e "15"	> step.txt
 
 echo -e "************************************************************"
 echo -e "* Create FILESYSTEM resource for the automated mount point *"
@@ -235,6 +259,7 @@ pcs -f fs_cfg constraint colocation add DrbdFS with virtual_ip INFINITY
 pcs -f fs_cfg constraint order virtual_ip then DrbdFS
 pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
+echo -e "16"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*               Stop all services                          *"
@@ -256,6 +281,7 @@ systemctl disable mariadb
 ssh root@$ip_slave "systemctl stop mariadb"
 ssh root@$ip_slave "systemctl disable mariadb"
 echo -e "*** Done ***"
+echo -e "17"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*  Create resource for the use of MariaDB in Master/Slave  *"
@@ -269,6 +295,7 @@ ssh root@$ip_slave "sed -i 's/var\/lib\/mysql/mnt\/mysql\/data/g' /etc/my.cnf"
 mv /etc/my.cnf /mnt/mysql/
 ln -s /mnt/mysql/my.cnf /etc/
 echo -e "*** Done ***"
+echo -e "8"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*     Create resource for the use of MariaDB in Slave      *"
@@ -286,6 +313,7 @@ pcs -f fs_cfg constraint colocation add mysql with virtual_ip INFINITY
 pcs -f fs_cfg constraint order DrbdFS then mysql
 pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
+echo -e "19"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*            Create resource for Asterisk                  *"
@@ -302,6 +330,7 @@ pcs -f fs_cfg constraint colocation add asterisk with virtual_ip INFINITY
 pcs -f fs_cfg constraint order mysql then asterisk
 pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
+echo -e "20"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*   Copy folders and files the DRBD partition on Master    *"
@@ -312,18 +341,21 @@ tar -zcvf var-lib-asterisk.tgz /var/lib/asterisk
 tar -zcvf usr-lib64-asterisk.tgz /usr/lib64/asterisk
 tar -zcvf var-spool-asterisk.tgz /var/spool/asterisk
 tar -zcvf etc-asterisk.tgz /etc/asterisk
+echo -e "21"	> step.txt
 
 tar xvfz var-asterisk.tgz 
 tar xvfz var-lib-asterisk.tgz 
 tar xvfz usr-lib64-asterisk.tgz 
 tar xvfz var-spool-asterisk.tgz 
 tar xvfz etc-asterisk.tgz
+echo -e "22"	> step.txt
 
 rm -rf /var/log/asterisk 
 rm -rf /var/lib/asterisk 
 rm -rf /usr/lib64/asterisk/ 
 rm -rf /var/spool/asterisk/ 
-rm -rf /etc/asterisk 
+rm -rf /etc/asterisk
+echo -e "23"	> step.txt
 
 ln -s /mnt/var/log/asterisk /var/log/asterisk 
 ln -s /mnt/var/lib/asterisk /var/lib/asterisk 
@@ -331,6 +363,7 @@ ln -s /mnt/usr/lib64/asterisk /usr/lib64/asterisk
 ln -s /mnt/var/spool/asterisk /var/spool/asterisk
 ln -s /mnt/etc/asterisk /etc/asterisk
 echo -e "*** Done ***"
+echo -e "24"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*           Configure symbolic links on Slave              *"
@@ -340,6 +373,7 @@ ssh root@$ip_slave 'rm -rf /var/lib/asterisk'
 ssh root@$ip_slave 'rm -rf /usr/lib64/asterisk/'
 ssh root@$ip_slave 'rm -rf /var/spool/asterisk/'
 ssh root@$ip_slave 'rm -rf /etc/asterisk'
+echo -e "25"	> step.txt
 
 ssh root@$ip_slave 'ln -s /mnt/var/log/asterisk /var/log/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/var/lib/asterisk /var/lib/asterisk'
@@ -347,6 +381,7 @@ ssh root@$ip_slave 'ln -s /mnt/usr/lib64/asterisk /usr/lib64/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/var/spool/asterisk /var/spool/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/etc/asterisk /etc/asterisk'
 echo -e "*** Done ***"
+echo -e "26"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*                    VitalPBX Service                      *"
@@ -358,6 +393,7 @@ pcs -f fs_cfg constraint colocation add vpbx-monitor with virtual_ip INFINITY
 pcs -f fs_cfg constraint order asterisk then vpbx-monitor
 pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
+echo -e "27"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*                    fail2ban Service                      *"
@@ -369,6 +405,7 @@ pcs -f fs_cfg constraint colocation add fail2ban with virtual_ip INFINITY
 pcs -f fs_cfg constraint order vpbx-monitor then fail2ban
 pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
+echo -e "28"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*                VitalPBX Cluster OK                       *"
@@ -379,3 +416,4 @@ ssh root@$ip_slave "pcs cluster unstanby  $host_slave"
 sleep 5
 pcs status resources
 echo -e "*** Done ***"
+echo -e "29"	> step.txt
