@@ -17,8 +17,9 @@ $stepFile=step.txt
 if [ -f $stepFile ]; then
 	step=`cat $stepFile`
 else
-	step-0
+	step=0
 fi
+echo -e "$step"
 
 echo -e "\n"
 echo -e "************************************************************"
@@ -72,6 +73,37 @@ if [ "$veryfy_info" != "${answer#[YESyes]}" ] ;then
 else
     	exit;
 fi
+
+echo -e "$ip_master" 		> config.txt
+echo -e "$ip_slave" 		>> config.txt
+echo -e "$ip_floating" 		>> config.txt
+echo -e "$ip_floating" 		>> config.txt
+echo -e "$ip_floating_mask" 	>> config.txt
+echo -e "$disk" 		>> config.txt
+echo -e "$hapassword" 		>> config.txt
+
+echo -e "1"	> step.txt
+
+echo -e "************************************************************"
+echo -e "*          Copy Authorization key to slave server          *"
+echo -e "************************************************************"
+sshKeyFile=/root/.ssh/id_rsa
+if [ ! -f $sshKeyFile ]; then
+	ssh-keygen -f /root/.ssh/id_rsa -t rsa -N '' >/dev/null
+fi
+ssh-copy-id root@$ip_slave
+echo -e "*** Done ***"
+echo -e "2"	> step.txt
+
+echo -e "************************************************************"
+echo -e "*            Get the hostname in Master and Slave          *"
+echo -e "************************************************************"
+host_master=`hostname -f`
+host_slave=`ssh root@$ip_slave 'hostname -f'`
+echo -e "$host_master"
+echo -e "$host_slave"
+echo -e "*** Done ***"
+echo -e "3"	> step.txt
 
 case $step in
 	3)
@@ -153,37 +185,6 @@ case $step in
 		jumpto $create_fail2ban_resource
   	;;
 esac
-
-echo -e "$ip_master" 		> config.txt
-echo -e "$ip_slave" 		>> config.txt
-echo -e "$ip_floating" 		>> config.txt
-echo -e "$ip_floating" 		>> config.txt
-echo -e "$ip_floating_mask" 	>> config.txt
-echo -e "$disk" 		>> config.txt
-echo -e "$hapassword" 		>> config.txt
-
-echo -e "1"	> step.txt
-
-echo -e "************************************************************"
-echo -e "*          Copy Authorization key to slave server          *"
-echo -e "************************************************************"
-sshKeyFile=/root/.ssh/id_rsa
-if [ ! -f $sshKeyFile ]; then
-	ssh-keygen -f /root/.ssh/id_rsa -t rsa -N '' >/dev/null
-fi
-ssh-copy-id root@$ip_slave
-echo -e "*** Done ***"
-echo -e "2"	> step.txt
-
-echo -e "************************************************************"
-echo -e "*            Get the hostname in Master and Slave          *"
-echo -e "************************************************************"
-host_master=`hostname -f`
-host_slave=`ssh root@$ip_slave 'hostname -f'`
-echo -e "$host_master"
-echo -e "$host_slave"
-echo -e "*** Done ***"
-echo -e "3"	> step.txt
 
 format_partition:
 echo -e "************************************************************"
