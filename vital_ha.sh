@@ -15,7 +15,7 @@ function jumpto
 
 $stepFile=step.txt
 if [ -f $stepFile ]; then
-	step=`cat $stepFile`
+	step=cat $stepFile
 else
 	step=0
 fi
