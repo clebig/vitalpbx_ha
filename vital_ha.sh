@@ -19,7 +19,7 @@ if [ -f $stepFile ]; then
 else
 	step=0
 fi
-echo -e "$step"
+echo -e "Value $step"
 
 echo -e "\n"
 echo -e "************************************************************"
