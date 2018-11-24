@@ -237,12 +237,29 @@ pcs cluster cib-push fs_cfg
 echo -e "*** Done ***"
 
 echo -e "************************************************************"
-echo -e "*  Create resource for the use of MariaDB in Master/Slave  *"
+echo -e "*               Stop all services                          *"
 echo -e "************************************************************"
+systemctl stop fail2ban
+systemctl disable fail2ban
+ssh root@$ip_slave "systemctl stop fail2ban"
+ssh root@$ip_slave "systemctl disable fail2ban"
+systemctl stop asterisk
+systemctl disable asterisk
+ssh root@$ip_slave "systemctl stop asterisk"
+ssh root@$ip_slave "systemctl disable asterisk"
+systemctl stop vpbx-monitor
+systemctl disable vpbx-monitor
+ssh root@$ip_slave "systemctl stop vpbx-monitor"
+ssh root@$ip_slave "systemctl disable vpbx-monitor"
 systemctl stop mariadb
 systemctl disable mariadb
 ssh root@$ip_slave "systemctl stop mariadb"
 ssh root@$ip_slave "systemctl disable mariadb"
+echo -e "*** Done ***"
+
+echo -e "************************************************************"
+echo -e "*  Create resource for the use of MariaDB in Master/Slave  *"
+echo -e "************************************************************"
 mkdir /mnt/mysql
 mkdir /mnt/mysql/data
 cd /mnt/mysql
@@ -273,10 +290,6 @@ echo -e "*** Done ***"
 echo -e "************************************************************"
 echo -e "*            Create resource for Asterisk                  *"
 echo -e "************************************************************"
-systemctl stop asterisk
-systemctl disable asterisk
-ssh root@$ip_slave "systemctl stop asterisk"
-ssh root@$ip_slave "systemctl disable asterisk"
 cd /usr/lib/ocf/resource.d/heartbeat
 wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/asterisk 
 chmod 755 asterisk
@@ -338,10 +351,6 @@ echo -e "*** Done ***"
 echo -e "************************************************************"
 echo -e "*                    VitalPBX Service                      *"
 echo -e "************************************************************"
-systemctl stop vpbx-monitor
-systemctl disable vpbx-monitor
-ssh root@$ip_slave "systemctl stop vpbx-monitor"
-ssh root@$ip_slave "systemctl disable vpbx-monitor"
 pcs resource create vpbx-monitor service:vpbx-monitor op monitor interval=30s
 pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg --config
@@ -353,10 +362,6 @@ echo -e "*** Done ***"
 echo -e "************************************************************"
 echo -e "*                    fail2ban Service                      *"
 echo -e "************************************************************"
-systemctl stop fail2ban
-systemctl disable fail2ban
-ssh root@$ip_slave "systemctl stop fail2ban"
-ssh root@$ip_slave "systemctl disable fail2ban"
 pcs resource create fail2ban service:fail2ban op monitor interval=30s
 pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg --config
