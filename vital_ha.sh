@@ -19,10 +19,9 @@ echo -e "*  Welcome to the VitalPBX high availability installation  *"
 echo -e "*                All options are mandatory                 *"
 echo -e "************************************************************"
 
-filename='config.txt'
+filename="config.txt"
 if [ -f $filename ]; then
-echo -e "config file"
-
+	echo -e "config file"
 	n=1
 	while read line; do
 		case $n in
