@@ -13,21 +13,37 @@ function jumpto
     exit
 }
 
-
-stepFile=step.txt
-
-if [ -f $stepFile ]; then
-	step=`cat $stepFile`
-else
-	step=0
-fi
-echo -e "Value $step"
-
 echo -e "\n"
 echo -e "************************************************************"
 echo -e "*  Welcome to the VitalPBX high availability installation  *"
 echo -e "*                All options are mandatory                 *"
 echo -e "************************************************************"
+
+filename='config.txt'
+n=1
+while read line; do
+	case $n in
+		1)
+			ip_master=$line
+  		;;
+		2)
+			ip_slave=$line
+  		;;
+		3)
+			ip_floating=$line
+  		;;
+		4)
+			ip_floating_mask=$line
+  		;;
+		5)
+			disk=$line
+  		;;
+		6)
+			hapassword=$line
+  		;;
+	esac
+	n=$((n+1))
+done < $filename
 
 while [[ $ip_master == '' ]]
 do
@@ -102,6 +118,13 @@ host_slave=`ssh root@$ip_slave 'hostname -f'`
 echo -e "$host_master"
 echo -e "$host_slave"
 echo -e "*** Done ***"
+
+stepFile=step.txt
+if [ -f $stepFile ]; then
+	step=`cat $stepFile`
+else
+	step=0
+fi
 
 start=${1:-"format_partition"}
 case $step in
