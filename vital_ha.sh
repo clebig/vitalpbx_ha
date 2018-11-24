@@ -84,8 +84,6 @@ echo -e "$ip_floating_mask" 	>> config.txt
 echo -e "$disk" 		>> config.txt
 echo -e "$hapassword" 		>> config.txt
 
-echo -e "1"	> step.txt
-
 echo -e "************************************************************"
 echo -e "*          Copy Authorization key to slave server          *"
 echo -e "************************************************************"
@@ -95,7 +93,6 @@ if [ ! -f $sshKeyFile ]; then
 fi
 ssh-copy-id root@$ip_slave
 echo -e "*** Done ***"
-echo -e "2"	> step.txt
 
 echo -e "************************************************************"
 echo -e "*            Get the hostname in Master and Slave          *"
@@ -105,7 +102,6 @@ host_slave=`ssh root@$ip_slave 'hostname -f'`
 echo -e "$host_master"
 echo -e "$host_slave"
 echo -e "*** Done ***"
-echo -e "3"	> step.txt
 
 case $step in
 	3)
