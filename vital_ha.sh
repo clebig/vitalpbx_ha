@@ -186,6 +186,9 @@ case $step in
 	28)
 		jumpto $create_fail2ban_resource
   	;;
+	29)
+		jumpto $vitalpbx_cluster_ok
+	;;
 esac
 
 format_partition:
@@ -528,6 +531,7 @@ pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
 echo -e "29"	> step.txt
 
+vitalpbx_cluster_ok:
 echo -e "************************************************************"
 echo -e "*                VitalPBX Cluster OK                       *"
 echo -e "************************************************************"
