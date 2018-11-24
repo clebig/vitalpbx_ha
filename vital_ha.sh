@@ -533,9 +533,9 @@ vitalpbx_cluster_ok:
 echo -e "************************************************************"
 echo -e "*                VitalPBX Cluster OK                       *"
 echo -e "************************************************************"
-ssh root@$ip_slave "pcs cluster stanby  $host_slave"
+ssh root@$ip_slave "pcs cluster standby  $host_slave"
 sleep 5
-ssh root@$ip_slave "pcs cluster unstanby  $host_slave"
+ssh root@$ip_slave "pcs cluster unstandby  $host_slave"
 sleep 5
 pcs status resources
 echo -e "*** Done ***"
