@@ -20,7 +20,7 @@ echo -e "*                All options are mandatory                 *"
 echo -e "************************************************************"
 
 filename='config.txt'
-if [ ! -f $filename ]; then
+if [ -f $filename ]; then
 echo -e "config file"
 
 	n=1
