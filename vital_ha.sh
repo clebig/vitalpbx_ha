@@ -74,85 +74,82 @@ else
 fi
 
 case $step in
-	[2]*)
-		
-  	;;
-	[3]*)
+	3)
 		jumpto $format_partition
   	;;
-	[4]*)
+	4)
 		jumpto $create_hostname
   	;;
-	[5]*)
+	5)
 		jumpto $update_firewall
   	;;
-	[6]*)
+	6)
 		jumpto $loading_drbd
   	;;
-	[7]*)
+	7)
 		jumpto $configure_drbd
   	;;
-	[8]*)
+	8)
 		jumptp $formating_drbd
   	;;
-	[9]*)
+	9)
 		jumptp $create_hacluster_password
   	;;
-	[10]*)
+	10)
 		jumpto $starting_pcs
   	;;
-	[11]*)
+	11)
 		jumpto $auth_hacluster
   	;;
-	[12]*)
+	12)
 		jumpto $creating_cluster
   	;;
-	[13]*)
+	13)
 		jumptp $starting_cluster
   	;;
-	[14]*)
+	14)
 		jumpto $creating_floating_ip
   	;;
-	[15]*)
+	15)
 		jumpto $creating_drbd_resources
   	;;
-	[16]*)
+	16)
 		jumpto $creating_filesystem
   	;;
-	[17]*)
+	17)
 		jumpto $stop_all_services
   	;;
-	[18]*)
+	18)
 		jumpto $setting_mariadb_resource
   	;;
-	[19]*)
+	19)
 		jumpto $creating_mariadb_resource
   	;;
-	[20]*)
+	20)
 		jumpto $creating_asterisk_resource
   	;;
-	[21]*)
+	21)
 		jumpto $compress_asterisk_files
   	;;
-	[22]*)
+	22)
 		jumpto $copy_asterisk_files
   	;;
-	[23]*)
+	23)
 		jumpto $remove_master_asterisk_files
   	;;
-	[24]*)
+	24)
 		jumpto $create_symbolic_linlk_master_asterisk_files
   	;;
-	[25]*)
+	25)
 		jumpto $remove_slave_asterisk_files
   	;;
-	[26]*)
+	26)
 		jumpto $create_symbolic_linlk_slave_asterisk_files
   	;;
-	[27]*)
+	27)
 		jumpto $create_vitalpbx_resource
   	;;
-	[28]*)
+	28)
 		jumpto $create_fail2ban_resource
   	;;
 esac
