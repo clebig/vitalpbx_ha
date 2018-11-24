@@ -21,6 +21,8 @@ echo -e "************************************************************"
 
 filename='config.txt'
 if [ ! -f $filename ]; then
+echo -e "config file"
+
 	n=1
 	while read line; do
 		case $n in
