@@ -209,6 +209,24 @@ We see that the server2 is in the stop state, therefore we must return it to nor
 [root@vitalpbx2 /]# <strong>pcs cluster unstandby vitalpbx2.local</strong>
 </pre>
 
+To execute the process of changing the role automatically, we recommend downloading the following scripts:<br>
+
+<pre>
+[root@vitalpbx1-2 /]# wget https://github.com/VitalPBX/vitalpbx_ha/blob/master/bascul
+[root@vitalpbx1-2 /]# chmod +x bascul
+[root@vitalpbx1-2 /]# mp bascul /usr/local/bin
+[root@vitalpbx1-2 /]# bascul
+************************************************************
+*     Change the roles of servers in high availability     *
+* <strong>WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING</strong>  *
+*All calls in progress will be lost and the system will be *
+*     be in an unavailable state for a few seconds.        *
+************************************************************
+Are you sure to switch from vitalpbx1.local to vitalpbx2.local? (yes,no) >
+</pre>
+
+This action convert the vitalpbx1.local to Slave and vitalpbx2.local to Master. If you want to return to default do the same again.<br>
+
 <strong>CONGRATULATIONS</strong>, you have installed and tested the high availability in <strong>VitalPBX</strong><br>
 :+1:
 
