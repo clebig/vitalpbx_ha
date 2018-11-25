@@ -1,5 +1,10 @@
 #!/bin/bash
 set -e
+# Authors:      Rodrigo Cuadra
+#               with Colaboration of Jose Miguel Rivera
+#
+# Support:      rcuadra@aplitel.com
+#
 host_master=`pcs status | awk '/Masters/ {print $3}'`
 host_slave=`pcs status | awk '/Slaves/ {print $3}'`
 
