@@ -149,6 +149,8 @@ At the end of the installation you have to see the following message
 
 ## Test<br>
 
+### Manual<br>
+
 To see the status of the cluster use the following command:<br>
 <pre>
 [root@vitalpbx1 /]# <strong>pcs status resources</strong>
@@ -209,6 +211,7 @@ We see that the server2 is in the stop state, therefore we must return it to nor
 [root@vitalpbx2 /]# <strong>pcs cluster unstandby vitalpbx2.local</strong>
 </pre>
 
+### Automatic<br>
 To execute the process of changing the role automatically, we recommend downloading the following scripts:<br>
 
 <pre>
