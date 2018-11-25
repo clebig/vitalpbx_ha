@@ -561,6 +561,18 @@ pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
 echo -e "29"	> step.txt
 
+vitalpbx_cluster_bascul:
+echo -e "************************************************************"
+echo -e "*         Ceating VitalPBX Cluster bascul command          *"
+echo -e "************************************************************"
+wget https://github.com/VitalPBX/vitalpbx_ha/blob/master/bascul
+chmod +x bascul
+mv bascul /usr/local/bin
+scp /usr/local/bin/bascul root@$ip_slave:/usr/local/bin/bascul
+ssh root@$ip_slave 'chmod +x /usr/local/bin/bascul'
+echo -e "*** Done ***"
+echo -e "30"	> step.txt
+
 vitalpbx_cluster_ok:
 echo -e "************************************************************"
 echo -e "*                VitalPBX Cluster OK                       *"
