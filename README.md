@@ -119,7 +119,7 @@ At the end of the installation you have to see the following message
 
 ## Test<br>
 
-To execute the process of changing the role automatically, we recommend using the following command:<br>
+To execute the process of changing the role, we recommend using the following command:<br>
 
 <pre>
 [root@vitalpbx1-2 /]# bascul
