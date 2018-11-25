@@ -214,7 +214,7 @@ To execute the process of changing the role automatically, we recommend download
 <pre>
 [root@vitalpbx1-2 /]# wget https://github.com/VitalPBX/vitalpbx_ha/blob/master/bascul
 [root@vitalpbx1-2 /]# chmod +x bascul
-[root@vitalpbx1-2 /]# mp bascul /usr/local/bin
+[root@vitalpbx1-2 /]# mv bascul /usr/local/bin
 [root@vitalpbx1-2 /]# bascul
 ************************************************************
 *     Change the roles of servers in high availability     *
