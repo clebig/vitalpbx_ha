@@ -93,7 +93,7 @@ do
     read -p "Are you sure to continue with this settings? (yes,no) > " veryfy_info 
 done
 
-if [ "$veryfy_info" != "${answer#[YESyes]}" ] ;then
+if [ "$veryfy_info" != "yes" ] ;then
 	echo -e "************************************************************"
 	echo -e "*                Starting to run the scripts               *"
 	echo -e "************************************************************"
