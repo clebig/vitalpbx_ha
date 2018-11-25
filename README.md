@@ -4,22 +4,8 @@ High availability is a characteristic of a system which aims to ensure an agreed
 
 make a high-availability cluster out of any pair of VitalPBX servers. VitalPBX can detect a range of failures on one VitalPBX server and automatically transfer control to the other server, resulting in a telephony environment with minimal down time.<br>
 
-![VitalPBX HA](https://github.com/VitalPBX/vitalpbx_ha/blob/master/VitalPBX_HA.png)
-
 ## Example:<br>
-| Name          | Master           | Slave            |
-| ------------- | ---------------- | ---------------- |
-| Host Name     | vitalpbx1.local  | vitalpbx2.local  |
-| IP Address    | 192.168.30.10    | 192.168.30.20    |
-| Netmask       | 255.255.248.0    | 255.255.248.0    |
-| Gateway       | 192.168.24.1     | 192.168.24.1     |
-| Primary DNS   | 8.8.8.8          | 8.8.8.8          |
-| Secundary DNS | 8.8.4.4          | 8.8.4.4          |
-
-| Floating IP     | Netmask   |
-| --------------- | --------- |
-| 192.168.30.30   | 21        |
-
+![VitalPBX HA](https://github.com/VitalPBX/vitalpbx_ha/blob/master/VitalPBX_HA.png)
 
 -----------------
 ## Prerequisites
@@ -97,7 +83,7 @@ Command (m for help): <strong>w</strong>
 [root@vitalpbx1-2 ~]#  <strong>reboot</strong>
 </pre>
 
-## Install Apps
+## Install Dependencies
 Install the necessary dependencies on both servers<br>
 <pre>
 [root@vitalpbx1-2 ~]#  yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
@@ -111,7 +97,7 @@ Now copy and run the following script<br>
 [root@vitalpbx1 ~]#  chmod +x vital_ha.sh
 [root@vitalpbx1 ~]#  ./vital_ha.sh
 </pre>
-
+Set these values, remember the Floating IP Mask must be 2 digit format and the Disk is that you created in the step “Create Disk”:
 <pre>
 IP Master.......... > <strong>192.168.30.10</strong>
 Host Name Master... > <strong>vitalpbx1.loca</strong>
