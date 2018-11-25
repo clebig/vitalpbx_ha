@@ -149,75 +149,9 @@ At the end of the installation you have to see the following message
 
 ## Test<br>
 
-### Manual<br>
-
-To see the status of the cluster use the following command:<br>
-<pre>
-[root@vitalpbx1 /]# <strong>pcs status resources</strong>
-</pre>
-
-If all is well, you will see the following<br>
+To execute the process of changing the role automatically, we recommend using the following command:<br>
 
 <pre>
- virtual_ip     (ocf::'heartbeat':IPaddr2):       Started vitalpbx1.local
- Master/Slave Set: DrbdDataClone [DrbdData]
-     Masters: [ vitalpbx1.local ]
-     Slaves: [ vitalpbx2.local ]
- DrbdFS (ocf::'heartbeat':Filesystem):    Started vitalpbx1.local
- mysql  (ocf::'heartbeat':mysql): Started vitalpbx1.local
- asterisk       (ocf::'heartbeat':asterisk):      Started vitalpbx1.local
- fail2ban       (service:fail2ban):     Started vitalpbx1.local
- vpbx-monitor   (service:vpbx-monitor): Started vitalpbx1.local
-</pre>
-
-Poweroff the Server1 vitalpbx1.local, and check the server2 vitalpbx2.local<br>
-<pre>
-[root@vitalpbx2 /]# <strong>pcs status resources</strong>
- virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx2.local
- Master/Slave Set: DrbdDataClone [DrbdData]
-     Masters: [ vitalpbx2.local ]
-     Stopped: [ vitalpbx1.local ]
- DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx2.local
- mysql  (ocf::heartbeat:mysql): Started vitalpbx2.local
- asterisk       (ocf::heartbeat:asterisk):      Started vitalpbx2.local
- fail2ban       (service:fail2ban):     Started vitalpbx1.local
- vpbx-monitor   (service:vpbx-monitor): Started vitalpbx2.local
-</pre>
-
-All services moved to server2.<br>
-
-Now turn on server1. You will see that the services continue on server2. To return everything to normal on server2, execute the following command:<br>
-<pre>
-[root@vitalpbx2 /]# <strong>pcs cluster standby vitalpbx2.local</strong>
-</pre>
-
-Server1 takes control again. <br>
-<pre>
-[root@vitalpbx1 ~]# pcs status resources
- virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx1.local
- Master/Slave Set: DrbdDataClone [DrbdData]
-     Masters: [ vitalpbx1.local ]
-     <strong>Stopped</strong>: [ vitalpbx2.local ]
- DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx1.local
- mysql  (ocf::heartbeat:mysql): Started vitalpbx1.local
- asterisk       (ocf::heartbeat:asterisk):      Started vitalpbx1.local
- fail2ban       (service:fail2ban):     Started vitalpbx1.local
- vpbx-monitor   (service:vpbx-monitor): Started vitalpbx1.local
-</pre>
-
-We see that the server2 is in the stop state, therefore we must return it to normal state again by applying the following command:<br>
-
-<pre>
-[root@vitalpbx2 /]# <strong>pcs cluster unstandby vitalpbx2.local</strong>
-</pre>
-
-### Automatic<br>
-To execute the process of changing the role automatically, we recommend downloading the following scripts:<br>
-
-<pre>
-[root@vitalpbx1-2 /]# wget https://github.com/VitalPBX/vitalpbx_ha/blob/master/bascul
-[root@vitalpbx1-2 /]# chmod +x bascul
-[root@vitalpbx1-2 /]# mv bascul /usr/local/bin
 [root@vitalpbx1-2 /]# bascul
 ************************************************************
 *     Change the roles of servers in high availability     *
