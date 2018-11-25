@@ -15,7 +15,7 @@ b.- Install VitalPBX on two servers with similar characteristics.<br>
 c.- At the time of installation leave the largest amount of space on the hard drive to store the variable data on both servers.<br>
 
 ## Installation
-We are going to start by installing VitalPBX on two servers<br>
+We are going to start by installing VitalPBX on two servers
 <pre>
 a.- When starting the installation go to:<br>
 <strong>INSTALLATION DESTINATION (Custom partitioning selected)</strong>
