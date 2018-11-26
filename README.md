@@ -81,7 +81,7 @@ Now copy and run the following script<br>
 [root@vitalpbx1 ~]#  chmod +x vital_ha.sh
 [root@vitalpbx1 ~]#  ./vital_ha.sh
 </pre>
-Set these values, remember the Floating IP Mask must be 2 digit format and the Disk is that you created in the step “Create Disk”:
+Set these values, remember the Floating IP Mask must be 2 digit format (SIDR) and the Disk is that you created in the step “Create Disk”:
 <pre>
 IP Master.......... > <strong>192.168.30.10</strong>
 IP Slave........... > <strong>192.168.30.20</strong>
