@@ -132,7 +132,6 @@ Are you sure to switch from vitalpbx1.local to vitalpbx2.local? (yes,no) >
 
 This action convert the vitalpbx1.local to Slave and vitalpbx2.local to Master. If you want to return to default do the same again.<br>
 
-<hr>
 ## Update
 
 To update VitalPBX to the latest version just follow the following steps:<br>
