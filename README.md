@@ -115,7 +115,7 @@ At the end of the installation you have to see the following message
 *** Done ***
 </pre>
 
-## Test<br>
+## Test
 
 To execute the process of changing the role, we recommend using the following command:<br>
 
@@ -131,6 +131,23 @@ Are you sure to switch from vitalpbx1.local to vitalpbx2.local? (yes,no) >
 </pre>
 
 This action convert the vitalpbx1.local to Slave and vitalpbx2.local to Master. If you want to return to default do the same again.<br>
+
+<hr>
+## Update
+
+To update VitalPBX to the latest version just follow the following steps:<br>
+1.- From your browser, go to ip 192.168.30.30
+2.- Update VitalPBX from the interface<br>
+3.- Execute the following command in Master console<br>
+<pre>
+[root@vitalpbx1 /]# bascul
+</pre>
+4.- From your browser, go to ip 192.168.30.30 again<br>
+5.- Update VitalPBX from the interface<br>
+6.- Execute the following command in Master console<br>
+<pre>
+[root@vitalpbx1 /]# bascul
+</pre>
 
 <strong>CONGRATULATIONS</strong>, you have installed and tested the high availability in <strong>VitalPBX</strong><br>
 :+1:
