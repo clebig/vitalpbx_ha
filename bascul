@@ -29,6 +29,8 @@ echo -e "************************************************************"
 		read -p "Are you sure to switch from $host_master to $host_slave? (yes,no) > " veryfy_bascul 
 	done
 	if [ "$veryfy_bascul" = "yes" ] ;then
+                BAR='........................................................'
+                i=0
 		pcs cluster unstandby $host_master
 		pcs cluster unstandby $host_slave
 		pcs cluster standby $host_master
@@ -36,13 +38,19 @@ echo -e "************************************************************"
 		echo -e "Stopping services on " $host_master
 		while [[ $host_master == $host_master_new ]]
 		do
+                        i=$i+1
+                        echo -ne "\r${BAR:0:$i}"
 			host_master_new=`pcs status | awk '/Masters/ {print $3}'`
 		done
-
+                echo -e "Done"
+                echo -e "Starting services on " $host_slave
 
 		virtualip=`pcs status | awk '/virtual_ip/ {print $3}'`
+               	i=0
         	while [[ $virtualip != 'Started' ]]
         	do
+                        i=$i+1
+                        echo -ne "\r${BAR:0:$i}"
                 	virtualip=`pcs status | awk '/virtual_ip/ {print $3}'`
         	done
 		echo -e "Virtual IP: Started on " $host_slave
