@@ -135,7 +135,7 @@ This action convert the vitalpbx1.local to Slave and vitalpbx2.local to Master. 
 ## Update
 
 To update VitalPBX to the latest version just follow the following steps:<br>
-1.- From your browser, go to ip 192.168.30.30
+1.- From your browser, go to ip 192.168.30.30<br>
 2.- Update VitalPBX from the interface<br>
 3.- Execute the following command in Master console<br>
 <pre>
