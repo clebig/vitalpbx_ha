@@ -565,7 +565,7 @@ vitalpbx_cluster_bascul:
 echo -e "************************************************************"
 echo -e "*         Ceating VitalPBX Cluster bascul command          *"
 echo -e "************************************************************"
-wget https://github.com/VitalPBX/vitalpbx_ha/blob/master/bascul
+wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/bascul
 chmod +x bascul
 mv bascul /usr/local/bin
 scp /usr/local/bin/bascul root@$ip_slave:/usr/local/bin/bascul
