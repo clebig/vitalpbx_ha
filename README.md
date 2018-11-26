@@ -84,9 +84,7 @@ Now copy and run the following script<br>
 Set these values, remember the Floating IP Mask must be 2 digit format and the Disk is that you created in the step “Create Disk”:
 <pre>
 IP Master.......... > <strong>192.168.30.10</strong>
-Host Name Master... > <strong>vitalpbx1.loca</strong>
 IP Slave........... > <strong>192.168.30.20</strong>
-Host Name Slave.... > <strong>vitalpbx2.local</strong>
 Floating IP........ > <strong>192.168.30.30</strong>
 Floating IP Mask... > <strong>21</strong>
 Disk (sdax)........ > <strong>sda4</strong>
