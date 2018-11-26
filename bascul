@@ -33,10 +33,12 @@ echo -e "************************************************************"
 		pcs cluster unstandby $host_slave
 		pcs cluster standby $host_master
 		host_master_new=$host_master
+		echo -e "Stopping services on " $host_master
 		while [[ $host_master == $host_master_new ]]
 		do
 			host_master_new=`pcs status | awk '/Masters/ {print $3}'`
 		done
+
 
 		virtualip=`pcs status | awk '/virtual_ip/ {print $3}'`
         	while [[ $virtualip != 'Started' ]]
