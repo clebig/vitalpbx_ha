@@ -46,42 +46,42 @@ if [ -f $filename ]; then
 		esac
 		n=$((n+1))
 	done < $filename
-	echo -e "IP Master......... > $ip_master"	
-	echo -e "IP Slave.......... > $ip_slave"
-	echo -e "Floating IP....... > $ip_floating "
-	echo -e "Floating IP Mask.. > $ip_floating_mask"
-	echo -e "Disk (sdax)....... > $disk"
-	echo -e "hacluster password > $hapassword"
+	echo -e "IP Master................ > $ip_master"	
+	echo -e "IP Slave................. > $ip_slave"
+	echo -e "Floating IP.............. > $ip_floating "
+	echo -e "Floating IP Mask (SIDR).. > $ip_floating_mask"
+	echo -e "Disk (sdax).............. > $disk"
+	echo -e "hacluster password....... > $hapassword"
 fi
 	
 while [[ $ip_master == '' ]]
 do
-    read -p "IP Master......... > " ip_master 
+    read -p "IP Master................ > " ip_master 
 done 
 
 while [[ $ip_slave == '' ]]
 do
-    read -p "IP Slave.......... > " ip_slave 
+    read -p "IP Slave................. > " ip_slave 
 done 
 
 while [[ $ip_floating == '' ]]
 do
-    read -p "Floating IP....... > " ip_floating 
+    read -p "Floating IP.............. > " ip_floating 
 done 
 
 while [[ $ip_floating_mask == '' ]]
 do
-    read -p "Floating IP Mask.. > " ip_floating_mask
+    read -p "Floating IP Mask (SIDR).. > " ip_floating_mask
 done 
 
 while [[ $disk == '' ]]
 do
-    read -p "Disk (sdax)....... > " disk 
+    read -p "Disk (sdax).............. > " disk 
 done 
 
 while [[ $hapassword == '' ]]
 do
-    read -p "hacluster password > " hapassword 
+    read -p "hacluster password....... > " hapassword 
 done
 
 echo -e "************************************************************"
