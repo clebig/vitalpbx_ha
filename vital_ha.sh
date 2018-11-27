@@ -469,7 +469,7 @@ wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/asterisk
 chmod 755 asterisk
 scp /usr/lib/ocf/resource.d/heartbeat/asterisk root@$ip_slave:/usr/lib/ocf/resource.d/heartbeat/asterisk
 ssh root@$ip_slave 'chmod 755 /usr/lib/ocf/resource.d/heartbeat/asterisk'
-pcs resource create asterisk ocf:heartbeat:asterisk user="asterisk" group="asterisk" op monitor timeout="30"
+pcs resource create asterisk ocf:heartbeat:asterisk user="root" group="root" op monitor timeout="30"
 pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg --config
 pcs -f fs_cfg constraint colocation add asterisk with virtual_ip INFINITY
