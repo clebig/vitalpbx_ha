@@ -583,4 +583,3 @@ ssh root@$ip_slave "pcs cluster unstandby  $host_slave"
 sleep 5
 pcs status resources
 echo -e "*** Done ***"
-ssh root@$ip_slave "reboot"
