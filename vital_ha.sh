@@ -581,5 +581,6 @@ ssh root@$ip_slave "pcs cluster standby  $host_slave"
 sleep 5
 ssh root@$ip_slave "pcs cluster unstandby  $host_slave"
 sleep 5
+ssh root@$ip_slave "reboot"
 pcs status resources
 echo -e "*** Done ***"
