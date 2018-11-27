@@ -104,7 +104,6 @@ fi
 echo -e "$ip_master" 		> config.txt
 echo -e "$ip_slave" 		>> config.txt
 echo -e "$ip_floating" 		>> config.txt
-echo -e "$ip_floating" 		>> config.txt
 echo -e "$ip_floating_mask" 	>> config.txt
 echo -e "$disk" 		>> config.txt
 echo -e "$hapassword" 		>> config.txt
