@@ -40,6 +40,7 @@ echo -e "************************************************************"
 		do
                         i=$i+1
                         echo -ne "\r${BAR:0:$i}"
+			sleep 1
 			host_master_new=`pcs status | awk '/Masters/ {print $3}'`
 		done
                 echo -e "Done"
@@ -51,6 +52,7 @@ echo -e "************************************************************"
         	do
                         i=$i+1
                         echo -ne "\r${BAR:0:$i}"
+			sleep 1
                 	virtualip=`pcs status | awk '/virtual_ip/ {print $3}'`
         	done
 		echo -e "Virtual IP: Started on " $host_slave
