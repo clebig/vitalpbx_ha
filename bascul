@@ -55,6 +55,7 @@ echo -e "************************************************************"
 			sleep 1
                 	virtualip=`pcs status | awk '/virtual_ip/ {print $3}'`
         	done
+		echo -e "Done"
 		echo -e "Virtual IP: Started on " $host_slave
 
 		Filesystem=`pcs status | awk '/DrbdFS/ {print $3}'`
