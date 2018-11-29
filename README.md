@@ -115,6 +115,9 @@ At the end of the installation you have to see the following message
 *** Done ***
 </pre>
 
+Note:<br>
+Now, reboot the server1 and wait for status change in server2, then reboot the server2 and wait for status change in server1.
+
 ## Test
 
 To execute the process of changing the role, we recommend using the following command:<br>
