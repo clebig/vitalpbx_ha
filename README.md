@@ -115,8 +115,17 @@ At the end of the installation you have to see the following message
 *** Done ***
 </pre>
 
-Note:<br>
-Now, reboot the server1 and wait for status change in server2, then reboot the server2 and wait for status change in server1.
+Now, reboot the server1 and wait for status change in server2.<br>
+<pre>
+[root@vitalpbx1 ~]# reboot
+[root@vitalpbx2 ~]# pcs status
+</pre>
+
+Then reboot the server2, connect to server1 and wait for status change in server1.
+<pre>
+[root@vitalpbx2 ~]# reboot
+[root@vitalpbx1 ~]# pcs status
+</pre>
 
 ## Test
 
