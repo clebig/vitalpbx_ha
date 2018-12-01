@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 # Authors:      Rodrigo Cuadra
-#               with Colaboration of Jose Miguel Rivera
+#               with Collaboration of Jose Miguel Rivera
 #
 # Support:      rcuadra@aplitel.com
 #
