@@ -146,7 +146,7 @@ Are you sure to switch from vitalpbx1.local to vitalpbx2.local? (yes,no) >
 
 This action convert the vitalpbx1.local to Slave and vitalpbx2.local to Master. If you want to return to default do the same again.<br>
 
-Next we will show a short video of how high availability works in VitalaPBX<br>
+Next we will show a short video how high availability works in VitalPBX<br>
 <div align="center">
   <a href="https://www.youtube.com/watch?v=3yoa3KXKMy0"><img src="https://img.youtube.com/vi/3yoa3KXKMy0/0.jpg" alt="High Availability demo video on VitalPBX"></a>
 </div>
