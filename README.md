@@ -147,10 +147,8 @@ Are you sure to switch from vitalpbx1.local to vitalpbx2.local? (yes,no) >
 This action convert the vitalpbx1.local to Slave and vitalpbx2.local to Master. If you want to return to default do the same again.<br>
 
 <div align="center">
-  <a href="https://www.youtube.com/watch?v=3yoa3KXKMy0"><img src="https://img.youtube.com/vi/3yoa3KXKMy0/0.jpg" alt="IMAGE ALT TEXT"></a>
+  <a href="https://www.youtube.com/watch?v=3yoa3KXKMy0"></a>
 </div>
-
-[![Alt text](https://img.youtube.com/vi/3yoa3KXKMy0/0.jpg)](https://www.youtube.com/watch?v=3yoa3KXKMy0)
 
 ## Turn on and turn off
 When you have to turn off the servers, when you turn it on always start with the Master, wait for the Master to start and then turn on the Slave<br>
