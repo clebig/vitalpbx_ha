@@ -151,6 +151,12 @@ This action convert the vitalpbx1.local to Slave and vitalpbx2.local to Master. 
 </div>
 
 
+<div align="center">
+    <iframe width="620" height="315"
+        src="https://www.youtube.com/vitalpbx/3yoa3KXKMy0">
+    </iframe>
+</div>
+
 ## Turn on and turn off
 When you have to turn off the servers, when you turn it on always start with the Master, wait for the Master to start and then turn on the Slave<br>
 
