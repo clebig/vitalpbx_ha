@@ -463,7 +463,10 @@ creating_asterisk_resource:
 echo -e "************************************************************"
 echo -e "*            Create resource for Asterisk                  *"
 echo -e "************************************************************"
-pcs resource create asterisk service:asterisk op monitor interval=30s
+cd /usr/lib/ocf/resource.d/heartbeat
+wget https://raw.githubusercontent.com/ClusterLabs/resource-agents/master/heartbeat/asterisk
+chmod 755 asterisk
+pcs resource create asterisk ocf:heartbeat:asterisk params user="root" group="root" op monitor timeout="30"
 pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg --config
 pcs -f fs_cfg constraint colocation add asterisk with virtual_ip INFINITY
