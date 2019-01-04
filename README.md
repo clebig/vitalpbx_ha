@@ -115,6 +115,19 @@ At the end of the installation you have to see the following message
 *** Done ***
 </pre>
 
+Now check if drbd has finished synchronizing the discs 
+<pre>
+
+[root@vitalpbx1 ~]# drbdadm status
+drbd0 role:Primary
+  disk:UpToDate
+  vitalpbx2.local role:Secondary
+    peer-disk:UpToDate
+
+[root@vitalpbx1 ~]#
+</pre>
+If you show us the previous message it means that everything is fine and we can continue, otherwise you have to wait for it to finish synchronizing.
+
 Now, reboot the server1 and wait for status change in server2.<br>
 <pre>
 [root@vitalpbx1 ~]# reboot
