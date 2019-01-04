@@ -126,7 +126,7 @@ drbd0 role:Primary
 
 [root@vitalpbx1 ~]#
 </pre>
-If you show us the previous message it means that everything is fine and we can continue, otherwise you have to wait for it to finish synchronizing.
+If it shows the previous message it means that everything is fine and we can continue, otherwise we have to wait for it to finish synchronizing.
 
 Now, reboot the server1 and wait for status change in server2.<br>
 <pre>
