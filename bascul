@@ -43,6 +43,7 @@ echo -e "************************************************************"
 			sleep 1
 			host_master_new=`pcs status resources | awk '/Masters/ {print $3}'`
 		done
+		pcs cluster unstandby $host_master
                 echo -e "Done"
                 echo -e "Starting services on " $host_slave
 
@@ -98,7 +99,6 @@ echo -e "************************************************************"
 		echo -e "fail2ban: Started on " $host_slave
 		echo -e "Done"
 
-		pcs cluster unstandby $host_master
 		sleep 3
 		echo -e "Done,"
 		pcs status
