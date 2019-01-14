@@ -167,6 +167,17 @@ Next we will show a short video how high availability works in VitalPBX<br>
 ## Turn on and turn off
 When you have to turn off the servers, when you turn it on always start with the Master, wait for the Master to start and then turn on the Slave<br>
 
+## Sonata Switchboard
+If you are going to install Sonata Switchboard we recommend you to execute the following commands in the Master
+
+<pre>
+[root@vitalpbx1 ~]# pcs resource create switchboard service:switchboard op monitor interval=30s
+[root@vitalpbx1 ~]# pcs cluster cib fs_cfg
+[root@vitalpbx1 ~]# pcs cluster cib-push fs_cfg --config
+[root@vitalpbx1 ~]# pcs -f fs_cfg constraint colocation add switchboard with virtual_ip INFINITY
+[root@vitalpbx1 ~]# pcs -f fs_cfg constraint order asterisk then switchboard
+</pre>
+
 ## Update
 
 To update VitalPBX to the latest version just follow the following steps:<br>
