@@ -443,6 +443,7 @@ mv /etc/my.cnf /mnt/mysql/
 ln -s /mnt/mysql/my.cnf /etc/
 ssh root@$ip_slave "rm -rf /etc/my.cnf"
 ssh root@$ip_slave "ln -s /mnt/mysql/my.cnf /etc/"
+chown mysql:mysql -R /mnt/mysql
 echo -e "*** Done ***"
 echo -e "19"	> step.txt
 
