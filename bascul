@@ -48,7 +48,7 @@ echo -e "************************************************************"
 
 		virtualip=`pcs status resources | awk '/virtual_ip/ {print $3}'`
                	i=0
-        	while [ $virtualip != 'Started' ]  && [ $i < 15 ]
+        	while [ $virtualip != 'Started' ] && [ $i -le 10 ]
         	do
                         i=$i+1
                         echo -ne "\r${BAR:0:$i}"
@@ -60,7 +60,7 @@ echo -e "************************************************************"
 
 		Filesystem=`pcs status resources | awk '/DrbdFS/ {print $3}'`
 		i=0
-		while [ $Filesystem != 'Started' ]  && [ $i < 15 ]
+		while [ $Filesystem != 'Started' ] && [ $i -le 10 ]
         	do
                         i=$i+1
                         echo -ne "\r${BAR:0:$i}"
@@ -72,7 +72,7 @@ echo -e "************************************************************"
 
 		mysql=`pcs status resources | awk '/mysql/ {print $3}'`
 		i=0
-        	while [ $mysql != 'Started' ]  && [ $i < 15 ]
+        	while [ $mysql != 'Started' ] && [ $i -le 10 ]
         	do
                         i=$i+1
                         echo -ne "\r${BAR:0:$i}"
@@ -84,7 +84,7 @@ echo -e "************************************************************"
 
 		asterisk=`pcs status resources | awk '/asterisk/ {print $3}'`
 		i=0
-        	while [ $asterisk != 'Started' ]  && [ $i < 15 ]
+        	while [ $asterisk != 'Started' ] && [ $i -le 10 ]
         	do
                         i=$i+1
                         echo -ne "\r${BAR:0:$i}"
@@ -96,7 +96,7 @@ echo -e "************************************************************"
 
 		vpbx_monitor=`pcs status resources | awk '/vpbx-monitor/ {print $3}'`
 		i=0
-        	while [ $vpbx_monitor != 'Started' ]  && [ $i < 15 ]
+        	while [ $vpbx_monitor != 'Started' ]  && [ $i -le 10 ]
         	do
                         i=$i+1
                         echo -ne "\r${BAR:0:$i}"
@@ -108,7 +108,7 @@ echo -e "************************************************************"
 
 		fail2ban=`pcs status resources | awk '/fail2ban/ {print $3}'`
 		i=0
-        	while [ $fail2ban != 'Started' ]  && [ $i < 15 ]
+        	while [ $fail2ban != 'Started' ] && [ $i -le 10 ]
         	do
                         i=$i+1
                         echo -ne "\r${BAR:0:$i}"
