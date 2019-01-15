@@ -50,8 +50,8 @@ echo -e "************************************************************"
                	i=0
         	while [[ $virtualip != 'Started' ]]
         	do
-                        i=$i+1
-			if [ "$i" -ge 10 ]; then
+			((i++))
+			if [ '$i' -ge 10 ]; then
 				break
 			fi
                         echo -ne "\r${BAR:0:$i}"
@@ -65,8 +65,8 @@ echo -e "************************************************************"
 		i=0
 		while [[ $Filesystem != 'Started' ]] 
         	do
-                        i=$i+1
-			if [ "$i" -ge 10 ]; then
+			((i++))
+			if [ '$i' -ge 10 ]; then
 				break
 			fi
                         echo -ne "\r${BAR:0:$i}"
@@ -80,8 +80,8 @@ echo -e "************************************************************"
 		i=0
         	while [[ $mysql != 'Started' ]]
         	do
-                        i=$i+1
-			if [ "$i" -ge 10 ]; then
+			((i++))
+			if [ '$i' -ge 10 ]; then
 				break
 			fi
                         echo -ne "\r${BAR:0:$i}"
@@ -95,10 +95,10 @@ echo -e "************************************************************"
 		i=0
         	while [[ $asterisk != 'Started' ]]
         	do
-			if [ "$i" -ge 10 ]; then
+			((i++))
+			if [ '$i' -ge 10 ]; then
 				break
 			fi
-                        i=$i+1
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
                 	asterisk=`pcs status resources | awk '/asterisk/ {print $3}'`
@@ -110,8 +110,8 @@ echo -e "************************************************************"
 		i=0
         	while [[ $vpbx_monitor != 'Started' ]]
         	do
-                        i=$i+1
-			if [ "$i" -ge 10 ]; then
+			((i++))
+			if [ '$i' -ge 10 ]; then
 				break
 			fi
                         echo -ne "\r${BAR:0:$i}"
@@ -125,8 +125,8 @@ echo -e "************************************************************"
 		i=0
         	while [[ $fail2ban != 'Started' ]]
         	do
-                        i=$i+1
-			if [ "$i" -ge 10 ]; then
+			((i++))
+			if [ '$i' -ge 10 ]; then
 				break
 			fi
                         echo -ne "\r${BAR:0:$i}"
