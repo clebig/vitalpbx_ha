@@ -48,7 +48,7 @@ echo -e "************************************************************"
 
 		virtualip=`pcs status resources | awk '/virtual_ip/ {print $3}'`
                	i=0
-        	while [[ $virtualip != 'Started' ]]
+        	while [ $virtualip != 'Started' ]  && [ $i < 15 ]
         	do
                         i=$i+1
                         echo -ne "\r${BAR:0:$i}"
@@ -59,40 +59,60 @@ echo -e "************************************************************"
 		echo -e "Done"
 
 		Filesystem=`pcs status resources | awk '/DrbdFS/ {print $3}'`
-		while [[ $Filesystem != 'Started' ]]
+		i=0
+		while [ $Filesystem != 'Started' ]  && [ $i < 15 ]
         	do
+                        i=$i+1
+                        echo -ne "\r${BAR:0:$i}"
+			sleep 1
 			Filesystem=`pcs status resources | awk '/DrbdFS/ {print $3}'`
         	done
 		echo -e "Filesystem: Started on " $host_slave
 		echo -e "Done"
 
 		mysql=`pcs status resources | awk '/mysql/ {print $3}'`
-        	while [[ $mysql != 'Started' ]]
+		i=0
+        	while [ $mysql != 'Started' ]  && [ $i < 15 ]
         	do
+                        i=$i+1
+                        echo -ne "\r${BAR:0:$i}"
+			sleep 1
                 	mysql=`pcs status resources | awk '/mysql/ {print $3}'`
         	done
 		echo -e "Mysql: Started on " $host_slave
 		echo -e "Done"
 
 		asterisk=`pcs status resources | awk '/asterisk/ {print $3}'`
-        	while [[ $asterisk != 'Started' ]]
+		i=0
+        	while [ $asterisk != 'Started' ]  && [ $i < 15 ]
         	do
+                        i=$i+1
+                        echo -ne "\r${BAR:0:$i}"
+			sleep 1
                 	asterisk=`pcs status resources | awk '/asterisk/ {print $3}'`
         	done
 		echo -e "Asterisk: Started on " $host_slave
 		echo -e "Done"
 
 		vpbx_monitor=`pcs status resources | awk '/vpbx-monitor/ {print $3}'`
-        	while [[ $vpbx_monitor != 'Started' ]]
+		i=0
+        	while [ $vpbx_monitor != 'Started' ]  && [ $i < 15 ]
         	do
+                        i=$i+1
+                        echo -ne "\r${BAR:0:$i}"
+			sleep 1
                 	vpbx_monitor=`pcs status resources | awk '/vpbx-monitor/ {print $3}'`
         	done
 		echo -e "VitalPBX Monitor: Started on " $host_slave
 		echo -e "Done"
 
 		fail2ban=`pcs status resources | awk '/fail2ban/ {print $3}'`
-        	while [[ $fail2ban != 'Started' ]]
+		i=0
+        	while [ $fail2ban != 'Started' ]  && [ $i < 15 ]
         	do
+                        i=$i+1
+                        echo -ne "\r${BAR:0:$i}"
+			sleep 1
                 	fail2ban=`pcs status resources | awk '/fail2ban/ {print $3}'`
         	done
 		echo -e "fail2ban: Started on " $host_slave
