@@ -51,8 +51,7 @@ echo -e "************************************************************"
         	while [[ $virtualip != 'Started' ]]
         	do
                         i=$i+1
-			if [ "$1" -le 10]
-			then
+			if [ "$i" -le 10 ]; then
 				break
 			fi
                         echo -ne "\r${BAR:0:$i}"
@@ -67,8 +66,7 @@ echo -e "************************************************************"
 		while [[ $Filesystem != 'Started' ]] 
         	do
                         i=$i+1
-			if [ "$1" -le 10]
-			then
+			if [ "$i" -le 10 ]; then
 				break
 			fi
                         echo -ne "\r${BAR:0:$i}"
@@ -83,8 +81,7 @@ echo -e "************************************************************"
         	while [[ $mysql != 'Started' ]]
         	do
                         i=$i+1
-			if [ "$1" -le 10]
-			then
+			if [ "$i" -le 10 ]; then
 				break
 			fi
                         echo -ne "\r${BAR:0:$i}"
@@ -98,8 +95,7 @@ echo -e "************************************************************"
 		i=0
         	while [[ $asterisk != 'Started' ]]
         	do
-			if [ "$1" -le 10]
-			then
+			if [ "$i" -le 10 ]; then
 				break
 			fi
                         i=$i+1
@@ -115,8 +111,7 @@ echo -e "************************************************************"
         	while [[ $vpbx_monitor != 'Started' ]]
         	do
                         i=$i+1
-			if [ "$1" -le 10]
-			then
+			if [ "$i" -le 10 ]; then
 				break
 			fi
                         echo -ne "\r${BAR:0:$i}"
@@ -131,8 +126,7 @@ echo -e "************************************************************"
         	while [[ $fail2ban != 'Started' ]]
         	do
                         i=$i+1
-			if [ "$1" -le 10]
-			then
+			if [ "$i" -le 10 ]; then
 				break
 			fi
                         echo -ne "\r${BAR:0:$i}"
