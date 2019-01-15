@@ -48,9 +48,13 @@ echo -e "************************************************************"
 
 		virtualip=`pcs status resources | awk '/virtual_ip/ {print $3}'`
                	i=0
-        	while [ $virtualip != 'Started' ] && [ $i -le 10 ]
+        	while [[ $virtualip != 'Started' ]]
         	do
                         i=$i+1
+			if [ "$1" -le 10]
+			then
+				break
+			fi
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
                 	virtualip=`pcs status resources | awk '/virtual_ip/ {print $3}'`
@@ -60,9 +64,13 @@ echo -e "************************************************************"
 
 		Filesystem=`pcs status resources | awk '/DrbdFS/ {print $3}'`
 		i=0
-		while [ $Filesystem != 'Started' ] && [ $i -le 10 ]
+		while [[ $Filesystem != 'Started' ]] 
         	do
                         i=$i+1
+			if [ "$1" -le 10]
+			then
+				break
+			fi
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
 			Filesystem=`pcs status resources | awk '/DrbdFS/ {print $3}'`
@@ -72,9 +80,13 @@ echo -e "************************************************************"
 
 		mysql=`pcs status resources | awk '/mysql/ {print $3}'`
 		i=0
-        	while [ $mysql != 'Started' ] && [ $i -le 10 ]
+        	while [[ $mysql != 'Started' ]]
         	do
                         i=$i+1
+			if [ "$1" -le 10]
+			then
+				break
+			fi
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
                 	mysql=`pcs status resources | awk '/mysql/ {print $3}'`
@@ -84,8 +96,12 @@ echo -e "************************************************************"
 
 		asterisk=`pcs status resources | awk '/asterisk/ {print $3}'`
 		i=0
-        	while [ $asterisk != 'Started' ] && [ $i -le 10 ]
+        	while [[ $asterisk != 'Started' ]]
         	do
+			if [ "$1" -le 10]
+			then
+				break
+			fi
                         i=$i+1
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
@@ -96,9 +112,13 @@ echo -e "************************************************************"
 
 		vpbx_monitor=`pcs status resources | awk '/vpbx-monitor/ {print $3}'`
 		i=0
-        	while [ $vpbx_monitor != 'Started' ]  && [ $i -le 10 ]
+        	while [[ $vpbx_monitor != 'Started' ]]
         	do
                         i=$i+1
+			if [ "$1" -le 10]
+			then
+				break
+			fi
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
                 	vpbx_monitor=`pcs status resources | awk '/vpbx-monitor/ {print $3}'`
@@ -108,9 +128,13 @@ echo -e "************************************************************"
 
 		fail2ban=`pcs status resources | awk '/fail2ban/ {print $3}'`
 		i=0
-        	while [ $fail2ban != 'Started' ] && [ $i -le 10 ]
+        	while [[ $fail2ban != 'Started' ]]
         	do
                         i=$i+1
+			if [ "$1" -le 10]
+			then
+				break
+			fi
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
                 	fail2ban=`pcs status resources | awk '/fail2ban/ {print $3}'`
