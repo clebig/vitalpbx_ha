@@ -55,8 +55,14 @@ echo -e "************************************************************"
 			sleep 1
                 	virtualip=`pcs status resources | awk '/virtual_ip/ {print $3}'`
         	done
-		echo -e "Virtual IP: Started on " $host_slave
-		echo -e "Done"
+		if [ $i -lt 10 ]
+		then
+			echo -e "Virtual IP: Started on " $host_slave
+			echo -e "Done"
+		else
+			echo -e "Virtual IP: Fail to Start on " $host_slave
+			echo -e "Fail"		
+		fi
 
 		Filesystem=`pcs status resources | awk '/DrbdFS/ {print $3}'`
 		i=0
@@ -67,8 +73,14 @@ echo -e "************************************************************"
 			sleep 1
 			Filesystem=`pcs status resources | awk '/DrbdFS/ {print $3}'`
         	done
-		echo -e "Filesystem: Started on " $host_slave
-		echo -e "Done"
+		if [ $i -lt 10 ]
+		then
+			echo -e "Filesystem: Started on " $host_slave
+			echo -e "Done"
+		else
+			echo -e "Filesystem: Fail to Start on " $host_slave
+			echo -e "Fail"		
+		fi
 
 		mysql=`pcs status resources | awk '/mysql/ {print $3}'`
 		i=0
@@ -79,8 +91,14 @@ echo -e "************************************************************"
 			sleep 1
                 	mysql=`pcs status resources | awk '/mysql/ {print $3}'`
         	done
-		echo -e "Mysql: Started on " $host_slave
-		echo -e "Done"
+		if [ $i -lt 10 ]
+		then
+			echo -e "Mysql: Started on " $host_slave
+			echo -e "Done"
+		else
+			echo -e "Mysql: Fail to Start on " $host_slave
+			echo -e "Fail"		
+		fi
 
 		asterisk=`pcs status resources | awk '/asterisk/ {print $3}'`
 		i=0
@@ -91,9 +109,15 @@ echo -e "************************************************************"
 			sleep 1
                 	asterisk=`pcs status resources | awk '/asterisk/ {print $3}'`
         	done
-		echo -e "Asterisk: Started on " $host_slave
-		echo -e "Done"
-
+		if [ $i -lt 10 ]
+		then
+			echo -e "Asterisk: Started on " $host_slave
+			echo -e "Done"
+		else
+			echo -e "Asterisk: Fail to Start on " $host_slave
+			echo -e "Fail"		
+		fi
+		
 		vpbx_monitor=`pcs status resources | awk '/vpbx-monitor/ {print $3}'`
 		i=0
         	while [ $vpbx_monitor != 'Started' ] && [ $i -lt 10 ]
@@ -103,9 +127,15 @@ echo -e "************************************************************"
 			sleep 1
                 	vpbx_monitor=`pcs status resources | awk '/vpbx-monitor/ {print $3}'`
         	done
-		echo -e "VitalPBX Monitor: Started on " $host_slave
-		echo -e "Done"
-
+		if [ $i -lt 10 ]
+		then
+			echo -e "VitalPBX Monitor: Started on " $host_slave
+			echo -e "Done"
+		else
+			echo -e "VitalPBX Monitor: Fail to Start on " $host_slave
+			echo -e "Fail"		
+		fi
+		
 		fail2ban=`pcs status resources | awk '/fail2ban/ {print $3}'`
 		i=0
         	while [ $fail2ban != 'Started' ] && [ $i -lt 10 ]
@@ -115,8 +145,14 @@ echo -e "************************************************************"
 			sleep 1
                 	fail2ban=`pcs status resources | awk '/fail2ban/ {print $3}'`
         	done
-		echo -e "fail2ban: Started on " $host_slave
-		echo -e "Done"
+		if [ $i -lt 10 ]
+		then
+			echo -e "fail2ban: Started on " $host_slave
+			echo -e "Done"
+		else
+			echo -e "fail2ban: Fail to Start on " $host_slave
+			echo -e "Fail"		
+		fi
 		
 		pcs cluster unstandby $host_master
 		sleep 3
