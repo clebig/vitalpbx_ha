@@ -471,11 +471,11 @@ create_dahdi_resource:
 echo -e "************************************************************"
 echo -e "*                    DAHDI Service                      *"
 echo -e "************************************************************"
-[root@vitalpbx1 ~]# pcs resource create dahdi service:dahdi op monitor interval=30s
-[root@vitalpbx1 ~]# pcs cluster cib fs_cfg
-[root@vitalpbx1 ~]# pcs cluster cib-push fs_cfg --config
-[root@vitalpbx1 ~]# pcs -f fs_cfg constraint colocation add dahdi with virtual_ip INFINITY
-[root@vitalpbx1 ~]# pcs -f fs_cfg constraint order mysql then dahdi
+pcs resource create dahdi service:dahdi op monitor interval=30s
+pcs cluster cib fs_cfg
+pcs cluster cib-push fs_cfg --config
+pcs -f fs_cfg constraint colocation add dahdi with virtual_ip INFINITY
+pcs -f fs_cfg constraint order mysql then dahdi
 
 echo -e "21"	> step.txt
 creating_asterisk_resource:
