@@ -188,33 +188,36 @@ case $step in
 		start=${1:-"creating_mariadb_resource"}
   	;;
 	20)
-		start=${1:-"creating_asterisk_resource"}
+		start=${1:-"create_dahdi_resource"}
   	;;
 	21)
-		start=${1:-"compress_asterisk_files"}
+		start=${1:-"creating_asterisk_resource"}
   	;;
 	22)
-		start=${1:-"copy_asterisk_files"}
+		start=${1:-"compress_asterisk_files"}
   	;;
 	23)
-		start=${1:-"remove_master_asterisk_files"}
+		start=${1:-"copy_asterisk_files"}
   	;;
 	24)
-		start=${1:-"create_symbolic_linlk_master_asterisk_files"}
+		start=${1:-"remove_master_asterisk_files"}
   	;;
 	25)
+		start=${1:-"create_symbolic_linlk_master_asterisk_files"}
+  	;;
+	24)
 		start=${1:-"remove_slave_asterisk_files"}
   	;;
-	26)
+	27)
 		start=${1:-"create_symbolic_linlk_slave_asterisk_files"}
   	;;
-	27)
+	28)
 		start=${1:-"create_vitalpbx_resource"}
   	;;
-	28)
+	29)
 		start=${1:-"create_fail2ban_resource"}
   	;;
-	29)
+	30)
 		start=${1:-"vitalpbx_cluster_ok"}
 	;;
 esac
@@ -426,6 +429,10 @@ systemctl stop mariadb
 systemctl disable mariadb
 ssh root@$ip_slave "systemctl stop mariadb"
 ssh root@$ip_slave "systemctl disable mariadb"
+systemctl stop dahdi
+systemctl disable dahdi
+ssh root@$ip_slave "systemctl stop dahdi"
+ssh root@$ip_slave "systemctl disable dahdi"
 echo -e "*** Done ***"
 echo -e "18"	> step.txt
 
@@ -460,16 +467,21 @@ pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
 echo -e "20"	> step.txt
 
+create_dahdi_resource:
+echo -e "************************************************************"
+echo -e "*                    DAHDI Service                      *"
+echo -e "************************************************************"
+[root@vitalpbx1 ~]# pcs resource create dahdi service:dahdi op monitor interval=30s
+[root@vitalpbx1 ~]# pcs cluster cib fs_cfg
+[root@vitalpbx1 ~]# pcs cluster cib-push fs_cfg --config
+[root@vitalpbx1 ~]# pcs -f fs_cfg constraint colocation add dahdi with virtual_ip INFINITY
+[root@vitalpbx1 ~]# pcs -f fs_cfg constraint order mysql then dahdi
+
+echo -e "21"	> step.txt
 creating_asterisk_resource:
 echo -e "************************************************************"
 echo -e "*            Create resource for Asterisk                  *"
 echo -e "************************************************************"
-#cd /usr/lib/ocf/resource.d/heartbeat
-#wget https://raw.githubusercontent.com/ClusterLabs/resource-agents/master/heartbeat/asterisk
-#chmod 755 asterisk
-#scp /usr/lib/ocf/resource.d/heartbeat/asterisk root@$ip_slave:/usr/lib/ocf/resource.d/heartbeat/asterisk
-#ssh root@$ip_slave 'chmod 755 /usr/lib/ocf/resource.d/heartbeat/asterisk'
-#pcs resource create asterisk ocf:heartbeat:asterisk user="root" group="root" op monitor timeout="30"
 pcs resource create asterisk service:asterisk op monitor interval=30s
 pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg --config
@@ -477,7 +489,7 @@ pcs -f fs_cfg constraint colocation add asterisk with virtual_ip INFINITY
 pcs -f fs_cfg constraint order mysql then asterisk
 pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
-echo -e "21"	> step.txt
+echo -e "22"	> step.txt
 
 compress_asterisk_files:
 echo -e "************************************************************"
@@ -489,7 +501,7 @@ tar -zcvf var-lib-asterisk.tgz /var/lib/asterisk
 tar -zcvf usr-lib64-asterisk.tgz /usr/lib64/asterisk
 tar -zcvf var-spool-asterisk.tgz /var/spool/asterisk
 tar -zcvf etc-asterisk.tgz /etc/asterisk
-echo -e "22"	> step.txt
+echo -e "23"	> step.txt
 
 copy_asterisk_files:
 tar xvfz var-asterisk.tgz 
@@ -497,7 +509,7 @@ tar xvfz var-lib-asterisk.tgz
 tar xvfz usr-lib64-asterisk.tgz 
 tar xvfz var-spool-asterisk.tgz 
 tar xvfz etc-asterisk.tgz
-echo -e "23"	> step.txt
+echo -e "24"	> step.txt
 
 remove_master_asterisk_files:
 rm -rf /var/log/asterisk 
@@ -505,7 +517,7 @@ rm -rf /var/lib/asterisk
 rm -rf /usr/lib64/asterisk/ 
 rm -rf /var/spool/asterisk/ 
 rm -rf /etc/asterisk
-echo -e "24"	> step.txt
+echo -e "25"	> step.txt
 
 create_symbolic_linlk_master_asterisk_files:
 ln -s /mnt/var/log/asterisk /var/log/asterisk 
@@ -514,7 +526,7 @@ ln -s /mnt/usr/lib64/asterisk /usr/lib64/asterisk
 ln -s /mnt/var/spool/asterisk /var/spool/asterisk
 ln -s /mnt/etc/asterisk /etc/asterisk
 echo -e "*** Done ***"
-echo -e "25"	> step.txt
+echo -e "26"	> step.txt
 
 remove_slave_asterisk_files:
 echo -e "************************************************************"
@@ -525,7 +537,7 @@ ssh root@$ip_slave 'rm -rf /var/lib/asterisk'
 ssh root@$ip_slave 'rm -rf /usr/lib64/asterisk/'
 ssh root@$ip_slave 'rm -rf /var/spool/asterisk/'
 ssh root@$ip_slave 'rm -rf /etc/asterisk'
-echo -e "26"	> step.txt
+echo -e "27"	> step.txt
 
 create_symbolic_linlk_slave_asterisk_files:
 ssh root@$ip_slave 'ln -s /mnt/var/log/asterisk /var/log/asterisk'
@@ -534,7 +546,7 @@ ssh root@$ip_slave 'ln -s /mnt/usr/lib64/asterisk /usr/lib64/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/var/spool/asterisk /var/spool/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/etc/asterisk /etc/asterisk'
 echo -e "*** Done ***"
-echo -e "27"	> step.txt
+echo -e "28"	> step.txt
 
 create_vitalpbx_resource:
 echo -e "************************************************************"
@@ -547,7 +559,7 @@ pcs -f fs_cfg constraint colocation add vpbx-monitor with virtual_ip INFINITY
 pcs -f fs_cfg constraint order asterisk then vpbx-monitor
 pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
-echo -e "28"	> step.txt
+echo -e "29"	> step.txt
 
 create_fail2ban_resource:
 echo -e "************************************************************"
@@ -560,7 +572,7 @@ pcs -f fs_cfg constraint colocation add fail2ban with virtual_ip INFINITY
 pcs -f fs_cfg constraint order vpbx-monitor then fail2ban
 pcs cluster cib-push fs_cfg --config
 echo -e "*** Done ***"
-echo -e "29"	> step.txt
+echo -e "30"	> step.txt
 
 vitalpbx_cluster_bascul:
 echo -e "************************************************************"
@@ -572,7 +584,7 @@ mv bascul /usr/local/bin
 scp /usr/local/bin/bascul root@$ip_slave:/usr/local/bin/bascul
 ssh root@$ip_slave 'chmod +x /usr/local/bin/bascul'
 echo -e "*** Done ***"
-echo -e "30"	> step.txt
+echo -e "31"	> step.txt
 
 vitalpbx_cluster_ok:
 echo -e "************************************************************"
