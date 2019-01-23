@@ -178,6 +178,7 @@ If you are going to install Sonata Switchboard we recommend you to execute the f
 [root@vitalpbx1 ~]# pcs cluster cib-push fs_cfg --config
 [root@vitalpbx1 ~]# pcs -f fs_cfg constraint colocation add switchboard with virtual_ip INFINITY
 [root@vitalpbx1 ~]# pcs -f fs_cfg constraint order asterisk then switchboard
+[root@vitalpbx1 ~]# pcs cluster cib-push fs_cfg --config
 </pre>
 
 and in the Slave
