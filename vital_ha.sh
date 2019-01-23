@@ -476,6 +476,7 @@ pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg --config
 pcs -f fs_cfg constraint colocation add dahdi with virtual_ip INFINITY
 pcs -f fs_cfg constraint order mysql then dahdi
+pcs cluster cib-push fs_cfg --config
 
 echo -e "21"	> step.txt
 creating_asterisk_resource:
