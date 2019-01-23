@@ -100,6 +100,24 @@ echo -e "************************************************************"
 			echo -e "Fail"		
 		fi
 
+		dahdi=`pcs status resources | awk '/dahdi/ {print $3}'`
+		i=0
+        	while [ $dahdi != 'Started' ] && [ $i -lt 10 ]
+        	do
+			let i=i+1
+                        echo -ne "\r${BAR:0:$i}"
+			sleep 1
+                	dahdi=`pcs status resources | awk '/dahdi/ {print $3}'`
+        	done
+		if [ $i -lt 10 ]
+		then
+			echo -e "Dahdi: Started on " $host_slave
+			echo -e "Done"
+		else
+			echo -e "Dahdi: Fail to Start on " $host_slave
+			echo -e "Fail"		
+		fi
+
 		asterisk=`pcs status resources | awk '/asterisk/ {print $3}'`
 		i=0
         	while [ $asterisk != 'Started' ] && [ $i -lt 10 ]
