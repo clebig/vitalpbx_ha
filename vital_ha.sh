@@ -296,8 +296,8 @@ scp /etc/drbd.d/drbd0.res root@$ip_slave:/etc/drbd.d/drbd0.res
 drbdadm create-md drbd0
 ssh root@$ip_slave "drbdadm create-md drbd0"
 drbdadm up drbd0
-ssh root@$ip_slave "drbdadm up drbd0"
 drbdadm primary drbd0 --force
+ssh root@$ip_slave "drbdadm up drbd0"
 sleep 3
 echo -e "*** Done ***"
 echo -e "8"	> step.txt
