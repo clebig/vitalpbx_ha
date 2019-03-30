@@ -483,6 +483,12 @@ creating_asterisk_resource:
 echo -e "************************************************************"
 echo -e "*            Create resource for Asterisk                  *"
 echo -e "************************************************************"
+sed -i 's/RestartSec=10/RestartSec=1/g'  /usr/lib/systemd/system/asterisk.service
+sed -i 's/Wants=mariadb.service/#Wants=mariadb.service/g'  /usr/lib/systemd/system/asterisk.service
+sed -i 's/After=mariadb.service/#After=mariadb.service/g'  /usr/lib/systemd/system/asterisk.service
+ssh root@$ip_slave "sed -i 's/RestartSec=10/RestartSec=1/g'  /usr/lib/systemd/system/asterisk.service"
+ssh root@$ip_slave "sed -i 's/Wants=mariadb.service/#Wants=mariadb.service/g'  /usr/lib/systemd/system/asterisk.service"
+ssh root@$ip_slave "sed -i 's/After=mariadb.service/#After=mariadb.service/g'  /usr/lib/systemd/system/asterisk.service"
 pcs resource create asterisk service:asterisk op monitor interval=30s
 pcs cluster cib fs_cfg
 pcs cluster cib-push fs_cfg --config
