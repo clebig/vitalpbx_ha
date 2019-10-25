@@ -99,25 +99,7 @@ echo -e "************************************************************"
 			echo -e "Mysql: Fail to Start on " $host_slave
 			echo -e "Fail"		
 		fi
-		
-		fail2ban=`pcs status resources | awk '/fail2ban/ {print $3}'`
-		i=0
-        	while [ $fail2ban != 'Started' ] && [ $i -lt 10 ]
-        	do
-			let i=i+1
-                        echo -ne "\r${BAR:0:$i}"
-			sleep 1
-                	fail2ban=`pcs status resources | awk '/fail2ban/ {print $3}'`
-        	done
-		if [ $i -lt 10 ]
-		then
-			echo -e "fail2ban: Started on " $host_slave
-			echo -e "Done"
-		else
-			echo -e "fail2ban: Fail to Start on " $host_slave
-			echo -e "Fail"		
-		fi
-		
+
 		pcs cluster unstandby $host_master
 		sleep 3
 		echo -e "Done,"
