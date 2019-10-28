@@ -65,6 +65,24 @@ echo -e "************************************************************"
 			echo -e "Fail"		
 		fi
 
+		lsyncd=`pcs status resources | awk '/lsyncd/ {print $4}'`
+		i=0
+        	while [ $lsyncd != 'Started' ] && [ $i -lt 10 ]
+        	do
+			let i=i+1
+                        echo -ne "\r${BAR:0:$i}"
+			sleep 1
+                	lsyncd=`pcs status resources | awk '/lsyncd/ {print $4}'`
+        	done
+		if [ $i -lt 10 ]
+		then
+			echo -e "Lsyncd: Started on " $host_slave
+			echo -e "Done"
+		else
+			echo -e "Lsyncd: Fail to Start on " $host_slave
+			echo -e "Fail"		
+		fi
+
 		asterisk=`pcs status resources | awk '/asterisk/ {print $4}'`
 		i=0
         	while [ $asterisk != 'Started' ] && [ $i -lt 10 ]
