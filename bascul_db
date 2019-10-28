@@ -5,8 +5,9 @@ set -e
 #
 # Support:      rcuadra@aplitel.com
 #
-host_master=`pcs status resources | awk '/Masters/ {print $3}'`
-host_slave=`pcs status resources | awk '/Slaves/ {print $3}'`
+host_active=`pcs status | awk '/virtual_ip/ {print $4}'`
+host_master=`pcs status | awk '/Online/ {print $3}'`
+host_slave=`pcs status | awk '/Online/ {print $4}'`
 
         if [ "$host_master" = "" ] ;then
 		echo -e "There are problems with high availability, please check with the command "pcs status" (we recommend applying the command "pcs cluster unstandby" in both servers)"
@@ -33,15 +34,15 @@ echo -e "************************************************************"
                 i=0
 		pcs cluster unstandby $host_master
 		pcs cluster unstandby $host_slave
-		pcs cluster standby $host_master
-		host_master_new=$host_master
+		pcs cluster standby $host_active
+		host_master_new=$host_active
 		echo -e "Stopping services on " $host_master
 		while [[ $host_master == $host_master_new ]]
 		do
                         let i=i+1
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
-			host_master_new=`pcs status resources | awk '/Masters/ {print $3}'`
+			host_master_new=`pcs status resources | awk '/virtual_ip/ {print $4}'`
 		done
                 echo -e "Done"
                 echo -e "Starting services on " $host_slave
@@ -64,43 +65,7 @@ echo -e "************************************************************"
 			echo -e "Fail"		
 		fi
 
-		Filesystem=`pcs status resources | awk '/DrbdFS/ {print $3}'`
-		i=0
-		while [ $Filesystem != 'Started' ] && [ $i -lt 10 ] 
-        	do
-			let i=i+1
-                        echo -ne "\r${BAR:0:$i}"
-			sleep 1
-			Filesystem=`pcs status resources | awk '/DrbdFS/ {print $3}'`
-        	done
-		if [ $i -lt 10 ]
-		then
-			echo -e "Filesystem: Started on " $host_slave
-			echo -e "Done"
-		else
-			echo -e "Filesystem: Fail to Start on " $host_slave
-			echo -e "Fail"		
-		fi
-
-		mysql=`pcs status resources | awk '/mysql/ {print $3}'`
-		i=0
-        	while [ $mysql != 'Started' ] && [ $i -lt 10 ]
-        	do
-			let i=i+1
-                        echo -ne "\r${BAR:0:$i}"
-			sleep 1
-                	mysql=`pcs status resources | awk '/mysql/ {print $3}'`
-        	done
-		if [ $i -lt 10 ]
-		then
-			echo -e "Mysql: Started on " $host_slave
-			echo -e "Done"
-		else
-			echo -e "Mysql: Fail to Start on " $host_slave
-			echo -e "Fail"		
-		fi
-
-		pcs cluster unstandby $host_master
+		pcs cluster unstandby $host_active
 		sleep 3
 		echo -e "Done,"
 		pcs status
