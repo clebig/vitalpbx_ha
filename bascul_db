@@ -70,25 +70,7 @@ echo -e "************************************************************"
 			echo -e "Virtual IP: Fail to Start on " $host_pasive
 			echo -e "Fail"		
 		fi
-		
-		lsyncd=`pcs status resources | awk '/lsyncd/ {print $3}'`
-		i=0
-        	while [ $lsyncd != 'Started' ] && [ $i -lt 10 ]
-        	do
-			let i=i+1
-                        echo -ne "\r${BAR:0:$i}"
-			sleep 1
-                	lsyncd=`pcs status resources | awk '/lsyncd/ {print $3}'`
-        	done
-		if [ $i -lt 10 ]
-		then
-			echo -e "Lsyncd: Started on " $host_pasive
-			echo -e "Done"
-		else
-			echo -e "Lsyncd: Fail to Start on " $host_pasive
-			echo -e "Fail"		
-		fi		
-		
+
 		mysql=`pcs status resources | awk '/mysql/ {print $3}'`
 		i=0
         	while [ $mysql != 'Started' ] && [ $i -lt 10 ]
