@@ -103,7 +103,8 @@ echo -e "************************************************************"
 		pcs cluster unstandby $host_master
 		sleep 3
 		echo -e "Done,"
-		pcs status
+		pcs status resources
+		drbdadm status
 	else
 		echo -e "Nothing to do, bye, bye"
 	fi
