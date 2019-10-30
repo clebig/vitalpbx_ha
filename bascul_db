@@ -71,14 +71,14 @@ echo -e "************************************************************"
 			echo -e "Fail"		
 		fi
 
-		mysql=`pcs status resources | awk '/mysql/ {print $3}'`
+		mysql=`pcs status resources | awk '/^\s+mysql/ {print $3}'`
 		i=0
         	while [ $mysql != 'Started' ] && [ $i -lt 10 ]
         	do
 			let i=i+1
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
-                	mysql=`pcs status resources | awk '/mysql/ {print $3}'`
+                	mysql=`pcs status resources | awk '/^\s+mysql/ {print $3}'`
         	done
 		if [ $i -lt 10 ]
 		then
