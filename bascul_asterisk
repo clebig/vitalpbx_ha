@@ -82,14 +82,14 @@ echo -e "************************************************************"
 			echo -e "Fail"		
 		fi
 
-	       	asterisk=`pcs status resources | awk '/asterisk/ {print $3}'`
+	       	asterisk=`pcs status resources | awk '/^\s+asterisk/ {print $3}'`
 		i=0
         	while [ $asterisk != 'Started' ] && [ $i -lt 10 ]
         	do
 			let i=i+1
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
-                	asterisk=`pcs status resources | awk '/asterisk/ {print $3}'`
+                	asterisk=`pcs status resources | awk '/^\s+asterisk/ {print $3}'`
         	done
 		if [ $i -lt 10 ]
 		then
