@@ -101,6 +101,7 @@ echo -e "************************************************************"
 		fi
 		
 		pcs cluster unstandby $host_master
+		pcs resource refresh --full
 		sleep 3
 		echo -e "Done,"
 		pcs status
