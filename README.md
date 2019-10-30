@@ -63,6 +63,10 @@ Select (default e): <strong>p</strong><br>
 Selected partition <strong>x</strong> (take note of the assigned partition number as we will need it later)
 <strong>[Enter]</strong>
 <strong>[Enter]</strong>
+Command (m for help): t
+Partition number (1-4, default 4): 4
+Hex code (type L to list all codes): 8e
+Changed type of partition 'Linux' to 'Linux LVM'
 Command (m for help): <strong>w</strong>
 [root@vitalpbx1-2 ~]#  <strong>reboot</strong>
 </pre>
