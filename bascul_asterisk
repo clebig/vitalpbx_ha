@@ -99,7 +99,26 @@ echo -e "************************************************************"
 			echo -e "Asterisk: Fail to Start on " $host_slave
 			echo -e "Fail"		
 		fi
-		
+
+	       	nfs=`pcs status resources | awk '/^\s+nfs/ {print $3}'`
+		i=0
+        	while [ $nfs != 'Started' ] && [ $i -lt 10 ]
+        	do
+			let i=i+1
+                        echo -ne "\r${BAR:0:$i}"
+			sleep 1
+                	asterisk=`pcs status resources | awk '/^\s+nfs/ {print $3}'`
+        	done
+		if [ $i -lt 10 ]
+		then
+			echo -e "NFS: Started on " $host_slave
+			echo -e "Done"
+		else
+			echo -e "NFS: Fail to Start on " $host_slave
+			echo -e "Fail"		
+		fi
+
+
 		pcs cluster unstandby $host_master
 		sleep 3
 		echo -e "Done,"
