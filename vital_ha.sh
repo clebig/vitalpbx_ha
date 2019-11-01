@@ -516,6 +516,7 @@ tar xvfz var-lib-asterisk.tgz
 tar xvfz usr-lib64-asterisk.tgz 
 tar xvfz var-spool-asterisk.tgz 
 tar xvfz etc-asterisk.tgz
+mkdir -p /mnt/var/lib/ombutel
 echo -e "24"	> step.txt
 
 remove_master_asterisk_files:
@@ -528,7 +529,8 @@ echo -e "25"	> step.txt
 
 create_symbolic_linlk_master_asterisk_files:
 ln -s /mnt/var/log/asterisk /var/log/asterisk 
-ln -s /mnt/var/lib/asterisk /var/lib/asterisk 
+ln -s /mnt/var/lib/asterisk /var/lib/asterisk
+ln -s /mnt/var/lib/ombutel /var/lib/ombutel 
 ln -s /mnt/usr/lib64/asterisk /usr/lib64/asterisk
 ln -s /mnt/var/spool/asterisk /var/spool/asterisk
 ln -s /mnt/etc/asterisk /etc/asterisk
@@ -549,6 +551,7 @@ echo -e "27"	> step.txt
 create_symbolic_linlk_slave_asterisk_files:
 ssh root@$ip_slave 'ln -s /mnt/var/log/asterisk /var/log/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/var/lib/asterisk /var/lib/asterisk'
+ssh root@$ip_slave 'ln -s /mnt/var/lib/ombutel /var/lib/ombutel'
 ssh root@$ip_slave 'ln -s /mnt/usr/lib64/asterisk /usr/lib64/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/var/spool/asterisk /var/spool/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/etc/asterisk /etc/asterisk'
