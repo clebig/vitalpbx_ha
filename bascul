@@ -82,14 +82,14 @@ echo -e "************************************************************"
 			echo -e "Fail"		
 		fi
 
-		mysql=`pcs status resources | awk '/mysql/ {print $3}'`
+		mysql=`pcs status resources | awk '/^\s+mysql/ {print $3}'`
 		i=0
         	while [ $mysql != 'Started' ] && [ $i -lt 10 ]
         	do
 			let i=i+1
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
-                	mysql=`pcs status resources | awk '/mysql/ {print $3}'`
+                	mysql=`pcs status resources | awk '/^\s+mysql/ {print $3}'`
         	done
 		if [ $i -lt 10 ]
 		then
@@ -100,14 +100,14 @@ echo -e "************************************************************"
 			echo -e "Fail"		
 		fi
 
-		dahdi=`pcs status resources | awk '/dahdi/ {print $3}'`
+		dahdi=`pcs status resources | awk '/^\s+dahdi/ {print $3}'`
 		i=0
         	while [ $dahdi != 'Started' ] && [ $i -lt 10 ]
         	do
 			let i=i+1
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
-                	dahdi=`pcs status resources | awk '/dahdi/ {print $3}'`
+                	dahdi=`pcs status resources | awk '/^\s+dahdi/ {print $3}'`
         	done
 		if [ $i -lt 10 ]
 		then
@@ -118,14 +118,14 @@ echo -e "************************************************************"
 			echo -e "Fail"		
 		fi
 
-		asterisk=`pcs status resources | awk '/asterisk/ {print $3}'`
+		asterisk=`pcs status resources | awk '/^\s+asterisk/ {print $3}'`
 		i=0
         	while [ $asterisk != 'Started' ] && [ $i -lt 10 ]
         	do
 			let i=i+1
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
-                	asterisk=`pcs status resources | awk '/asterisk/ {print $3}'`
+                	asterisk=`pcs status resources | awk '/^\s+asterisk/ {print $3}'`
         	done
 		if [ $i -lt 10 ]
 		then
@@ -136,14 +136,14 @@ echo -e "************************************************************"
 			echo -e "Fail"		
 		fi
 		
-		vpbx_monitor=`pcs status resources | awk '/vpbx-monitor/ {print $3}'`
+		vpbx_monitor=`pcs status resources | awk '/^\s+vpbx-monitor/ {print $3}'`
 		i=0
         	while [ $vpbx_monitor != 'Started' ] && [ $i -lt 10 ]
         	do
 			let i=i+1
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
-                	vpbx_monitor=`pcs status resources | awk '/vpbx-monitor/ {print $3}'`
+                	vpbx_monitor=`pcs status resources | awk '/^\s+vpbx-monitor/ {print $3}'`
         	done
 		if [ $i -lt 10 ]
 		then
@@ -154,14 +154,14 @@ echo -e "************************************************************"
 			echo -e "Fail"		
 		fi
 		
-		fail2ban=`pcs status resources | awk '/fail2ban/ {print $3}'`
+		fail2ban=`pcs status resources | awk '/^\s+fail2ban/ {print $3}'`
 		i=0
         	while [ $fail2ban != 'Started' ] && [ $i -lt 10 ]
         	do
 			let i=i+1
                         echo -ne "\r${BAR:0:$i}"
 			sleep 1
-                	fail2ban=`pcs status resources | awk '/fail2ban/ {print $3}'`
+                	fail2ban=`pcs status resources | awk '/^\s+fail2ban/ {print $3}'`
         	done
 		if [ $i -lt 10 ]
 		then
