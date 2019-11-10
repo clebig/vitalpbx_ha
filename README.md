@@ -44,14 +44,14 @@ We will configure in each server the IP address and the host name. Go to the web
 First change the Hostname, remember press the Check button.<br>
 Disable the DHCP option and set these values<br>
 
-| Name          | Master           | Slave            |
-| ------------- | ---------------- | ---------------- |
-| Hostname      | vitalpbx1.local  | vitalpbx2.local  |
-| IP Address    | 192.168.30.10    | 192.168.30.20    |
-| Netmask       | 255.255.248.0    | 255.255.248.0    |
-| Gateway       | 192.168.24.1     | 192.168.24.1     |
-| Primary DNS   | 8.8.8.8          | 8.8.8.8          |
-| Secondary DNS | 8.8.4.4          | 8.8.4.4          |
+| Name          | Master                 | Slave                 |
+| ------------- | ---------------------- | --------------------- |
+| Hostname      | vitalpbx-master.local  | vitalpbx-slave.local  |
+| IP Address    | 192.168.30.10          | 192.168.30.20         |
+| Netmask       | 255.255.248.0          | 255.255.248.0         |
+| Gateway       | 192.168.24.1           | 192.168.24.1          |
+| Primary DNS   | 8.8.8.8                | 8.8.8.8               |
+| Secondary DNS | 8.8.4.4                | 8.8.4.4               |
 
 ## Create Disk
 Now we connect through ssh to each of the servers.<br>
@@ -74,16 +74,17 @@ Command (m for help): <strong>w</strong>
 ## Install Dependencies
 Install the necessary dependencies on both servers<br>
 <pre>
-[root@vitalpbx1-2 ~]#  yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
+[root@vitalpbx-master ~]#  yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
+[root@vitalpbx-slave ~]#  yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
 </pre>
 
 ## Script
 Now copy and run the following script<br>
 <pre>
-[root@vitalpbx1 ~]#  cd /
-[root@vitalpbx1 ~]#  wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vital_ha.sh
-[root@vitalpbx1 ~]#  chmod +x vital_ha.sh
-[root@vitalpbx1 ~]#  ./vital_ha.sh
+[root@vitalpbx-master ~]#  cd /
+[root@vitalpbx-master ~]#  wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vital_ha.sh
+[root@vitalpbx-master ~]#  chmod +x vital_ha.sh
+[root@vitalpbx-master ~]#  ./vital_ha.sh
 </pre>
 Set these values, remember the Floating IP Mask must be 2 digit format (SIDR) and the Disk is that you created in the step “Create Disk”:
 <pre>
@@ -107,43 +108,54 @@ At the end of the installation you have to see the following message
 ************************************************************
 *                VitalPBX Cluster OK                       *
 ************************************************************
- virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx1.local
+ virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx-master.local
  Master/Slave Set: DrbdDataClone [DrbdData]
-     Masters: [ vitalpbx1.local ]
-     Slaves: [ vitalpbx2.local ]
- DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx1.local
- mysql  (ocf::heartbeat:mysql): Started vitalpbx1.local
- asterisk       (ocf::heartbeat:asterisk):      Started vitalpbx1.local
- fail2ban       (service:fail2ban):     Started vitalpbx1.local
- vpbx-monitor   (service:vpbx-monitor): Started vitalpbx1.local
+     Masters: [ vitalpbx-master.local ]
+     Slaves: [ vitalpbx-slave.local ]
+ DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx-master.local
+ mysql  (ocf::heartbeat:mysql): Started vitalpbx-master.local
+ dahdi  (service:dahdi):        Started vitalpbx-master.local
+ asterisk       (service:asterisk):     Started vitalpbx-master.local
+ vpbx-monitor   (service:vpbx-monitor): Started vitalpbx-master.local
+ fail2ban       (service:fail2ban):     Started vitalpbx-master.local
+drbd0 role:Primary
+  disk:UpToDate
+  vitalpbx-slave.local role:Secondary
+    peer-disk:UpToDate
+
+************************************************************
+*       Before restarting the servers wait for drbd        *
+*            to finish synchronizing the disks             *
+*    Use the *drbdadm status* command to see its status    *
+************************************************************
 *** Done ***
 </pre>
 
 Now check if drbd has finished synchronizing the discs 
 <pre>
 
-[root@vitalpbx1 ~]# drbdadm status
+[root@vitalpbx-master ~]# drbdadm status
 drbd0 role:Primary
   disk:UpToDate
   vitalpbx2.local role:Secondary
     peer-disk:UpToDate
 
-[root@vitalpbx1 ~]#
+[root@vitalpbx-master ~]#
 </pre>
 If it shows the previous message it means that everything is fine and we can continue, otherwise we have to wait for it to finish synchronizing.
 
-Now, reboot the server1 and wait for status change in server2.<br>
+Now, reboot the vitalpbx-master and wait for status change in vitalpbx-slave.<br>
 <pre>
-[root@vitalpbx1 ~]# reboot
+[root@vitalpbx-master ~]# reboot
 
-[root@vitalpbx2 ~]# pcs status
+[root@vitalpbx-slave ~]# pcs status
 </pre>
 
-Then reboot the server2, connect to server1 and wait for status change in server1.
+Then reboot the vitalpbx-slave, connect to vitalpbx-master and wait for status change in server1.
 <pre>
-[root@vitalpbx2 ~]# reboot
+[root@vitalpbx-slave ~]# reboot
 
-[root@vitalpbx1 ~]# pcs status
+[root@vitalpbx-master ~]# pcs status
 </pre>
 
 ## Test
@@ -151,17 +163,17 @@ Then reboot the server2, connect to server1 and wait for status change in server
 To execute the process of changing the role, we recommend using the following command:<br>
 
 <pre>
-[root@vitalpbx1-2 /]# bascul
+[root@vitalpbx-master /]# bascul
 ************************************************************
 *     Change the roles of servers in high availability     *
 * <strong>WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING</strong>  *
 *All calls in progress will be lost and the system will be *
 *     be in an unavailable state for a few seconds.        *
 ************************************************************
-Are you sure to switch from vitalpbx1.local to vitalpbx2.local? (yes,no) >
+Are you sure to switch from vitalpbx-master.local to vitalpbx-slave.local? (yes,no) >
 </pre>
 
-This action convert the vitalpbx1.local to Slave and vitalpbx2.local to Master. If you want to return to default do the same again.<br>
+This action convert the vitalpbx-master.local to Slave and vitalpbx-slave.local to Master. If you want to return to default do the same again.<br>
 
 Next we will show a short video how high availability works in VitalPBX<br>
 <div align="center">
@@ -192,7 +204,7 @@ and in the Slave
 [root@vitalpbx2 ~]# systemctl disable switchboard
 </pre>
 
-## Update
+## Update VitalPBX version
 
 To update VitalPBX to the latest version just follow the following steps:<br>
 1.- From your browser, go to ip 192.168.30.30<br>
@@ -207,6 +219,14 @@ To update VitalPBX to the latest version just follow the following steps:<br>
 <pre>
 [root@vitalpbx1 /]# bascul
 </pre>
+
+## Some useful commands
+• <strong>bascul</strong>, is used to change roles between high availability servers. If all is well, a confirmation question should appear if we wish to execute the action.
+• <strong>role</strong>, shows the status of the current server. If all is well you should return Masters or Slaves.
+• <strong>pcs resource refresh --full</strong>, to poll all resources even if the status is unknown, enter the following command.
+• <strong>pcs cluster unstandby host</strong>, in some cases the bascul command does not finish tilting, which causes one of the servers to be in standby (stop), with this command the state is restored to normal.
+• <strong>drbdadm status</strong>, shows the integrity status of the disks that are being shared between both servers in high availability. If for some reason the status of Connecting or Standalone returns to us, wait a while and if the state remains it is because there are synchronization problems between both servers and you should execute the drbdsplit command.
+• <strong>drbdsplit</strong>, solves DRBD split brain recovery.<br>
 
 <strong>CONGRATULATIONS</strong>, you have installed and tested the high availability in <strong>VitalPBX</strong><br>
 :+1:
