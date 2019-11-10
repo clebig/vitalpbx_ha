@@ -108,20 +108,20 @@ At the end of the installation you have to see the following message
 ************************************************************
 *                VitalPBX Cluster OK                       *
 ************************************************************
- virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx-master.local
- Master/Slave Set: DrbdDataClone [DrbdData]
+virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx-master.local
+Master/Slave Set: DrbdDataClone [DrbdData]
      Masters: [ vitalpbx-master.local ]
      Slaves: [ vitalpbx-slave.local ]
- DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx-master.local
- mysql  (ocf::heartbeat:mysql): Started vitalpbx-master.local
- dahdi  (service:dahdi):        Started vitalpbx-master.local
- asterisk       (service:asterisk):     Started vitalpbx-master.local
- vpbx-monitor   (service:vpbx-monitor): Started vitalpbx-master.local
- fail2ban       (service:fail2ban):     Started vitalpbx-master.local
+DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx-master.local
+mysql  (ocf::heartbeat:mysql): Started vitalpbx-master.local
+dahdi  (service:dahdi):        Started vitalpbx-master.local
+asterisk       (service:asterisk):     Started vitalpbx-master.local
+vpbx-monitor   (service:vpbx-monitor): Started vitalpbx-master.local
+fail2ban       (service:fail2ban):     Started vitalpbx-master.local
 drbd0 role:Primary
   disk:UpToDate
   vitalpbx-slave.local role:Secondary
-    peer-disk:UpToDate
+  peer-disk:UpToDate
 
 ************************************************************
 *       Before restarting the servers wait for drbd        *
