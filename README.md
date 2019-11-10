@@ -57,7 +57,7 @@ Disable the DHCP option and set these values<br>
 Now we connect through ssh to each of the servers.<br>
 a.- Initialize the partition to allocate the available space on the hard disk. Do these on both servers.<br>
 <pre>
-[root@vitalpbx1-2 ~]#  fdisk /dev/sda
+[root@vitalpbx-master ~]#  fdisk /dev/sda
 Command (m for help): <strong>n</strong>
 Select (default e): <strong>p</strong><br>
 Selected partition <strong>x</strong> (take note of the assigned partition number as we will need it later)
@@ -68,7 +68,7 @@ Partition number (1-4, default 4): 4
 Hex code (type L to list all codes): 8e
 Changed type of partition 'Linux' to 'Linux LVM'
 Command (m for help): <strong>w</strong>
-[root@vitalpbx1-2 ~]#  <strong>reboot</strong>
+[root@vitalpbx-master ~]#  <strong>reboot</strong>
 </pre>
 
 ## Install Dependencies
