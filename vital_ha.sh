@@ -528,7 +528,6 @@ echo -e "************************************************************"
 tar -zcvf /mnt/var-asterisk.tgz /var/log/asterisk 
 tar -zcvf /mnt/var-lib-asterisk.tgz /var/lib/asterisk
 tar -zcvf /mnt/var-lib-ombutel.tgz /var/lib/ombutel
-tar -zcvf /mnt/usr-share-ombutel.tgz /usr/share/ombutel
 tar -zcvf /mnt/usr-lib64-asterisk.tgz /usr/lib64/asterisk
 tar -zcvf /mnt/var-spool-asterisk.tgz /var/spool/asterisk
 tar -zcvf /mnt/etc-asterisk.tgz /etc/asterisk
@@ -538,7 +537,6 @@ copy_asterisk_files:
 tar xvfz /mnt/var-asterisk.tgz -C /mnt/
 tar xvfz /mnt/var-lib-asterisk.tgz -C /mnt/
 tar xvfz /mnt/var-lib-ombutel.tgz -C /mnt/
-tar xvfz /mnt/usr-share-ombutel.tgz -C /mnt/
 tar xvfz /mnt/usr-lib64-asterisk.tgz -C /mnt/
 tar xvfz /mnt/var-spool-asterisk.tgz -C /mnt/
 tar xvfz /mnt/etc-asterisk.tgz -C /mnt/
@@ -548,14 +546,12 @@ remove_master_asterisk_files:
 rm -f /mnt/var-asterisk.tgz 
 rm -f /mnt/var-lib-asterisk.tgz
 rm -f /mnt/var-lib-ombutel.tgz
-rm -f /mnt/usr-share-ombutel.tgz
 rm -f /mnt/usr-lib64-asterisk.tgz 
 rm -f /mnt/var-spool-asterisk.tgz 
 rm -f /mnt/etc-asterisk.tgz
 rm -rf /var/log/asterisk 
 rm -rf /var/lib/asterisk
 rm -rf /var/lib/ombutel 
-rm -rf /usr/share/ombutel 
 rm -rf /usr/lib64/asterisk
 rm -rf /var/spool/asterisk
 rm -rf /etc/asterisk
@@ -565,7 +561,6 @@ create_symbolic_linlk_master_asterisk_files:
 ln -s /mnt/var/log/asterisk /var/log/asterisk
 ln -s /mnt/var/lib/asterisk /var/lib/asterisk
 ln -s /mnt/var/lib/ombutel /var/lib/ombutel
-ln -s /mnt/usr/share/ombutel /usr/share/ombutel
 ln -s /mnt/usr/lib64/asterisk /usr/lib64/asterisk
 ln -s /mnt/var/spool/asterisk /var/spool/asterisk
 ln -s /mnt/etc/asterisk /etc/asterisk
@@ -580,7 +575,6 @@ echo -e "************************************************************"
 ssh root@$ip_slave 'rm -rf /var/log/asterisk'
 ssh root@$ip_slave 'rm -rf /var/lib/asterisk'
 ssh root@$ip_slave 'rm -rf /var/lib/ombutel'
-ssh root@$ip_slave 'rm -rf /usr/share/ombutel'
 ssh root@$ip_slave 'rm -rf /usr/lib64/asterisk'
 ssh root@$ip_slave 'rm -rf /var/spool/asterisk'
 ssh root@$ip_slave 'rm -rf /etc/asterisk'
@@ -590,7 +584,6 @@ create_symbolic_linlk_slave_asterisk_files:
 ssh root@$ip_slave 'ln -s /mnt/var/log/asterisk /var/log/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/var/lib/asterisk /var/lib/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/var/lib/ombutel /var/lib/ombutel'
-ssh root@$ip_slave 'ln -s /mnt/usr/share/ombutel /usr/share/ombutel'
 ssh root@$ip_slave 'ln -s /mnt/usr/lib64/asterisk /usr/lib64/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/var/spool/asterisk /var/spool/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/etc/asterisk /etc/asterisk'
