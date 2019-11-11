@@ -595,7 +595,6 @@ ssh root@$ip_slave 'ln -s /mnt/usr/share/ombutel /usr/share/ombutel'
 ssh root@$ip_slave 'ln -s /mnt/usr/lib64/asterisk /usr/lib64/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/var/spool/asterisk /var/spool/asterisk'
 ssh root@$ip_slave 'ln -s /mnt/etc/asterisk /etc/asterisk'
-ssh root@$ip_slave 'ln -s /mnt/usr/share/ombutel /usr/share/ombutel'
 echo -e "*** Done ***"
 echo -e "26"	> step.txt
 
