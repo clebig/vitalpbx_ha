@@ -540,6 +540,7 @@ tar xvfz /mnt/var-lib-ombutel.tgz -C /mnt/
 tar xvfz /mnt/usr-lib64-asterisk.tgz -C /mnt/
 tar xvfz /mnt/var-spool-asterisk.tgz -C /mnt/
 tar xvfz /mnt/etc-asterisk.tgz -C /mnt/
+chmod -R 775 /mnt/var/log/asterisk
 echo -e "22"	> step.txt
 
 remove_master_asterisk_files:
