@@ -18,31 +18,6 @@ b.- Install VitalPBX Version 3.0 in two servers with similar characteristics.<br
 c.- MariaDB Galera (include in VitalPBX 3).<br>
 d.- Corosync, Pacemaker, PCS and lsyncd.
 
-## Installation
-We are going to start by installing VitalPBX on two servers
-<pre>
-a.- When starting the installation go to:
-<strong>INSTALLATION DESTINATION (Custom partitioning selected)</strong><br>
-b.- Select:
-<strong>I will configure partitioning</strong>
-And press the button
-<strong>Done</strong><br>
-c.- Select the root partition:
-<strong>/</strong>
-Change the capacity to:
-<strong>Desired Capacity: 20GB</strong>
-We need enough space for the operating system and its applications in the future; then click<br>
-<strong>Modify button</strong>
-Select disk and press the buttons 
-<strong>Select</strong>
-<strong>Update Settings</strong><br>
-d.- Finally, we press the button:
-<strong>Done</strong>
-And press the button
-<strong>Accept Changes</strong>
-</pre>
-And continue with the installation.<br>
-
 ## Configurations
 We will configure in each server the IP address and the host name. Go to the web interface to: Admin>System Settinngs>Network Settings.<br>
 First change the Hostname, remember press the Check button.<br>
@@ -50,53 +25,66 @@ Disable the DHCP option and set these values<br>
 
 | Name          | Master                 | Slave                 |
 | ------------- | ---------------------- | --------------------- |
-| Hostname      | vitalpbx-master.local  | vitalpbx-slave.local  |
-| IP Address    | 192.168.30.10          | 192.168.30.20         |
-| Netmask       | 255.255.248.0          | 255.255.248.0         |
-| Gateway       | 192.168.24.1           | 192.168.24.1          |
+| Hostname      | vitalpbx1.local        | vitalpbx2.local       |
+| IP Address    | 192.168.10.61          | 192.168.10.62         |
+| Netmask       | 255.255.255.0          | 255.255.255.0         |
+| Gateway       | 192.168.10.1           | 192.168.10.1          |
 | Primary DNS   | 8.8.8.8                | 8.8.8.8               |
 | Secondary DNS | 8.8.4.4                | 8.8.4.4               |
-
-## Create Disk
-Now we connect through ssh to each of the servers.<br>
-a.- Initialize the partition to allocate the available space on the hard disk. Do these on both servers.<br>
-<pre>
-[root@vitalpbx-master ~]#  fdisk /dev/sda
-Command (m for help): <strong>n</strong>
-Select (default e): <strong>p</strong><br>
-Selected partition <strong>x</strong> (take note of the assigned partition number as we will need it later)
-<strong>[Enter]</strong>
-<strong>[Enter]</strong>
-Command (m for help): t
-Partition number (1-4, default 4): 4
-Hex code (type L to list all codes): 8e
-Changed type of partition 'Linux' to 'Linux LVM'
-Command (m for help): <strong>w</strong>
-[root@vitalpbx-master ~]#  <strong>reboot</strong>
-</pre>
 
 ## Install Dependencies
 Install the necessary dependencies on both servers<br>
 <pre>
-[root@vitalpbx-master ~]#  yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
-[root@vitalpbx-slave ~]#  yum -y install drbd90-utils kmod-drbd90 corosync pacemaker pcs<br>
+[root@vitalpbx1 ~]# yum -y install corosync pacemaker pcs lsyncd<br>
+[root@vitalpbx2 ~]# yum -y install corosync pacemaker pcs lsyncd<br>
+</pre>
+
+## Create authorization key for the Access between the two servers without credentials
+
+Create key in Server <strong>1</strong>
+<pre>
+[root@vitalpbx<strong>1</strong> ~]# ssh-keygen -f /root/.ssh/id_rsa -t rsa -N '' >/dev/null
+[root@vitalpbx<strong>1</strong> ~]# ssh-copy-id root@<strong>192.168.10.62</strong>
+Are you sure you want to continue connecting (yes/no)? <strong>yes</strong>
+root@192.168.10.62's password: <strong>(remote server root’s password)</strong>
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   "ssh 'root@192.168.10.62'"
+and check to make sure that only the key(s) you wanted were added. 
+
+[root@vitalpbx<strong>1</strong> ~]#
+</pre>
+
+Create key in Server <strong>2</strong>
+<pre>
+[root@vitalpbx<strong>2</strong> ~]# ssh-keygen -f /root/.ssh/id_rsa -t rsa -N '' >/dev/null
+[root@vitalpbx<strong>2</strong> ~]# ssh-copy-id root@<strong>192.168.10.61</strong>
+Are you sure you want to continue connecting (yes/no)? <strong>yes</strong>
+root@192.168.10.61's password: <strong>(remote server root’s password)</strong>
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   "ssh 'root@192.168.10.61'"
+and check to make sure that only the key(s) you wanted were added. 
+
+[root@vitalpbx<strong>2</strong> ~]#
 </pre>
 
 ## Script
 Now copy and run the following script<br>
 <pre>
 [root@vitalpbx-master ~]#  cd /
-[root@vitalpbx-master ~]#  wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vital_ha.sh
-[root@vitalpbx-master ~]#  chmod +x vital_ha.sh
-[root@vitalpbx-master ~]#  ./vital_ha.sh
+[root@vitalpbx-master ~]#  wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vpbxha.sh
+[root@vitalpbx-master ~]#  chmod +x vpbxha.sh
+[root@vitalpbx-master ~]#  ./vpbxha.sh
 </pre>
 Set these values, remember the Floating IP Mask must be 2 digit format (SIDR) and the Disk is that you created in the step “Create Disk”:
 <pre>
-IP Master.......... > <strong>192.168.30.10</strong>
-IP Slave........... > <strong>192.168.30.20</strong>
-Floating IP........ > <strong>192.168.30.30</strong>
-Floating IP Mask... > <strong>21</strong>
-Disk (sdax)........ > <strong>sda4</strong>
+IP Master.......... > <strong>192.168.10.61</strong>
+IP Slave........... > <strong>192.168.10.62</strong>
+Floating IP........ > <strong>192.168.10.60</strong>
+Floating IP Mask... > <strong>24</strong>
 hacluster password. > <strong>mypassword</strong>
 
 Are you sure to continue with these settings? (yes,no) > <strong>yes</strong>
@@ -111,58 +99,47 @@ At the end of the installation you have to see the following message
 <pre>
 ************************************************************
 *                VitalPBX Cluster OK                       *
+*    Don't worry if you still see the status in Stop       *
+*  sometimes you have to wait about 30 seconds for it to   *
+*                 restart completely                       *
+*         after 30 seconds run the command: role           *
 ************************************************************
-virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx-master.local
-Master/Slave Set: DrbdDataClone [DrbdData]
-     Masters: [ vitalpbx-master.local ]
-     Slaves: [ vitalpbx-slave.local ]
-DrbdFS (ocf::heartbeat:Filesystem):    Started vitalpbx-master.local
-mysql  (ocf::heartbeat:mysql): Started vitalpbx-master.local
-dahdi  (service:dahdi):        Started vitalpbx-master.local
-asterisk       (service:asterisk):     Started vitalpbx-master.local
-vpbx-monitor   (service:vpbx-monitor): Started vitalpbx-master.local
-fail2ban       (service:fail2ban):     Started vitalpbx-master.local
-drbd0 role:Primary
-  disk:UpToDate
-  vitalpbx-slave.local role:Secondary
-  peer-disk:UpToDate
+
+ _    _ _           _ ______ ______ _    _
+| |  | (_)_        | (_____ (____  \ \  / /
+| |  | |_| |_  ____| |_____) )___)  ) \/ /
+ \ \/ /| |  _)/ _  | |  ____/  __  ( )  (
+  \  / | | |_( ( | | | |    | |__)  ) /\ \
+   \/  |_|\___)_||_|_|_|    |______/_/  \_\
+
+
+ Role           : Master
+ Version        : 3.0.0-4
+ Asterisk       : 17.6.0
+ Linux Version  : CentOS Linux release 7.8.2003 (Core)
+ Welcome to     : vitalpbx1.local
+ Uptime         :  1:30
+ Load           : Last Minute: 0.74, Last 5 Minutes: 0.30, Last 15 Minutes: 0.16
+ Users          : 4 users
+ IP Address     : 192.168.10.61 192.168.10.60
+ Clock          : Wed 2020-08-05 09:04:19 EDT
+ NTP Sync.      : no
+
 
 ************************************************************
-*       Before restarting the servers wait for drbd        *
-*            to finish synchronizing the disks             *
-*    Use the *drbdadm status* command to see its status    *
+*                  Servers Status                          *
 ************************************************************
-*** Done ***
-</pre>
+Master
+ virtual_ip     (ocf::heartbeat:IPaddr2):       Started vitalpbx1.local
+ asterisk       (service:asterisk):     Started vitalpbx1.local
+ lsyncd (service:lsyncd.service):       Started vitalpbx1.local
 
-Now check if drbd has finished synchronizing the discs 
+Servers Status
+  vitalpbx1.local: Online
+  vitalpbx2.local: Online
 <pre>
 
-[root@vitalpbx-master ~]# drbdadm status
-drbd0 role:Primary
-  disk:UpToDate
-  vitalpbx2.local role:Secondary
-    peer-disk:UpToDate
-
-[root@vitalpbx-master ~]#
-</pre>
-If it shows the previous message it means that everything is fine and we can continue, otherwise we have to wait for it to finish synchronizing.
-
-Now, reboot the vitalpbx-master and wait for status change in vitalpbx-slave.<br>
-<pre>
-[root@vitalpbx-master ~]# reboot
-
-[root@vitalpbx-slave ~]# pcs status
-</pre>
-
-Then reboot the vitalpbx-slave, connect to vitalpbx-master and wait for status change in server1.
-<pre>
-[root@vitalpbx-slave ~]# reboot
-
-[root@vitalpbx-master ~]# pcs status
-</pre>
-
-## Test
+## Change Servers Role
 
 To execute the process of changing the role, we recommend using the following command:<br>
 
@@ -174,50 +151,52 @@ To execute the process of changing the role, we recommend using the following co
 *All calls in progress will be lost and the system will be *
 *     be in an unavailable state for a few seconds.        *
 ************************************************************
-Are you sure to switch from vitalpbx-master.local to vitalpbx-slave.local? (yes,no) >
+Are you sure to switch from vitalpbx<strong>1</strong>.local to vitalpbx<strong>2</strong>.local? (yes,no) >
 </pre>
 
-This action convert the vitalpbx-master.local to Slave and vitalpbx-slave.local to Master. If you want to return to default do the same again.<br>
+This action convert the vitalpbx<strong>1</strong>.local to Standby and vitalpbx<strong>2</strong>.local to Master. If you want to return to default do the same again.<br>
 
 Next we will show a short video how high availability works in VitalPBX<br>
 <div align="center">
   <a href="https://www.youtube.com/watch?v=3yoa3KXKMy0"><img src="https://img.youtube.com/vi/3yoa3KXKMy0/0.jpg" alt="High Availability demo video on VitalPBX"></a>
 </div>
 
-## Turn on and turn off
-When you have to turn off the servers, when you turn it on always start with the Master, wait for the Master to start and then turn on the Slave<br>
+## Recommendations
+If you have to turn off both servers at the same time, we recommend that you start by turning off the one in Standby and then the Master<br>
+If the two servers stopped abruptly, always start first that you think you have the most up-to-date information and a few minutes later the other server<br>
+If you want to update the version of VitalPBX we recommend you do it first on Server 1, then do a bascul and do it again on Server 2<br>
 
-## Sonata Switchboard
-If you are going to install Sonata Switchboard we recommend you to execute the following commands in the Master
+## Dahdi
+If you are going to install Dhadi we recommend you to execute the following commands in the Server <strong>1</strong>
 
 <pre>
-[root@vitalpbx1 ~]# systemctl stop switchboard
-[root@vitalpbx1 ~]# systemctl disable switchboard
-[root@vitalpbx1 ~]# pcs resource create switchboard service:switchboard op monitor interval=30s
+[root@vitalpbx1 ~]# systemctl stop dahdi
+[root@vitalpbx1 ~]# systemctl disable dahdi
+[root@vitalpbx1 ~]# pcs resource create dahdi service:dahdi op monitor interval=30s
 [root@vitalpbx1 ~]# pcs cluster cib fs_cfg
 [root@vitalpbx1 ~]# pcs cluster cib-push fs_cfg --config
-[root@vitalpbx1 ~]# pcs -f fs_cfg constraint colocation add switchboard with virtual_ip INFINITY
-[root@vitalpbx1 ~]# pcs -f fs_cfg constraint order asterisk then switchboard
+[root@vitalpbx1 ~]# pcs -f fs_cfg constraint colocation add dahdi with virtual_ip INFINITY
+[root@vitalpbx1 ~]# pcs -f fs_cfg constraint order lsyncd then dahdi
 [root@vitalpbx1 ~]# pcs cluster cib-push fs_cfg --config
 </pre>
 
-and in the Slave
+and in the Server <strong>2</strong>
 
 <pre>
-[root@vitalpbx2 ~]# systemctl stop switchboard
-[root@vitalpbx2 ~]# systemctl disable switchboard
+[root@vitalpbx2 ~]# systemctl stop dahdi
+[root@vitalpbx2 ~]# systemctl disable dahdi
 </pre>
 
 ## Update VitalPBX version
 
 To update VitalPBX to the latest version just follow the following steps:<br>
-1.- From your browser, go to ip 192.168.30.30<br>
+1.- From your browser, go to ip 192.168.10.60<br>
 2.- Update VitalPBX from the interface<br>
 3.- Execute the following command in Master console<br>
 <pre>
 [root@vitalpbx1 /]# bascul
 </pre>
-4.- From your browser, go to ip 192.168.30.30 again<br>
+4.- From your browser, go to ip 192.168.10.60 again<br>
 5.- Update VitalPBX from the interface<br>
 6.- Execute the following command in Master console<br>
 <pre>
@@ -229,10 +208,13 @@ To update VitalPBX to the latest version just follow the following steps:<br>
 • <strong>role</strong>, shows the status of the current server. If all is well you should return Masters or Slaves.<br>
 • <strong>pcs resource refresh --full</strong>, to poll all resources even if the status is unknown, enter the following command.<br>
 • <strong>pcs cluster unstandby host</strong>, in some cases the bascul command does not finish tilting, which causes one of the servers to be in standby (stop), with this command the state is restored to normal.<br>
-• <strong>drbdadm status</strong>, shows the integrity status of the disks that are being shared between both servers in high availability. If for some reason the status of Connecting or Standalone returns to us, wait a while and if the state remains it is because there are synchronization problems between both servers and you should execute the drbdsplit command.<br>
-• <strong>drbdsplit</strong>, solves DRBD split brain recovery.<br>
 
-<strong>CONGRATULATIONS</strong>, you have installed and tested the high availability in <strong>VitalPBX</strong><br>
+## More Information
+If you want more information that will help you solve problems about High Availability in VitalPBX we invite you to see the following manual<br>
+
+
+
+<strong>CONGRATULATIONS</strong>, you have installed and tested the high availability in <strong>VitalPBX 3</strong><br>
 :+1:
 
 
