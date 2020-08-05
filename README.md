@@ -4,7 +4,9 @@ High availability is a characteristic of a system which aims to ensure an agreed
 
 Make a high-availability cluster out of any pair of VitalPBX servers. VitalPBX can detect a range of failures on one VitalPBX server and automatically transfer control to the other server, resulting in a telephony environment with minimal down time.<br>
 
-Important note:
+<div class="text-red mb-2">
+<strong>Important note:</strong><br>
+</div>
 Since DRBD is no longer used in version 3, it is not possible to migrate a High Availability VitalPBX from Version 2 to 3.
 
 ## Example:<br>
@@ -19,8 +21,8 @@ c.- MariaDB Galera (include in VitalPBX 3).<br>
 d.- Corosync, Pacemaker, PCS and lsyncd.
 
 ## Configurations
-We will configure in each server the IP address and the host name. Go to the web interface to: Admin>System Settinngs>Network Settings.<br>
-First change the Hostname, remember press the Check button.<br>
+We will configure in each server the IP address and the host name. Go to the web interface to: <strong>Admin>System Settinngs>Network Settings</strong>.<br>
+First change the Hostname, remember press the <strong>Check</strong> button.<br>
 Disable the DHCP option and set these values<br>
 
 | Name          | Master                 | Slave                 |
