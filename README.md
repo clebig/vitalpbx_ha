@@ -1,8 +1,11 @@
-VitalPBX High Availability (Version 2)
+VitalPBX High Availability (Version 3)
 =====
 High availability is a characteristic of a system which aims to ensure an agreed level of operational performance, usually uptime, for a higher than normal period.<br>
 
 Make a high-availability cluster out of any pair of VitalPBX servers. VitalPBX can detect a range of failures on one VitalPBX server and automatically transfer control to the other server, resulting in a telephony environment with minimal down time.<br>
+
+Important note:
+Since DRBD is no longer used in version 3, it is not possible to migrate a High Availability VitalPBX from Version 2 to 3.
 
 ## Example:<br>
 ![VitalPBX HA](https://github.com/VitalPBX/vitalpbx_ha/blob/master/VitalPBX_HA.png)
@@ -11,8 +14,9 @@ Make a high-availability cluster out of any pair of VitalPBX servers. VitalPBX c
 ## Prerequisites
 In order to install VitalPBX in high availability you need the following:<br>
 a.- 3 IP addresses.<br>
-b.- Install VitalPBX on two servers with similar characteristics.<br>
-c.- At the time of installation leave the largest amount of space on the hard drive to store the variable data on both servers.<br>
+b.- Install VitalPBX Version 3.0 in two servers with similar characteristics.<br>
+c.- MariaDB Galera (include in VitalPBX 3).<br>
+d.- Corosync, Pacemaker, PCS and lsyncd.
 
 ## Installation
 We are going to start by installing VitalPBX on two servers
