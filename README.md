@@ -4,9 +4,7 @@ High availability is a characteristic of a system which aims to ensure an agreed
 
 Make a high-availability cluster out of any pair of VitalPBX servers. VitalPBX can detect a range of failures on one VitalPBX server and automatically transfer control to the other server, resulting in a telephony environment with minimal down time.<br>
 
-<div class="text-red mb-2">
 <strong>Important note:</strong><br>
-</div>
 Since DRBD is no longer used in version 3, it is not possible to migrate a High Availability VitalPBX from Version 2 to 3.
 
 ## Example:<br>
@@ -213,12 +211,7 @@ To update VitalPBX to the latest version just follow the following steps:<br>
 
 ## More Information
 If you want more information that will help you solve problems about High Availability in VitalPBX we invite you to see the following manual<br>
-
-
+[GitHub Pages](https://pages.github.com/)
 
 <strong>CONGRATULATIONS</strong>, you have installed and tested the high availability in <strong>VitalPBX 3</strong><br>
 :+1:
-
-
-
-
