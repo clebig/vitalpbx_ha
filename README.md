@@ -137,7 +137,7 @@ Master
 Servers Status
   vitalpbx1.local: Online
   vitalpbx2.local: Online
-<pre>
+</pre>
 
 ## Change Servers Role
 
