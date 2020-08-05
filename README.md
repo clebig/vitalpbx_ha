@@ -166,8 +166,8 @@ If you have to turn off both servers at the same time, we recommend that you sta
 If the two servers stopped abruptly, always start first that you think you have the most up-to-date information and a few minutes later the other server<br>
 If you want to update the version of VitalPBX we recommend you do it first on Server 1, then do a bascul and do it again on Server 2<br>
 
-## Dahdi
-If you are going to install Dhadi we recommend you to execute the following commands in the Server <strong>1</strong>
+## Dahdi with Xorcom HA Hardware
+If you are going to install Dhadi with Xorcom HA Hardware we recommend you to execute the following commands in the Server <strong>1</strong>
 
 <pre>
 [root@vitalpbx1 ~]# systemctl stop dahdi
