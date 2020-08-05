@@ -8,7 +8,7 @@ Make a high-availability cluster out of any pair of VitalPBX servers. VitalPBX c
 Since DRBD is no longer used in version 3, it is not possible to migrate a High Availability VitalPBX from Version 2 to 3.
 
 ## Example:<br>
-![VitalPBX HA](https://github.com/VitalPBX/vitalpbx_ha/blob/master/VitalPBX_HA.png)
+![VitalPBX HA](https://github.com/VitalPBX/vitalpbx_ha/blob/master/VitalPBX3_HA.png)
 
 -----------------
 ## Prerequisites
