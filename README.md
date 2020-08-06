@@ -74,24 +74,26 @@ and check to make sure that only the key(s) you wanted were added.
 ## Script
 Now copy and run the following script<br>
 <pre>
-[root@vitalpbx-master ~]#  cd /
-[root@vitalpbx-master ~]#  wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vpbxha.sh
-[root@vitalpbx-master ~]#  chmod +x vpbxha.sh
-[root@vitalpbx-master ~]#  ./vpbxha.sh
-</pre>
-Set these values, remember the Floating IP Mask must be 2 digit format (SIDR) and the Disk is that you created in the step “Create Disk”:
-<pre>
-IP Master.......... > <strong>192.168.10.61</strong>
-IP Slave........... > <strong>192.168.10.62</strong>
-Floating IP........ > <strong>192.168.10.60</strong>
-Floating IP Mask... > <strong>24</strong>
-hacluster password. > <strong>mypassword</strong>
+[root@ vitalpbx<strong>1</strong> ~]# mkdir /usr/share/vitalpbx/ha
+[root@ vitalpbx<strong>1</strong> ~]# cd /usr/share/vitalpbx/ha
+[root@ vitalpbx<strong>1</strong> ~]# wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vpbxha.sh
+[root@ vitalpbx<strong>1</strong> ~]# chmod +x vpbxha.sh
+[root@ vitalpbx<strong>1</strong> ~]# ./vpbxha.sh
 
-Are you sure to continue with these settings? (yes,no) > <strong>yes</strong>
-
-Are you sure you want to continue connecting (yes/no)? <strong>yes</strong>
-
-root@192.168.30.20's password: <strong>The root password from Slave Server</strong>
+************************************************************
+*  Welcome to the VitalPBX high availability installation  *
+*                All options are mandatory                 *
+************************************************************
+IP Master................ > <strong>192.168.10.61</strong>
+IP Standby............... > <strong>192.168.10.62</strong>
+Floating IP.............. > <strong>192.168.10.60</strong>
+Floating IP Mask (SIDR).. > <strong>24</strong>
+hacluster password....... > <strong>MyPassword (any password)</strong>
+************************************************************
+*                   Check Information                      *
+*        Make sure you have internet on both servers       *
+************************************************************
+Are you sure to continue with this settings? (yes,no) > <strong>yes</strong>
 </pre>
 
 At the end of the installation you have to see the following message
@@ -114,7 +116,7 @@ At the end of the installation you have to see the following message
 
 
  Role           : Master
- Version        : 3.0.0-4
+ Version        : 3.0.0-5
  Asterisk       : 17.6.0
  Linux Version  : CentOS Linux release 7.8.2003 (Core)
  Welcome to     : vitalpbx1.local
