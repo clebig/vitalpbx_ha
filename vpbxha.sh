@@ -58,7 +58,7 @@ done
 while [[ $ip_standby == '' ]]
 do
     read -p "IP Standby............... > " ip_standby 
-done 
+done
 
 while [[ $ip_floating == '' ]]
 do
@@ -126,6 +126,119 @@ echo -e "*****************************************************************"
 	if [ "$veryfy_destroy" = yes ] ;then
 		pcs cluster destroy
 		ssh root@$ip_standby "pcs cluster destroy"
+		
+cat > /etc/profile.d/vitalwelcome.sh << EOF
+#!/bin/bash
+# This code is the property of VitalPBX LLC Company
+# License: Proprietary
+# Date: 30-Jul-2020
+# Show the Role of Server.
+#Bash Colour Codes
+green="\033[00;32m"
+txtrst="\033[00;0m"
+if [ -f /etc/redhat-release ]; then
+        linux_ver=\`cat /etc/redhat-release\`
+        vitalpbx_ver=\`rpm -qi vitalpbx |awk -F: '/^Version/ {print \$2}'\`
+        vitalpbx_release=\`rpm -qi vitalpbx |awk -F: '/^Release/ {print \$2}'\`
+elif [ -f /etc/debian_version ]; then
+        linux_ver="Debian "\`cat /etc/debian_version\`
+        vitalpbx_ver=\`dpkg -l vitalpbx |awk '/ombutel/ {print \$3}'\`
+else
+        linux_ver=""
+        vitalpbx_ver=""
+        vitalpbx_release=""
+fi
+vpbx_version="\${vitalpbx_ver}-\${vitalpbx_release}"
+asterisk_version=\`rpm -q --qf "%{VERSION}" asterisk\`
+logo='
+ _    _ _           _ ______ ______ _    _
+| |  | (_)_        | (_____ (____  \ \  / /
+| |  | |_| |_  ____| |_____) )___)  ) \/ /
+ \ \/ /| |  _)/ _  | |  ____/  __  ( )  (
+  \  / | | |_( ( | | | |    | |__)  ) /\ \\
+   \/  |_|\___)_||_|_|_|    |______/_/  \_\\
+'
+echo -e "
+\${green}
+\${logo}
+\${txtrst}
+ Version        : \${vpbx_version//[[:space:]]}
+ Asterisk       : \${asterisk_version}
+ Linux Version  : \${linux_ver}
+ Welcome to     : \`hostname\`
+ Uptime         : \`uptime | grep -ohe 'up .*' | sed 's/up //g' | awk -F "," '{print \$1}'\`
+ Load           : \`uptime | grep -ohe 'load average[s:][: ].*' | awk '{ print "Last Minute: " \$3" Last 5 Minutes: "\$4" Last 15 Minutes: "\$5 }'\`
+ Users          : \`uptime | grep -ohe '[0-9.*] user[s,]'\`
+ IP Address     : \${green}\`ip addr | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | xargs\`\${txtrst}
+ Clock          :\`timedatectl | sed -n '/Local time/ s/^[ \t]*Local time:\(.*$\)/\1/p'\`
+ NTP Sync.      :\`timedatectl |awk -F: '/NTP sync/ {print \$2}'\`
+"
+echo -e ""
+echo -e "************************************************************"
+echo -e "*                  Servers Status                          *"
+echo -e "************************************************************"
+echo -e "Master"
+pcs status resources
+echo -e ""
+echo -e "Servers Status"
+pcs cluster pcsd-status
+EOF
+chmod 755 /etc/profile.d/vitalwelcome.sh
+scp /etc/profile.d/vitalwelcome.sh root@$ip_standby:/etc/profile.d/vitalwelcome.sh
+ssh root@$ip_standby "chmod 755 /etc/profile.d/vitalwelcome.sh"
+rm -rf /usr/local/bin/bascul		
+rm -rf /usr/local/bin/role
+ssh root@$ip_standby "rm -rf /usr/local/bin/bascul"
+ssh root@$ip_standby "rm -rf /usr/local/bin/role"
+
+cat > /etc/my.cnf.d/server.cnf << EOF
+#
+# These groups are read by MariaDB server.
+# Use it for options that only the server (but not clients) should see
+#
+# See the examples of server my.cnf files in /usr/share/mysql/
+#
+# this is read by the standalone daemon and embedded servers
+[server]
+# this is only for the mysqld standalone daemon
+[mysqld]
+#
+# * Galera-related settings
+#
+[galera]
+# Mandatory settings
+#wsrep_on=ON
+#wsrep_provider=
+#wsrep_cluster_address=
+#binlog_format=row
+#default_storage_engine=InnoDB
+#innodb_autoinc_lock_mode=2
+#
+# Allow server to accept connections on all interfaces.
+#
+#bind-address=0.0.0.0
+#
+# Optional setting
+#wsrep_slave_threads=1
+#innodb_flush_log_at_trx_commit=0
+# this is only for embedded server
+[embedded]
+EOF
+scp /etc/my.cnf.d/server.cnf root@$ip_standby:/etc/my.cnf.d/server.cnf
+systemctl restart mariadb
+ssh root@$ip_standby "systemctl restart mariadb"
+
+cat > /etc/lsyncd.conf << EOF
+----
+-- User configuration file for lsyncd.
+--
+-- Simple example for default rsync.
+--
+EOF
+scp /etc/lsyncd.conf root@$ip_standby:/etc/lsyncd.conf
+scp /etc/lsyncd.conf root@$ip_app:/etc/lsyncd.conf
+	
+		
 	fi
 	exit
 fi
@@ -155,48 +268,45 @@ case $step in
 		start="configuring_firewall"
   	;;
 	4)
-		start="create_galera_config"
-  	;;
-	5)
-		start="create_galera_recovery"
-  	;;	
-	6)
 		start="create_lsyncd_config_file"
   	;;
-	7)
+	5)
+		start="create_mariadb_replica"
+	;;
+	6)
 		start="create_hacluster_password"
   	;;
-	8)
+	7)
 		start="starting_pcs"
   	;;
-	9)
+	8)
 		start="auth_hacluster"
   	;;
-	10)
+	9)
 		start="creating_cluster"
   	;;
-	11)
+	10)
 		start="starting_cluster"
   	;;
-	12)
+	11)
 		start="creating_floating_ip"
   	;;
-	13)
+	12)
 		start="disable_services"
 	;;
-	14)
+	13)
 		start="create_asterisk_service"
 	;;
-	15)
+	14)
 		start="create_lsyncd_service"
 	;;
-	16)
+	15)
 		start="vitalpbx_create_bascul"
 	;;
-	17)
+	16)
 		start="vitalpbx_create_role"
 		;;
-	18)
+	17)
 		start="ceate_welcome_message"
 	;;
 esac
@@ -234,25 +344,16 @@ echo -e "************************************************************"
 #Create temporal Firewall Rules in Server 1 and 2
 firewall-cmd --permanent --add-service=high-availability
 firewall-cmd --permanent --zone=public --add-port=3306/tcp
-firewall-cmd --permanent --zone=public --add-port=4567/tcp
-firewall-cmd --permanent --zone=public --add-port=4568/tcp
-firewall-cmd --permanent --zone=public --add-port=4444/tcp
-firewall-cmd --permanent --zone=public --add-port=4567/udp
 firewall-cmd --reload
 ssh root@$ip_standby "firewall-cmd --permanent --add-service=high-availability"
 ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=3306/tcp"
-ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=4567/tcp"
-ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=4568/tcp"
-ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=4444/tcp"
-ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=4567/udp"
 ssh root@$ip_standby "firewall-cmd --reload"
+
 echo -e "************************************************************"
 echo -e "*             Configuring Permanent Firewall               *"
 echo -e "*   Creating Firewall Services in VitalPBX in Server 1     *"
 echo -e "************************************************************"
 mysql -uroot ombutel -e "INSERT INTO ombu_firewall_services (name, protocol, port) VALUES ('MariaDB Client', 'tcp', '3306')"
-mysql -uroot ombutel -e "INSERT INTO ombu_firewall_services (name, protocol, port) VALUES ('MariaDB Galera Traffic', 'tcp', '4567-4568')"
-mysql -uroot ombutel -e "INSERT INTO ombu_firewall_services (name, protocol, port) VALUES ('MariaDB Galera SST', 'tcp', '4444')"
 mysql -uroot ombutel -e "INSERT INTO ombu_firewall_services (name, protocol, port) VALUES ('HA2224', 'tcp', '2224')"
 mysql -uroot ombutel -e "INSERT INTO ombu_firewall_services (name, protocol, port) VALUES ('HA3121', 'tcp', '3121')"
 mysql -uroot ombutel -e "INSERT INTO ombu_firewall_services (name, protocol, port) VALUES ('HA5403', 'tcp', '5403')"
@@ -266,16 +367,6 @@ echo -e "************************************************************"
 last_index=$(mysql -uroot ombutel -e "SELECT MAX(\`index\`) AS Consecutive FROM ombu_firewall_rules"  | awk 'NR==2')
 last_index=$last_index+1
 service_id=$(mysql -uroot ombutel -e "select firewall_service_id from ombu_firewall_services where name = 'MariaDB Client'" | awk 'NR==2')
-mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_master', 'accept', $last_index)"
-last_index=$last_index+1
-mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_standby', 'accept', $last_index)"
-last_index=$last_index+1
-service_id=$(mysql -uroot ombutel -e "select firewall_service_id from ombu_firewall_services where name = 'MariaDB Galera Traffic'" | awk 'NR==2')
-mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_master', 'accept', $last_index)"
-last_index=$last_index+1
-mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_standby', 'accept', $last_index)"
-last_index=$last_index+1
-service_id=$(mysql -uroot ombutel -e "select firewall_service_id from ombu_firewall_services where name = 'MariaDB Galera SST'" | awk 'NR==2')
 mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_master', 'accept', $last_index)"
 last_index=$last_index+1
 mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_standby', 'accept', $last_index)"
@@ -303,7 +394,7 @@ last_index=$last_index+1
 service_id=$(mysql -uroot ombutel -e "select firewall_service_id from ombu_firewall_services where name = 'HA21064'" | awk 'NR==2')
 mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_master', 'accept', $last_index)"
 last_index=$last_index+1
-mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_standby', 'accept', $last_index)"
+mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_arbitrator', 'accept', $last_index)"
 last_index=$last_index+1
 service_id=$(mysql -uroot ombutel -e "select firewall_service_id from ombu_firewall_services where name = 'HA9929'" | awk 'NR==2')
 mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_master', 'accept', $last_index)"
@@ -312,261 +403,18 @@ mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, s
 echo -e "*** Done Step 4 ***"
 echo -e "4"	> step.txt
 
-create_galera_config:
-echo -e "************************************************************"
-echo -e "*             Creating Galera Config File                  *"
-echo -e "************************************************************"
-cat > /etc/my.cnf.d/server.cnf << EOF
-#
-# These groups are read by MariaDB server.
-# Use it for options that only the server (but not clients) should see
-#
-# See the examples of server my.cnf files in /usr/share/mysql/
-#
-
-# this is read by the standalone daemon and embedded servers
-[server]
-
-# this is only for the mysqld standalone daemon
-[mysqld]
-
-#
-# * Galera-related settings
-#
-[galera]
-binlog_format=ROW
-default-storage-engine=innodb
-innodb_autoinc_lock_mode=2
-bind-address=0.0.0.0
-
-# Galera Provider Configuration
-wsrep_on=ON
-wsrep_provider=/usr/lib64/galera-4/libgalera_smm.so
-
-# Galera Cluster Configuration
-wsrep_cluster_name="test_cluster"
-wsrep_cluster_address="gcomm://$ip_master,$ip_standby"
-
-# Galera Synchronization Configuration
-wsrep_sst_method=rsync
-
-# Galera Node Configuration
-wsrep_node_address="$ip_master"
-wsrep_node_name="MasterA"
-
-
-# Mandatory settings
-#wsrep_on=ON
-#wsrep_provider=
-#wsrep_cluster_address=
-#binlog_format=row
-#default_storage_engine=InnoDB
-#innodb_autoinc_lock_mode=2
-#
-# Allow server to accept connections on all interfaces.
-#
-#bind-address=0.0.0.0
-#
-# Optional setting
-#wsrep_slave_threads=1
-#innodb_flush_log_at_trx_commit=0
-
-# this is only for embedded server
-[embedded]
-
-EOF
-
-cat > /tmp/server.cnf << EOF
-#
-# These groups are read by MariaDB server.
-# Use it for options that only the server (but not clients) should see
-#
-# See the examples of server my.cnf files in /usr/share/mysql/
-#
-
-# this is read by the standalone daemon and embedded servers
-[server]
-
-# this is only for the mysqld standalone daemon
-[mysqld]
-
-#
-# * Galera-related settings
-#
-[galera]
-binlog_format=ROW
-default-storage-engine=innodb
-innodb_autoinc_lock_mode=2
-bind-address=0.0.0.0
-
-# Galera Provider Configuration
-wsrep_on=ON
-wsrep_provider=/usr/lib64/galera-4/libgalera_smm.so
-
-# Galera Cluster Configuration
-wsrep_cluster_name="test_cluster"
-wsrep_cluster_address="gcomm://$ip_master,$ip_standby"
-
-# Galera Synchronization Configuration
-wsrep_sst_method=rsync
-
-# Galera Node Configuration
-wsrep_node_address="$ip_standby"
-wsrep_node_name="MasterB"
-
-
-# Mandatory settings
-#wsrep_on=ON
-#wsrep_provider=
-#wsrep_cluster_address=
-#binlog_format=row
-#default_storage_engine=InnoDB
-#innodb_autoinc_lock_mode=2
-#
-# Allow server to accept connections on all interfaces.
-#
-#bind-address=0.0.0.0
-#
-# Optional setting
-#wsrep_slave_threads=1
-#innodb_flush_log_at_trx_commit=0
-
-# this is only for embedded server
-[embedded]
-
-EOF
-scp /tmp/server.cnf root@$ip_standby:/etc/my.cnf.d/server.cnf
-systemctl stop mariadb
-galera_new_cluster
-ssh root@$ip_standby "systemctl restart mariadb"
-echo -e "*** Done Step 5 ***"
-echo -e "5"	> step.txt
-
-create_galera_recovery:
-echo -e "************************************************************"
-echo -e "*         Creating Galera recovery Script  Server 1        *"
-echo -e "************************************************************"
-cat > /usr/local/bin/recovery_galera << EOF
-#!/bin/bash
-# This code is the property of VitalPBX LLC Company
-# License: Proprietary
-# Date: 30-Jul-2020
-# Recovers automatically in the event that MariaDB Galera is in an undetermined state
-set -e
-
-mariadb_state=\`systemctl is-active mariadb >/dev/null 2>&1 && echo YES || echo NO\`
-if [ "\${mariadb_state}" = 'NO' ] ;then
-	galera_state_server_a=\`cat /var/lib/mysql/grastate.dat | grep 'safe_to_bootstrap:'\`
-	
-	if ping -c 3 $ip_standby; then
-		galera_state_server_b=\`ssh root@$ip_standby "cat /var/lib/mysql/grastate.dat | grep 'safe_to_bootstrap:'"\`
-
-		if [ "\${galera_state_server_a}" = 'safe_to_bootstrap: 1' ] ;then
-			galera_new_cluster
-			ssh root@$ip_standby "systemctl start mariadb"
-			systemctl status mariadb
-			exit;	
-		fi
-
-		if [ "\${galera_state_server_b}" = 'safe_to_bootstrap: 1' ] ;then
-			ssh root@$ip_standby "galera_new_cluster"
-			systemctl start mariadb
-			systemctl status mariadb
-			exit;
-		fi
-	else
-		sed -i 's/safe_to_bootstrap: 0/safe_to_bootstrap: 1/g' /var/lib/mysql/grastate.dat
-		galera_new_cluster
-	fi
-
-else
-	echo -e "************************************************************"
-	echo -e "*               MariaDB Service is Running                 *"
-	echo -e "************************************************************"
-fi
-EOF
-chmod +x /usr/local/bin/recovery_galera
-
-echo -e "************************************************************"
-echo -e "*         Creating Galera recovery Script  Server 2        *"
-echo -e "************************************************************"
-cat > /tmp/recovery_galera << EOF
-#!/bin/bash
-# This code is the property of VitalPBX LLC Company
-# License: Proprietary
-# Date: 30-Jul-2020
-# Recovers automatically in the event that MariaDB Galera is in an undetermined state
-set -e
-
-mariadb_state=\`systemctl is-active mariadb >/dev/null 2>&1 && echo YES || echo NO\`
-if [ "\${mariadb_state}" = 'NO' ] ;then
-	galera_state_server_a=\`cat /var/lib/mysql/grastate.dat | grep 'safe_to_bootstrap:'\`
-	
-	if ping -c 3 $ip_master; then
-		galera_state_server_b=\`ssh root@$ip_master "cat /var/lib/mysql/grastate.dat | grep 'safe_to_bootstrap:'"\`
-
-		if [ "\${galera_state_server_a}" = 'safe_to_bootstrap: 1' ] ;then
-			galera_new_cluster
-			ssh root@$ip_master "systemctl start mariadb"
-			systemctl status mariadb
-			exit;	
-		fi
-
-		if [ "\${galera_state_server_b}" = 'safe_to_bootstrap: 1' ] ;then
-			ssh root@$ip_master "galera_new_cluster"
-			systemctl start mariadb
-			systemctl status mariadb
-			exit;
-		fi
-	else
-		sed -i 's/safe_to_bootstrap: 0/safe_to_bootstrap: 1/g' /var/lib/mysql/grastate.dat
-		galera_new_cluster
-	fi
-
-else
-	echo -e "************************************************************"
-	echo -e "*               MariaDB Service is Running                 *"
-	echo -e "************************************************************"
-fi
-EOF
-scp /tmp/recovery_galera root@$ip_standby:/usr/local/bin/recovery_galera
-ssh root@$ip_standby 'chmod +x /usr/local/bin/recovery_galera'
-
-echo -e "************************************************************"
-echo -e "*            Creating Galera recovery Service              *"
-echo -e "************************************************************"
-cat > /etc/systemd/system/recovery-galera.service << EOF
-[Unit]
-Description=Run script at startup after network and mariadb becomes reachable
-After=network.target
-After=mariadb.service
-
-[Service]
-Type=Recovery Galera
-RemainAfterExit=yes
-ExecStart=/usr/local/bin/recovery_galera
-TimeoutStartSec=0
-
-[Install]
-WantedBy=default.target
-EOF
-
-scp /etc/systemd/system/recovery-galera.service root@$ip_standby:/etc/systemd/system/recovery-galera.service
-systemctl daemon-reload
-systemctl enable recovery-galera.service
-ssh root@$ip_standby "systemctl daemon-reload"
-ssh root@$ip_standby "systemctl enable recovery-galera.service"
-echo -e "*** Done Step 6 ***"
-echo -e "6"	> step.txt
-
 create_lsyncd_config_file:
 echo -e "************************************************************"
 echo -e "*          Configure lsync in Server 1 and 2               *"
 echo -e "************************************************************"
-mkdir /var/spool/asterisk/monitor
+if [ ! -d "/var/spool/asterisk/monitor" ] ;then
+	mkdir /var/spool/asterisk/monitor
+fi
 chown asterisk:asterisk /var/spool/asterisk/monitor
-ssh root@$ip_standby "mkdir /var/spool/asterisk/monitor"
+
+ssh root@$ip_standby [[ ! -d /var/spool/asterisk/monitor ]] && ssh root@$ip_standby "mkdir /var/spool/asterisk/monitor" || echo "Path exist";
 ssh root@$ip_standby "chown asterisk:asterisk /var/spool/asterisk/monitor"
+
 cat > /etc/lsyncd.conf << EOF
 ----
 -- User configuration file for lsyncd.
@@ -764,8 +612,77 @@ sync {
 }
 EOF
 scp /tmp/lsyncd.conf root@$ip_standby:/etc/lsyncd.conf
+echo -e "*** Done Step 5 ***"
+echo -e "5"	> step.txt
+
+create_mariadb_replica:
+echo -e "************************************************************"
+echo -e "*                Create mariadb replica                    *"
+echo -e "************************************************************"
+
+cat > /etc/my.cnf.d/vitalpbx.cnf << EOF
+[mysqld]
+server-id=1
+log-bin=mysql-bin
+
+innodb_buffer_pool_size = 64M
+innodb_flush_log_at_trx_commit = 2
+innodb_log_file_size = 64M
+innodb_log_buffer_size = 64M
+bulk_insert_buffer_size = 64M
+max_allowed_packet = 64M
+EOF
+systemctl restart mariadb
+cat > /tmp/vitalpbx.cnf << EOF
+[mysqld]
+server-id=2
+log-bin=mysql-bin
+
+innodb_buffer_pool_size = 64M
+innodb_flush_log_at_trx_commit = 2
+innodb_log_file_size = 64M
+innodb_log_buffer_size = 64M
+bulk_insert_buffer_size = 64M
+max_allowed_packet = 64M
+EOF
+scp /tmp/vitalpbx.cnf root@$ip_standby:/etc/my.cnf.d/vitalpbx.cnf
+ssh root@$ip_standby "systemctl restart mariadb"
+#Server 1
+mysql -uroot -e "grant replication slave on *.* to vitalpbx_replica@'%' identified by 'vitalpbx_replica';"
+mysql -uroot -e "flush privileges;"
+mysql -uroot -e "flush tables with read lock;"
+#GET File and Position
+file_server_1=`mysql -uroot -e "show master status" | awk 'NR==2 {print $1}'`
+position_server_1=`mysql -uroot -e "show master status" | awk 'NR==2 {print $2}'`
+#Server 2
+cat > /tmp/grand.sh << EOF
+#!/bin/bash
+mysql -uroot -e "grant replication slave on *.* to vitalpbx_replica@'%' identified by 'vitalpbx_replica';"
+mysql -uroot -e "flush privileges;"
+mysql -uroot -e "flush tables with read lock;"
+EOF
+scp /tmp/grand.sh root@$ip_standby:/tmp/grand.sh
+ssh root@$ip_standby "chmod +x /tmp/grand.sh"
+ssh root@$ip_standby "/tmp/./grand.sh"
+#Change in server 2
+cat > /tmp/change.sh << EOF
+#!/bin/bash
+mysql -uroot -e "change master to master_host='$ip_master', master_user='vitalpbx_replica', master_password='vitalpbx_replica', master_log_file='$file_server_1', master_log_pos=$position_server_1;"
+mysql -uroot -e "start slave;"
+EOF
+scp /tmp/change.sh root@$ip_standby:/tmp/change.sh
+ssh root@$ip_standby "chmod +x /tmp/change.sh"
+ssh root@$ip_standby "/tmp/./change.sh"
+#GET File and Position
+file_server_2=`ssh root@$ip_standby 'mysql -uroot -e "show master status;"' | awk 'NR==2 {print $1}'`
+position_server_2=`ssh root@$ip_standby 'mysql -uroot -e "show master status;"' | awk 'NR==2 {print $2}'`
+#Change in server 2
+mysql -uroot -e "unlock table;"
+mysql -uroot -e "change master to master_host='$ip_standby', master_user='vitalpbx_replica', master_password='vitalpbx_replica', master_log_file='$file_server_2', master_log_pos=$position_server_2;"
+mysql -uroot -e "start slave;"
+
 echo -e "*** Done Step 6 ***"
-echo -e "7"	> step.txt
+echo -e "6"	> step.txt
 
 create_hacluster_password:
 echo -e "************************************************************"
@@ -774,7 +691,7 @@ echo -e "************************************************************"
 echo $hapassword | passwd --stdin hacluster
 ssh root@$ip_standby "echo $hapassword | passwd --stdin hacluster"
 echo -e "*** Done Step 7 ***"
-echo -e "8"	> step.txt
+echo -e "7"	> step.txt
 
 starting_pcs:
 echo -e "************************************************************"
@@ -789,7 +706,7 @@ ssh root@$ip_standby "systemctl enable pcsd.service"
 ssh root@$ip_standby "systemctl enable corosync.service"
 ssh root@$ip_standby "systemctl enable pacemaker.service"
 echo -e "*** Done Step 8 ***"
-echo -e "9"	> step.txt
+echo -e "8"	> step.txt
 
 auth_hacluster:
 echo -e "************************************************************"
@@ -797,7 +714,7 @@ echo -e "*            Server Authenticate in Master                 *"
 echo -e "************************************************************"
 pcs cluster auth $host_master $host_standby -u hacluster -p $hapassword
 echo -e "*** Done Step 9 ***"
-echo -e "10"	> step.txt
+echo -e "9"	> step.txt
 
 creating_cluster:
 echo -e "************************************************************"
@@ -805,7 +722,7 @@ echo -e "*              Creating Cluster in Master                  *"
 echo -e "************************************************************"
 pcs cluster setup --name cluster_vitalpbx $host_master $host_standby
 echo -e "*** Done Step 10 ***"
-echo -e "11"	> step.txt
+echo -e "10"	> step.txt
 
 starting_cluster:
 echo -e "************************************************************"
@@ -816,7 +733,7 @@ pcs cluster enable --all
 pcs property set stonith-enabled=false
 pcs property set no-quorum-policy=ignore
 echo -e "*** Done Step 11 ***"
-echo -e "12"	> step.txt
+echo -e "11"	> step.txt
 
 creating_floating_ip:
 echo -e "************************************************************"
@@ -826,7 +743,7 @@ pcs resource create virtual_ip ocf:heartbeat:IPaddr2 ip=$ip_floating cidr_netmas
 pcs cluster cib drbd_cfg
 pcs cluster cib-push drbd_cfg
 echo -e "*** Done Step 12 ***"
-echo -e "13"	> step.txt
+echo -e "12"	> step.txt
 
 disable_services:
 echo -e "************************************************************"
@@ -841,7 +758,7 @@ ssh root@$ip_standby "systemctl stop asterisk"
 ssh root@$ip_standby "systemctl disable lsyncd"
 ssh root@$ip_standby "systemctl stop lsyncd"
 echo -e "*** Done Step 13 ***"
-echo -e "14"	> step.txt
+echo -e "13"	> step.txt
 
 create_asterisk_service:
 echo -e "************************************************************"
@@ -860,7 +777,7 @@ pcs resource update asterisk op stop timeout=120s
 pcs resource update asterisk op start timeout=120s
 pcs resource update asterisk op restart timeout=120s
 echo -e "*** Done Step 14 ***"
-echo -e "15"	> step.txt
+echo -e "14"	> step.txt
 
 create_lsyncd_service:
 echo -e "************************************************************"
@@ -873,7 +790,7 @@ pcs -f fs_cfg constraint colocation add lsyncd with virtual_ip INFINITY
 pcs -f fs_cfg constraint order asterisk then lsyncd
 pcs cluster cib-push fs_cfg --config
 echo -e "*** Done Step 15 ***"
-echo -e "16"	> step.txt
+echo -e "15"	> step.txt
 
 vitalpbx_create_bascul:
 echo -e "************************************************************"
@@ -979,7 +896,7 @@ chmod +x /usr/local/bin/bascul
 scp /usr/local/bin/bascul root@$ip_standby:/usr/local/bin/bascul
 ssh root@$ip_standby 'chmod +x /usr/local/bin/bascul'
 echo -e "*** Done Step 16 ***"
-echo -e "17"	> step.txt
+echo -e "16"	> step.txt
 
 vitalpbx_create_role:
 echo -e "************************************************************"
@@ -1053,7 +970,7 @@ chmod +x /usr/local/bin/role
 scp /usr/local/bin/role root@$ip_standby:/usr/local/bin/role
 ssh root@$ip_standby 'chmod +x /usr/local/bin/role'
 echo -e "*** Done Step 17 ***"
-echo -e "18"	> step.txt
+echo -e "17"	> step.txt
 
 ceate_welcome_message:
 echo -e "************************************************************"
@@ -1065,7 +982,7 @@ echo -e "*** Done ***"
 scp /etc/profile.d/vitalwelcome.sh root@$ip_standby:/etc/profile.d/vitalwelcome.sh
 ssh root@$ip_standby "chmod 755 /etc/profile.d/vitalwelcome.sh"
 echo -e "*** Done Step 18 END ***"
-echo -e "19"	> step.txt
+echo -e "18"	> step.txt
 
 vitalpbx_cluster_ok:
 echo -e "************************************************************"
