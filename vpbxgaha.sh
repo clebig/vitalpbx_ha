@@ -2,7 +2,7 @@
 # This code is the property of VitalPBX LLC Company
 # License: Proprietary
 # Date: 15-Aug-2020
-# VitalPBX Hight Availability with MariaDB Galera and Sync
+# VitalPBX Hight Availability For Call Centers
 #
 set -e
 function jumpto
