@@ -1,7 +1,7 @@
 #!/bin/bash
 # This code is the property of VitalPBX LLC Company
 # License: Proprietary
-# Date: 04-Aug-2020
+# Date: 14-Aug-2020
 # VitalPBX Hight Availability with MariaDB Galera and Sync
 #
 set -e
@@ -400,6 +400,8 @@ service_id=$(mysql -uroot ombutel -e "select firewall_service_id from ombu_firew
 mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_master', 'accept', $last_index)"
 last_index=$last_index+1
 mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_standby', 'accept', $last_index)"
+mysql -uroot ombutel -e "INSERT INTO ombu_firewall_whitelist (host, description, default) VALUES ('$ip_master', 'Server 1 IP', 'no')"
+mysql -uroot ombutel -e "INSERT INTO ombu_firewall_whitelist (host, description, default) VALUES ('$ip_standby', 'Server 2 IP', 'no')"
 echo -e "*** Done Step 4 ***"
 echo -e "4"	> step.txt
 
@@ -676,7 +678,7 @@ ssh root@$ip_standby "/tmp/./change.sh"
 #GET File and Position
 file_server_2=`ssh root@$ip_standby 'mysql -uroot -e "show master status;"' | awk 'NR==2 {print $1}'`
 position_server_2=`ssh root@$ip_standby 'mysql -uroot -e "show master status;"' | awk 'NR==2 {print $2}'`
-#Change in server 2
+#Change in server 1
 mysql -uroot -e "unlock table;"
 mysql -uroot -e "change master to master_host='$ip_standby', master_user='vitalpbx_replica', master_password='vitalpbx_replica', master_log_file='$file_server_2', master_log_pos=$position_server_2;"
 mysql -uroot -e "start slave;"
