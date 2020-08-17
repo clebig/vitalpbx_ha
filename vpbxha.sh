@@ -1,8 +1,8 @@
 #!/bin/bash
 # This code is the property of VitalPBX LLC Company
 # License: Proprietary
-# Date: 15-Aug-2020
-# VitalPBX Hight Availability
+# Date: 17-Aug-2020
+# VitalPBX Hight Availability with MariaDB Galera and Sync
 #
 set -e
 function jumpto
