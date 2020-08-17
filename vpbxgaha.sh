@@ -1,8 +1,8 @@
 #!/bin/bash
 # This code is the property of VitalPBX LLC Company
 # License: Proprietary
-# Date: 15-Aug-2020
-# VitalPBX Hight Availability For Call Centers
+# Date: 17-Aug-2020
+# VitalPBX Hight Availability with MariaDB Galera and Sync
 #
 set -e
 function jumpto
@@ -377,6 +377,8 @@ firewall-cmd --permanent --zone=public --add-port=4567/tcp
 firewall-cmd --permanent --zone=public --add-port=4568/tcp
 firewall-cmd --permanent --zone=public --add-port=4444/tcp
 firewall-cmd --permanent --zone=public --add-port=4567/udp
+firewall-cmd --permanent --zone=public --add-port=5038/udp
+firewall-cmd --permanent --zone=public --add-rich-rule 'rule family='ipv4' source address="$ip_app" port port=5038 protocol=tcp accept'
 firewall-cmd --reload
 ssh root@$ip_standby "firewall-cmd --permanent --add-service=high-availability"
 ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=3306/tcp"
@@ -384,6 +386,8 @@ ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=4567/tcp
 ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=4568/tcp"
 ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=4444/tcp"
 ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=4567/udp"
+ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=5038/udp"
+ssh root@$ip_standby 'firewall-cmd --permanent --zone=public --add-rich-rule 'rule family='ipv4' source address="$ip_app" port port=5038 protocol=tcp accept''
 ssh root@$ip_standby "firewall-cmd --reload"
 ssh root@$ip_app "firewall-cmd --permanent --zone=public --add-port=3306/tcp"
 ssh root@$ip_app "firewall-cmd --permanent --zone=public --add-port=4567/tcp"
@@ -480,7 +484,7 @@ cat > /etc/asterisk/vitalpbx/manager__50-astboard-user.conf << EOF
 [astboard]
 secret = astboard
 deny = 0.0.0.0/0.0.0.0
-permit= $ip_app/255.255.255.0
+permit= 0.0.0.0/0.0.0.0
 read = all
 write = all
 writetimeout = 5000
