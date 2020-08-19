@@ -1,8 +1,8 @@
 #!/bin/bash
 # This code is the property of VitalPBX LLC Company
 # License: Proprietary
-# Date: 17-Aug-2020
-# VitalPBX Hight Availability with MariaDB Galera and Sync
+# Date: 20-Aug-2020
+# VitalPBX Hight Availability with MariaDB Galera, Corosync, PCS, Pacemaker and Lsync
 #
 set -e
 function jumpto
@@ -352,17 +352,12 @@ echo -e "2"	> step.txt
 
 rename_tenant_id_in_server2:
 echo -e "************************************************************"
-echo -e "*               Rename Tenant ID in Server 2               *"
+echo -e "*              Remove Tenant in Server 2 and 3             *"
 echo -e "************************************************************"
-tenant_id=`ls /var//lib/vitalpbx/static/`
-remote_tenant_id=`ssh root@$ip_standby "ls /var//lib/vitalpbx/static/"`
-if [ "$tenant_id" != "$remote_tenant_id" ] ;then
-    ssh root@$ip_standby "mv /var/lib/vitalpbx/static/$remote_tenant_id /var/lib/vitalpbx/static/$tenant_id"
-fi
-remote_tenant_id=`ssh root@$ip_app "ls /var//lib/vitalpbx/static/"`
-if [ "$tenant_id" != "$remote_tenant_id" ] ;then
-    ssh root@$ip_app "mv /var/lib/vitalpbx/static/$remote_tenant_id /var/lib/vitalpbx/static/$tenant_id"
-fi
+remote_tenant_id=`ssh root@$ip_standby "ls /var/lib/vitalpbx/static/"`
+ssh root@$ip_standby "rm -rf /var/lib/vitalpbx/static/$remote_tenant_id"
+remote_tenant_id=`ssh root@$ip_app "ls /var/lib/vitalpbx/static/"`
+ssh root@$ip_app "rm -rf /var/lib/vitalpbx/static/$remote_tenant_id"
 echo -e "*** Done Step 3 ***"
 echo -e "3"	> step.txt
 
@@ -378,7 +373,7 @@ firewall-cmd --permanent --zone=public --add-port=4568/tcp
 firewall-cmd --permanent --zone=public --add-port=4444/tcp
 firewall-cmd --permanent --zone=public --add-port=4567/udp
 firewall-cmd --permanent --zone=public --add-port=5038/udp
-firewall-cmd --permanent --zone=public --add-rich-rule 'rule family='ipv4' source address="$ip_app" port port=5038 protocol=tcp accept'
+firewall-cmd --permanent --zone=public --add-rich-rule 'rule family='ipv4' source address='$ip_app' port port=5038 protocol=tcp accept'
 firewall-cmd --reload
 ssh root@$ip_standby "firewall-cmd --permanent --add-service=high-availability"
 ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=3306/tcp"
@@ -387,7 +382,7 @@ ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=4568/tcp
 ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=4444/tcp"
 ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=4567/udp"
 ssh root@$ip_standby "firewall-cmd --permanent --zone=public --add-port=5038/udp"
-ssh root@$ip_standby 'firewall-cmd --permanent --zone=public --add-rich-rule 'rule family='ipv4' source address="$ip_app" port port=5038 protocol=tcp accept''
+ssh root@$ip_standby 'firewall-cmd --permanent --zone=public --add-rich-rule "rule family='ipv4' source address='$ip_app' port port=5038 protocol=tcp accept"'
 ssh root@$ip_standby "firewall-cmd --reload"
 ssh root@$ip_app "firewall-cmd --permanent --zone=public --add-port=3306/tcp"
 ssh root@$ip_app "firewall-cmd --permanent --zone=public --add-port=4567/tcp"
