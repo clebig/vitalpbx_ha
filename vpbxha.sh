@@ -240,6 +240,7 @@ scp /etc/lsyncd.conf root@$ip_app:/etc/lsyncd.conf
 	
 		
 	fi
+	echo -e "4"	> step.txt
 	exit
 fi
 
@@ -647,7 +648,6 @@ EOF
 scp /tmp/vitalpbx.cnf root@$ip_standby:/etc/my.cnf.d/vitalpbx.cnf
 ssh root@$ip_standby "systemctl restart mariadb"
 #Server 1
-mysql -uroot -e "STOP SLAVE;"
 mysql -uroot -e "GRANT REPLICATION SLAVE ON *.* to vitalpbx_replica@'%' IDENTIFIED BY 'vitalpbx_replica';"
 mysql -uroot -e "FLUSH PRIVILEGES;"
 mysql -uroot -e "FLUSH TABLES WITH READ LOCK;"
@@ -657,7 +657,6 @@ position_server_1=`mysql -uroot -e "show master status" | awk 'NR==2 {print $2}'
 #Server 2
 cat > /tmp/grand.sh << EOF
 #!/bin/bash
-mysql -uroot -e "STOP SLAVE;"
 mysql -uroot -e "GRANT REPLICATION SLAVE ON *.* to vitalpbx_replica@'%' IDENTIFIED BY 'vitalpbx_replica';"
 mysql -uroot -e "FLUSH PRIVILEGES;"
 mysql -uroot -e "FLUSH TABLES WITH READ LOCK;"
