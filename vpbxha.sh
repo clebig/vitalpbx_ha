@@ -1,8 +1,8 @@
 #!/bin/bash
 # This code is the property of VitalPBX LLC Company
 # License: Proprietary
-# Date: 17-Aug-2020
-# VitalPBX Hight Availability with MariaDB Galera and Sync
+# Date: 19-Aug-2020
+# VitalPBX Hight Availability with MariaDB Replica, Corosync, PCS, Pacemaker and Lsync
 #
 set -e
 function jumpto
@@ -327,13 +327,10 @@ echo -e "2"	> step.txt
 
 rename_tenant_id_in_server2:
 echo -e "************************************************************"
-echo -e "*               Rename Tenant ID in Server 2               *"
+echo -e "*                Remove Tenant in Server 2                 *"
 echo -e "************************************************************"
-tenant_id=`ls /var//lib/vitalpbx/static/`
 remote_tenant_id=`ssh root@$ip_standby "ls /var//lib/vitalpbx/static/"`
-if [ "$tenant_id" != "$remote_tenant_id" ] ;then
-    ssh root@$ip_standby "mv /var/lib/vitalpbx/static/$remote_tenant_id /var/lib/vitalpbx/static/$tenant_id"
-fi
+ssh root@$ip_standby "rm -rf /var/lib/vitalpbx/static/$remote_tenant_id"
 echo -e "*** Done Step 3 ***"
 echo -e "3"	> step.txt
 
@@ -650,18 +647,20 @@ EOF
 scp /tmp/vitalpbx.cnf root@$ip_standby:/etc/my.cnf.d/vitalpbx.cnf
 ssh root@$ip_standby "systemctl restart mariadb"
 #Server 1
-mysql -uroot -e "grant replication slave on *.* to vitalpbx_replica@'%' identified by 'vitalpbx_replica';"
-mysql -uroot -e "flush privileges;"
-mysql -uroot -e "flush tables with read lock;"
+mysql -uroot -e "STOP SLAVE;"
+mysql -uroot -e "GRANT REPLICATION SLAVE ON *.* to vitalpbx_replica@'%' IDENTIFIED BY 'vitalpbx_replica';"
+mysql -uroot -e "FLUSH PRIVILEGES;"
+mysql -uroot -e "FLUSH TABLES WITH READ LOCK;"
 #GET File and Position
 file_server_1=`mysql -uroot -e "show master status" | awk 'NR==2 {print $1}'`
 position_server_1=`mysql -uroot -e "show master status" | awk 'NR==2 {print $2}'`
 #Server 2
 cat > /tmp/grand.sh << EOF
 #!/bin/bash
-mysql -uroot -e "grant replication slave on *.* to vitalpbx_replica@'%' identified by 'vitalpbx_replica';"
-mysql -uroot -e "flush privileges;"
-mysql -uroot -e "flush tables with read lock;"
+mysql -uroot -e "STOP SLAVE;"
+mysql -uroot -e "GRANT REPLICATION SLAVE ON *.* to vitalpbx_replica@'%' IDENTIFIED BY 'vitalpbx_replica';"
+mysql -uroot -e "FLUSH PRIVILEGES;"
+mysql -uroot -e "FLUSH TABLES WITH READ LOCK;"
 EOF
 scp /tmp/grand.sh root@$ip_standby:/tmp/grand.sh
 ssh root@$ip_standby "chmod +x /tmp/grand.sh"
@@ -669,8 +668,8 @@ ssh root@$ip_standby "/tmp/./grand.sh"
 #Change in server 2
 cat > /tmp/change.sh << EOF
 #!/bin/bash
-mysql -uroot -e "change master to master_host='$ip_master', master_user='vitalpbx_replica', master_password='vitalpbx_replica', master_log_file='$file_server_1', master_log_pos=$position_server_1;"
-mysql -uroot -e "start slave;"
+mysql -uroot -e "CHANGE MASTER TO MASTER_HOST='$ip_master', MASTER_USER='vitalpbx_replica', MASTER_PASSWORD='vitalpbx_replica', MASTER_LOG_FILE='$file_server_1', MASTER_LOG_POS=$position_server_1;"
+mysql -uroot -e "START SLAVE;"
 EOF
 scp /tmp/change.sh root@$ip_standby:/tmp/change.sh
 ssh root@$ip_standby "chmod +x /tmp/change.sh"
@@ -679,9 +678,9 @@ ssh root@$ip_standby "/tmp/./change.sh"
 file_server_2=`ssh root@$ip_standby 'mysql -uroot -e "show master status;"' | awk 'NR==2 {print $1}'`
 position_server_2=`ssh root@$ip_standby 'mysql -uroot -e "show master status;"' | awk 'NR==2 {print $2}'`
 #Change in server 1
-mysql -uroot -e "unlock table;"
-mysql -uroot -e "change master to master_host='$ip_standby', master_user='vitalpbx_replica', master_password='vitalpbx_replica', master_log_file='$file_server_2', master_log_pos=$position_server_2;"
-mysql -uroot -e "start slave;"
+mysql -uroot -e "UNLOCK TABLE;"
+mysql -uroot -e "CHANGE MASTER TO MASTER_HOST='$ip_standby', MASTER_USER='vitalpbx_replica', MASTER_PASSWORD='vitalpbx_replica', MASTER_LOG_FILE='$file_server_2', MASTER_LOG_POS=$position_server_2;"
+mysql -uroot -e "START SLAVE;"
 
 echo -e "*** Done Step 6 ***"
 echo -e "6"	> step.txt
