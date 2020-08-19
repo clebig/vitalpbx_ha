@@ -397,8 +397,8 @@ service_id=$(mysql -uroot ombutel -e "select firewall_service_id from ombu_firew
 mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_master', 'accept', $last_index)"
 last_index=$last_index+1
 mysql -uroot ombutel -e "INSERT INTO ombu_firewall_rules (firewall_service_id, source, action, \`index\`) VALUES ($service_id, '$ip_standby', 'accept', $last_index)"
-mysql -uroot ombutel -e "INSERT INTO ombu_firewall_whitelist (host, description, default) VALUES ('$ip_master', 'Server 1 IP', 'no')"
-mysql -uroot ombutel -e "INSERT INTO ombu_firewall_whitelist (host, description, default) VALUES ('$ip_standby', 'Server 2 IP', 'no')"
+mysql -uroot ombutel -e "INSERT INTO ombu_firewall_whitelist (host, description, \`default\`) VALUES ('$ip_master', 'Server 1 IP', 'no')"
+mysql -uroot ombutel -e "INSERT INTO ombu_firewall_whitelist (host, description, \`default\`) VALUES ('$ip_standby', 'Server 2 IP', 'no')"
 echo -e "*** Done Step 4 ***"
 echo -e "4"	> step.txt
 
