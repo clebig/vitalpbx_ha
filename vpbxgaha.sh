@@ -145,19 +145,6 @@ echo -e "*****************************************************************"
 		systemctl stop pcsd.service 
 		systemctl stop corosync.service 
 		systemctl stop pacemaker.service
-cat > /tmp/remotecluster.sh << EOF
-#!/bin/bash
-pcs cluster destroy
-systemctl disable pcsd.service 
-systemctl disable corosync.service 
-systemctl disable pacemaker.service
-systemctl stop pcsd.service 
-systemctl stop corosync.service 
-systemctl stop pacemaker.service
-EOF
-scp /tmp/remotecluster.sh root@$ip_standby:/tmp/remotecluster.sh
-ssh root@$ip_standby "chmod +x /tmp/remotecluster.sh"
-ssh root@$ip_standby "/tmp/./remotecluster.sh"	
 cat > /etc/profile.d/vitalwelcome.sh << EOF
 #!/bin/bash
 # This code is the property of VitalPBX LLC Company
@@ -261,6 +248,19 @@ cat > /etc/lsyncd.conf << EOF
 EOF
 scp /etc/lsyncd.conf root@$ip_standby:/etc/lsyncd.conf
 scp /etc/lsyncd.conf root@$ip_app:/etc/lsyncd.conf
+cat > /tmp/remotecluster.sh << EOF
+#!/bin/bash
+pcs cluster destroy
+systemctl disable pcsd.service 
+systemctl disable corosync.service 
+systemctl disable pacemaker.service
+systemctl stop pcsd.service 
+systemctl stop corosync.service 
+systemctl stop pacemaker.service
+EOF
+scp /tmp/remotecluster.sh root@$ip_standby:/tmp/remotecluster.sh
+ssh root@$ip_standby "chmod +x /tmp/remotecluster.sh"
+ssh root@$ip_standby "/tmp/./remotecluster.sh"	
 systemctl stop lsyncd
 systemctl enable asterisk
 systemctl restart asterisk
