@@ -124,9 +124,28 @@ echo -e "*****************************************************************"
 	read -p "Are you sure you want to completely destroy the cluster? (yes, no) > " veryfy_destroy 
 	done
 	if [ "$veryfy_destroy" = yes ] ;then
+		pcs cluster stop
 		pcs cluster destroy
-		ssh root@$ip_standby "pcs cluster destroy"
+		systemctl disable pcsd.service 
+		systemctl disable corosync.service 
+		systemctl disable pacemaker.service
+		systemctl stop pcsd.service 
+		systemctl stop corosync.service 
+		systemctl stop pacemaker.service
 		
+cat > /tmp/remotecluster.sh << EOF
+#!/bin/bash
+pcs cluster destroy
+systemctl disable pcsd.service 
+systemctl disable corosync.service 
+systemctl disable pacemaker.service
+systemctl stop pcsd.service 
+systemctl stop corosync.service 
+systemctl stop pacemaker.service
+EOF
+scp /tmp/remotecluster.sh root@$ip_standby:/tmp/remotecluster.sh
+ssh root@$ip_standby "chmod +x /tmp/remotecluster.sh"
+ssh root@$ip_standby "/tmp/./remotecluster.sh"		
 cat > /etc/profile.d/vitalwelcome.sh << EOF
 #!/bin/bash
 # This code is the property of VitalPBX LLC Company
@@ -173,15 +192,6 @@ echo -e "
  Clock          :\`timedatectl | sed -n '/Local time/ s/^[ \t]*Local time:\(.*$\)/\1/p'\`
  NTP Sync.      :\`timedatectl |awk -F: '/NTP sync/ {print \$2}'\`
 "
-echo -e ""
-echo -e "************************************************************"
-echo -e "*                  Servers Status                          *"
-echo -e "************************************************************"
-echo -e "Master"
-pcs status resources
-echo -e ""
-echo -e "Servers Status"
-pcs cluster pcsd-status
 EOF
 chmod 755 /etc/profile.d/vitalwelcome.sh
 scp /etc/profile.d/vitalwelcome.sh root@$ip_standby:/etc/profile.d/vitalwelcome.sh
@@ -225,7 +235,11 @@ cat > /etc/my.cnf.d/server.cnf << EOF
 [embedded]
 EOF
 scp /etc/my.cnf.d/server.cnf root@$ip_standby:/etc/my.cnf.d/server.cnf
+mysql -uroot -e "STOP SLAVE;"
+mysql -uroot -e "RESET SLAVE;"
 systemctl restart mariadb
+ssh root@$ip_standby 'mysql -uroot -e "STOP SLAVE;"'
+ssh root@$ip_standby 'mysql -uroot -e "RESET SLAVE;"'
 ssh root@$ip_standby "systemctl restart mariadb"
 
 cat > /etc/lsyncd.conf << EOF
@@ -236,8 +250,15 @@ cat > /etc/lsyncd.conf << EOF
 --
 EOF
 scp /etc/lsyncd.conf root@$ip_standby:/etc/lsyncd.conf
-scp /etc/lsyncd.conf root@$ip_app:/etc/lsyncd.conf
-	
+systemctl stop lsyncd
+systemctl enable asterisk
+systemctl restart asterisk
+ssh root@$ip_standby "systemctl stop lsyncd"
+ssh root@$ip_standby "systemctl enable asterisk"
+ssh root@$ip_standby "systemctl restart asterisk"
+echo -e "************************************************************"
+echo -e "*            Cluster destroyed successfully                *"
+echo -e "************************************************************"
 		
 	fi
 	echo -e "4"	> step.txt
@@ -245,7 +266,7 @@ scp /etc/lsyncd.conf root@$ip_app:/etc/lsyncd.conf
 fi
 
 if [ "$arg" = 'rebuild' ] ;then
-	step=9
+	step=4
 else
 	stepFile=step.txt
 	if [ -f $stepFile ]; then
