@@ -662,6 +662,17 @@ mysql -uroot -e "FLUSH TABLES WITH READ LOCK;"
 file_server_1=`mysql -uroot -e "show master status" | awk 'NR==2 {print $1}'`
 position_server_1=`mysql -uroot -e "show master status" | awk 'NR==2 {print $2}'`
 
+#Now on the Master-1 server, do a dump of the database MySQL and import it to Master-2
+mysqldump -u root --all-databases > all_databases.sql
+scp all_databases.sql root@$ip_standby:/tmp/all_databases.sql
+cat > /tmp/mysqldump.sh << EOF
+#!/bin/bash
+mysql mysql -u root <  /tmp/all_databases.sql 
+EOF
+scp /tmp/mysqldump.sh root@$ip_standby:/tmp/mysqldump.sh
+ssh root@$ip_standby "chmod +x /tmp/mysqldump.sh"
+ssh root@$ip_standby "/tmp/./mysqldump.sh"
+
 #Configuration of the Second Master Server (Master-2)
 cat > /tmp/vitalpbx.cnf << EOF
 [mysqld]
