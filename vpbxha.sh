@@ -1,7 +1,7 @@
 #!/bin/bash
 # This code is the property of VitalPBX LLC Company
 # License: Proprietary
-# Date: 19-Aug-2020
+# Date: 21-Aug-2020
 # VitalPBX Hight Availability with MariaDB Replica, Corosync, PCS, Pacemaker and Lsync
 #
 set -e
@@ -132,20 +132,6 @@ echo -e "*****************************************************************"
 		systemctl stop pcsd.service 
 		systemctl stop corosync.service 
 		systemctl stop pacemaker.service
-		
-cat > /tmp/remotecluster.sh << EOF
-#!/bin/bash
-pcs cluster destroy
-systemctl disable pcsd.service 
-systemctl disable corosync.service 
-systemctl disable pacemaker.service
-systemctl stop pcsd.service 
-systemctl stop corosync.service 
-systemctl stop pacemaker.service
-EOF
-scp /tmp/remotecluster.sh root@$ip_standby:/tmp/remotecluster.sh
-ssh root@$ip_standby "chmod +x /tmp/remotecluster.sh"
-ssh root@$ip_standby "/tmp/./remotecluster.sh"		
 cat > /etc/profile.d/vitalwelcome.sh << EOF
 #!/bin/bash
 # This code is the property of VitalPBX LLC Company
@@ -250,6 +236,19 @@ cat > /etc/lsyncd.conf << EOF
 --
 EOF
 scp /etc/lsyncd.conf root@$ip_standby:/etc/lsyncd.conf
+cat > /tmp/remotecluster.sh << EOF
+#!/bin/bash
+pcs cluster destroy
+systemctl disable pcsd.service 
+systemctl disable corosync.service 
+systemctl disable pacemaker.service
+systemctl stop pcsd.service 
+systemctl stop corosync.service 
+systemctl stop pacemaker.service
+EOF
+scp /tmp/remotecluster.sh root@$ip_standby:/tmp/remotecluster.sh
+ssh root@$ip_standby "chmod +x /tmp/remotecluster.sh"
+ssh root@$ip_standby "/tmp/./remotecluster.sh"	
 systemctl stop lsyncd
 systemctl enable asterisk
 systemctl restart asterisk
@@ -640,15 +639,12 @@ create_mariadb_replica:
 echo -e "************************************************************"
 echo -e "*                Create mariadb replica                    *"
 echo -e "************************************************************"
-
+#Configuration of the First Master Server (Master-1)
 cat > /etc/my.cnf.d/vitalpbx.cnf << EOF
 [mysqld]
 server-id=1
-report_host = master
-log_bin = /var/lib/mysql/mariadb-bin
-log_bin_index = /var/lib/mysql/mariadb-bin.index
-relay_log = /var/lib/mysql/relay-bin
-relay_log_index = /var/lib/mysql/relay-bin.index
+log-bin=mysql-bin
+report_host = master1
 
 innodb_buffer_pool_size = 64M
 innodb_flush_log_at_trx_commit = 2
@@ -658,14 +654,20 @@ bulk_insert_buffer_size = 64M
 max_allowed_packet = 64M
 EOF
 systemctl restart mariadb
+#Create a new user on the Master-1
+mysql -uroot -e "GRANT REPLICATION SLAVE ON *.* to vitalpbx_replica@'%' IDENTIFIED BY 'vitalpbx_replica';"
+mysql -uroot -e "FLUSH PRIVILEGES;"
+mysql -uroot -e "FLUSH TABLES WITH READ LOCK;"
+#Get bin_log on Master-1
+file_server_1=`mysql -uroot -e "show master status" | awk 'NR==2 {print $1}'`
+position_server_1=`mysql -uroot -e "show master status" | awk 'NR==2 {print $2}'`
+
+#Configuration of the Second Master Server (Master-2)
 cat > /tmp/vitalpbx.cnf << EOF
 [mysqld]
 server-id = 2
+log-bin=mysql-bin
 report_host = master2
-log_bin = /var/lib/mysql/mariadb-bin
-log_bin_index = /var/lib/mysql/mariadb-bin.index
-relay_log = /var/lib/mysql/relay-bin
-relay_log_index = /var/lib/mysql/relay-bin.index
 
 innodb_buffer_pool_size = 64M
 innodb_flush_log_at_trx_commit = 2
@@ -676,14 +678,7 @@ max_allowed_packet = 64M
 EOF
 scp /tmp/vitalpbx.cnf root@$ip_standby:/etc/my.cnf.d/vitalpbx.cnf
 ssh root@$ip_standby "systemctl restart mariadb"
-#Server 1
-mysql -uroot -e "GRANT REPLICATION SLAVE ON *.* to vitalpbx_replica@'%' IDENTIFIED BY 'vitalpbx_replica';"
-mysql -uroot -e "FLUSH PRIVILEGES;"
-mysql -uroot -e "FLUSH TABLES WITH READ LOCK;"
-#GET File and Position
-file_server_1=`mysql -uroot -e "show master status" | awk 'NR==2 {print $1}'`
-position_server_1=`mysql -uroot -e "show master status" | awk 'NR==2 {print $2}'`
-#Server 2
+#Create a new user on the Master-2
 cat > /tmp/grand.sh << EOF
 #!/bin/bash
 mysql -uroot -e "GRANT REPLICATION SLAVE ON *.* to vitalpbx_replica@'%' IDENTIFIED BY 'vitalpbx_replica';"
@@ -693,7 +688,10 @@ EOF
 scp /tmp/grand.sh root@$ip_standby:/tmp/grand.sh
 ssh root@$ip_standby "chmod +x /tmp/grand.sh"
 ssh root@$ip_standby "/tmp/./grand.sh"
-#Change in server 2
+#Get bin_log on Master-2
+file_server_2=`ssh root@$ip_standby 'mysql -uroot -e "show master status;"' | awk 'NR==2 {print $1}'`
+position_server_2=`ssh root@$ip_standby 'mysql -uroot -e "show master status;"' | awk 'NR==2 {print $2}'`
+#Stop the slave, add Master-1 to the Master-2 and start slave
 cat > /tmp/change.sh << EOF
 #!/bin/bash
 mysql -uroot -e "STOP SLAVE;"
@@ -703,10 +701,8 @@ EOF
 scp /tmp/change.sh root@$ip_standby:/tmp/change.sh
 ssh root@$ip_standby "chmod +x /tmp/change.sh"
 ssh root@$ip_standby "/tmp/./change.sh"
-#GET File and Position
-file_server_2=`ssh root@$ip_standby 'mysql -uroot -e "show master status;"' | awk 'NR==2 {print $1}'`
-position_server_2=`ssh root@$ip_standby 'mysql -uroot -e "show master status;"' | awk 'NR==2 {print $2}'`
-#Change in server 1
+
+#Connect to Master-1 and follow the same steps
 mysql -uroot -e "STOP SLAVE;"
 mysql -uroot -e "CHANGE MASTER TO MASTER_HOST='$ip_standby', MASTER_USER='vitalpbx_replica', MASTER_PASSWORD='vitalpbx_replica', MASTER_LOG_FILE='$file_server_2', MASTER_LOG_POS=$position_server_2;"
 mysql -uroot -e "START SLAVE;"
