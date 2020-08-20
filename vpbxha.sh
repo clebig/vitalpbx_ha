@@ -623,7 +623,11 @@ echo -e "************************************************************"
 cat > /etc/my.cnf.d/vitalpbx.cnf << EOF
 [mysqld]
 server-id=1
-log-bin=mysql-bin
+report_host = master
+log_bin = /var/lib/mysql/mariadb-bin
+log_bin_index = /var/lib/mysql/mariadb-bin.index
+relay_log = /var/lib/mysql/relay-bin
+relay_log_index = /var/lib/mysql/relay-bin.index
 
 innodb_buffer_pool_size = 64M
 innodb_flush_log_at_trx_commit = 2
@@ -635,8 +639,12 @@ EOF
 systemctl restart mariadb
 cat > /tmp/vitalpbx.cnf << EOF
 [mysqld]
-server-id=2
-log-bin=mysql-bin
+server-id = 2
+report_host = master2
+log_bin = /var/lib/mysql/mariadb-bin
+log_bin_index = /var/lib/mysql/mariadb-bin.index
+relay_log = /var/lib/mysql/relay-bin
+relay_log_index = /var/lib/mysql/relay-bin.index
 
 innodb_buffer_pool_size = 64M
 innodb_flush_log_at_trx_commit = 2
@@ -667,6 +675,7 @@ ssh root@$ip_standby "/tmp/./grand.sh"
 #Change in server 2
 cat > /tmp/change.sh << EOF
 #!/bin/bash
+mysql -uroot -e "STOP SLAVE;"
 mysql -uroot -e "CHANGE MASTER TO MASTER_HOST='$ip_master', MASTER_USER='vitalpbx_replica', MASTER_PASSWORD='vitalpbx_replica', MASTER_LOG_FILE='$file_server_1', MASTER_LOG_POS=$position_server_1;"
 mysql -uroot -e "START SLAVE;"
 EOF
@@ -677,7 +686,7 @@ ssh root@$ip_standby "/tmp/./change.sh"
 file_server_2=`ssh root@$ip_standby 'mysql -uroot -e "show master status;"' | awk 'NR==2 {print $1}'`
 position_server_2=`ssh root@$ip_standby 'mysql -uroot -e "show master status;"' | awk 'NR==2 {print $2}'`
 #Change in server 1
-mysql -uroot -e "UNLOCK TABLE;"
+mysql -uroot -e "STOP SLAVE;"
 mysql -uroot -e "CHANGE MASTER TO MASTER_HOST='$ip_standby', MASTER_USER='vitalpbx_replica', MASTER_PASSWORD='vitalpbx_replica', MASTER_LOG_FILE='$file_server_2', MASTER_LOG_POS=$position_server_2;"
 mysql -uroot -e "START SLAVE;"
 
