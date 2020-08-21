@@ -23,7 +23,7 @@ We will configure in each server the IP address and the host name. Go to the web
 First change the Hostname, remember press the <strong>Check</strong> button.<br>
 Disable the DHCP option and set these values<br>
 
-| Name          | Master                 | Slave                 |
+| Name          | Master                 | Standby               |
 | ------------- | ---------------------- | --------------------- |
 | Hostname      | vitalpbx1.local        | vitalpbx2.local       |
 | IP Address    | 192.168.10.61          | 192.168.10.62         |
