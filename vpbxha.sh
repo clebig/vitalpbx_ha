@@ -639,6 +639,8 @@ create_mariadb_replica:
 echo -e "************************************************************"
 echo -e "*                Create mariadb replica                    *"
 echo -e "************************************************************"
+#Remove anonymous user from MySQL
+mysql -uroot -e "DELETE FROM mysql.user WHERE User='';"
 #Configuration of the First Master Server (Master-1)
 cat > /etc/my.cnf.d/vitalpbx.cnf << EOF
 [mysqld]
