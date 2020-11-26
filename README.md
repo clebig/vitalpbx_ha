@@ -35,8 +35,8 @@ Disable the DHCP option and set these values<br>
 ## Install Dependencies
 Install the necessary dependencies on both servers<br>
 <pre>
-[root@vitalpbx1 ~]# yum -y install corosync pacemaker pcs lsyncd
-[root@vitalpbx2 ~]# yum -y install corosync pacemaker pcs lsyncd
+[root@vitalpbx1 ~]# yum -y install corosync pacemaker pcs lsyncd vitalpbx-high-availability
+[root@vitalpbx2 ~]# yum -y install corosync pacemaker pcs lsyncd vitalpbx-high-availability
 </pre>
 
 ## Create authorization key for the Access between the two servers without credentials
