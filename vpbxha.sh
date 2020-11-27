@@ -285,20 +285,10 @@ echo -e "*  Remove memory Firewall Rules in Server 1 and 2 and App  *"
 echo -e "************************************************************"
 firewall-cmd --remove-service=high-availability
 firewall-cmd --zone=public --remove-port=3306/tcp
-firewall-cmd --zone=public --remove-port=4567/tcp
-firewall-cmd --zone=public --remove-port=4568/tcp
-firewall-cmd --zone=public --remove-port=4444/tcp
-firewall-cmd --zone=public --remove-port=4567/udp
-firewall-cmd --zone=public --remove-port=5038/udp
 firewall-cmd --runtime-to-permanent
 firewall-cmd --reload
 ssh root@$ip_standby "firewall-cmd --remove-service=high-availability"
 ssh root@$ip_standby "firewall-cmd --zone=public --remove-port=3306/tcp"
-ssh root@$ip_standby "firewall-cmd --zone=public --remove-port=4567/tcp"
-ssh root@$ip_standby "firewall-cmd --zone=public --remove-port=4568/tcp"
-ssh root@$ip_standby "firewall-cmd --zone=public --remove-port=4444/tcp"
-ssh root@$ip_standby "firewall-cmd --zone=public --remove-port=4567/udp"
-ssh root@$ip_standby "firewall-cmd --zone=public --remove-port=5038/udp"
 ssh root@$ip_standby "firewall-cmd --runtime-to-permanent"
 ssh root@$ip_standby "firewall-cmd --reload"
 rm step.txt
