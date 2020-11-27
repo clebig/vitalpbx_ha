@@ -296,7 +296,7 @@ echo -e "*            Cluster destroyed successfully                *"
 echo -e "************************************************************"
 		
 	fi
-	rm -rf step.txt
+	echo -e "2"	> step.txt
 	exit
 fi
 
