@@ -291,7 +291,7 @@ ssh root@$ip_standby "firewall-cmd --remove-service=high-availability"
 ssh root@$ip_standby "firewall-cmd --zone=public --remove-port=3306/tcp"
 ssh root@$ip_standby "firewall-cmd --runtime-to-permanent"
 ssh root@$ip_standby "firewall-cmd --reload"
-rm step.txt
+rm -rf step.txt
 echo -e "************************************************************"
 echo -e "*            Cluster destroyed successfully                *"
 echo -e "************************************************************"
