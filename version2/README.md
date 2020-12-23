@@ -82,7 +82,7 @@ Install the necessary dependencies on both servers<br>
 Now copy and run the following script<br>
 <pre>
 [root@vitalpbx-master ~]#  cd /
-[root@vitalpbx-master ~]#  wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/vital_ha.sh
+[root@vitalpbx-master ~]#  wget https://raw.githubusercontent.com/VitalPBX/vitalpbx_ha/master/version2/vital_ha.sh
 [root@vitalpbx-master ~]#  chmod +x vital_ha.sh
 [root@vitalpbx-master ~]#  ./vital_ha.sh
 </pre>
