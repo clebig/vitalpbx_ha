@@ -25,7 +25,7 @@ Disable the DHCP option and set these values<br>
 
 | Name          | Master                 | Standby               |
 | ------------- | ---------------------- | --------------------- |
-| Hostname      | vitalpbx1.local        | vitalpbx2.local       |
+| Hostname      | voip01.domain.com      | voip02.domain.com     |
 | IP Address    | 192.168.10.61          | 192.168.10.62         |
 | Netmask       | 255.255.255.0          | 255.255.255.0         |
 | Gateway       | 192.168.10.1           | 192.168.10.1          |
