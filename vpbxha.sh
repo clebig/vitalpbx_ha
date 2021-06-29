@@ -479,7 +479,7 @@ if [ ! -d "/var/lib/vitxi" ] ;then
 fi
 chown -R apache:apache /var/lib/vitxi
 
-ssh root@$ip_standby [[ ! -d /var/spool/asterisk/monitor ]] && ssh root@$ip_standby "mkdir /var/spool/asterisk/monitori" || echo "Path exist";
+ssh root@$ip_standby [[ ! -d /var/spool/asterisk/monitor ]] && ssh root@$ip_standby "mkdir /var/spool/asterisk/monitor" || echo "Path exist";
 ssh root@$ip_standby "chown -R asterisk:asterisk /var/spool/asterisk/monitor"
 
 ssh root@$ip_standby [[ ! -d /usr/share/vitxi ]] && ssh root@$ip_standby "mkdir /usr/share/vitxi" || echo "Path exist";
