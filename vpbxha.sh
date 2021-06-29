@@ -468,8 +468,29 @@ if [ ! -d "/var/spool/asterisk/monitor" ] ;then
 fi
 chown asterisk:asterisk /var/spool/asterisk/monitor
 
-ssh root@$ip_standby [[ ! -d /var/spool/asterisk/monitor ]] && ssh root@$ip_standby "mkdir /var/spool/asterisk/monitor" || echo "Path exist";
-ssh root@$ip_standby "chown asterisk:asterisk /var/spool/asterisk/monitor"
+if [ ! -d "/usr/share/vitxi" ] ;then
+	mkdir /usr/share/vitxi
+	mkdir /usr/share/vitxi/storage
+fi
+chown -R apache:apache /usr/share/vitxi
+
+if [ ! -d "/var/lib/vitxi" ] ;then
+	mkdir /var/lib/vitxi
+fi
+chown -R apache:apache /var/lib/vitxi
+
+ssh root@$ip_standby [[ ! -d /var/spool/asterisk/monitor ]] && ssh root@$ip_standby "mkdir /var/spool/asterisk/monitori" || echo "Path exist";
+ssh root@$ip_standby "chown -R asterisk:asterisk /var/spool/asterisk/monitor"
+
+ssh root@$ip_standby [[ ! -d /usr/share/vitxi ]] && ssh root@$ip_standby "mkdir /usr/share/vitxi" || echo "Path exist";
+ssh root@$ip_standby "chown -R apache:apache /usr/share/vitxi"
+
+ssh root@$ip_standby [[ ! -d /usr/share/vitxi/storage ]] && ssh root@$ip_standby "mkdir /usr/share/vitxi/storage" || echo "Path exist";
+ssh root@$ip_standby "chown -R apache:apache /usr/share/vitxi/storage"
+
+ssh root@$ip_standby [[ ! -d /var/lib/vitxi ]] && ssh root@$ip_standby "mkdir /var/lib/vitxi" || echo "Path exist";
+ssh root@$ip_standby "chown -R apache:apache /var/lib/vitxi"
+
 
 cat > /etc/lsyncd.conf << EOF
 ----
@@ -604,6 +625,48 @@ sync {
 				archive = "true",
 				_extra = {
 						"--include=astdb.sqlite3",
+						"--exclude=*"
+						}
+				}
+}
+
+sync {
+		default.rsync,
+		source="/usr/share/vitxi/backend/",
+		target="$ip_master:/usr/share/vitxi/backend/",
+		rsync = {
+				binary = "/usr/bin/rsync",
+				owner = true,
+				group = true,
+				archive = "true",
+				_extra = {
+						"--include=.env",
+						"--exclude=*"
+						}
+				}
+}
+
+sync {
+		default.rsync,
+		source="/usr/share/vitxi/backend/storage/",
+		target="$ip_master:/usr/share/vitxi/backend/storage/",
+		rsync={
+				owner = true,
+				group = true
+		}
+}
+
+sync {
+		default.rsync,
+		source="/var/lib/vitxi/",
+		target="$ip_master:/var/lib/vitxi/",
+		rsync = {
+				binary = "/usr/bin/rsync",
+				owner = true,
+				group = true,
+				archive = "true",
+				_extra = {
+						"--include=wizard.conf",
 						"--exclude=*"
 						}
 				}
