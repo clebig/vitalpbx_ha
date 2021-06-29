@@ -485,12 +485,14 @@ ssh root@$ip_standby "chown -R asterisk:asterisk /var/spool/asterisk/monitor"
 ssh root@$ip_standby [[ ! -d /usr/share/vitxi ]] && ssh root@$ip_standby "mkdir /usr/share/vitxi" || echo "Path exist";
 ssh root@$ip_standby "chown -R apache:apache /usr/share/vitxi"
 
-ssh root@$ip_standby [[ ! -d /usr/share/vitxi/storage ]] && ssh root@$ip_standby "mkdir /usr/share/vitxi/storage" || echo "Path exist";
-ssh root@$ip_standby "chown -R apache:apache /usr/share/vitxi/storage"
+ssh root@$ip_standby [[ ! -d /usr/share/vitxi/backend ]] && ssh root@$ip_standby "mkdir /usr/share/vitxi/backend" || echo "Path exist";
+ssh root@$ip_standby "chown -R apache:apache /usr/share/vitxi/backend"
+
+ssh root@$ip_standby [[ ! -d /usr/share/vitxi/backend/storage ]] && ssh root@$ip_standby "mkdir /usr/share/vitxi/backend/storage" || echo "Path exist";
+ssh root@$ip_standby "chown -R apache:apache /usr/share/vitxi/backend/storage"
 
 ssh root@$ip_standby [[ ! -d /var/lib/vitxi ]] && ssh root@$ip_standby "mkdir /var/lib/vitxi" || echo "Path exist";
 ssh root@$ip_standby "chown -R apache:apache /var/lib/vitxi"
-
 
 cat > /etc/lsyncd.conf << EOF
 ----
@@ -530,7 +532,49 @@ sync {
 						"--exclude=*"
 						}
 				}
-	}
+}
+
+sync {
+		default.rsync,
+		source="/usr/share/vitxi/backend/",
+		target="$ip_standby:/usr/share/vitxi/backend/",
+		rsync = {
+				binary = "/usr/bin/rsync",
+				owner = true,
+				group = true,
+				archive = "true",
+				_extra = {
+						"--include=.env",
+						"--exclude=*"
+						}
+				}
+}
+
+sync {
+		default.rsync,
+		source="/usr/share/vitxi/backend/storage/",
+		target="$ip_standby:/usr/share/vitxi/backend/storage/",
+		rsync={
+				owner = true,
+				group = true
+		}
+}
+
+sync {
+		default.rsync,
+		source="/var/lib/vitxi/",
+		target="$ip_standby:/var/lib/vitxi/",
+		rsync = {
+				binary = "/usr/bin/rsync",
+				owner = true,
+				group = true,
+				archive = "true",
+				_extra = {
+						"--include=wizard.conf",
+						"--exclude=*"
+						}
+				}
+}
 
 sync {
 		default.rsync,
