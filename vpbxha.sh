@@ -470,7 +470,8 @@ chown asterisk:asterisk /var/spool/asterisk/monitor
 
 if [ ! -d "/usr/share/vitxi" ] ;then
 	mkdir /usr/share/vitxi
-	mkdir /usr/share/vitxi/storage
+	mkdir /usr/share/vitxi/backend
+	mkdir /usr/share/vitxi/backend/storage
 fi
 chown -R apache:apache /usr/share/vitxi
 
