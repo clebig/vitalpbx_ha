@@ -280,6 +280,8 @@ systemctl restart asterisk
 ssh root@$ip_standby "systemctl stop lsyncd"
 ssh root@$ip_standby "systemctl enable asterisk"
 ssh root@$ip_standby "systemctl restart asterisk"
+ssh root@$ip_standby "systemctl stop dnsmasq"
+ssh root@$ip_standby "systemctl disable dnsmasq"
 echo -e "************************************************************"
 echo -e "*  Remove memory Firewall Rules in Server 1 and 2 and App  *"
 echo -e "************************************************************"
@@ -358,13 +360,16 @@ case $step in
 		start="create_lsyncd_service"
 	;;
 	15)
-		start="vitalpbx_create_bascul"
+		start="create_dnsmasq_service"
 	;;
 	16)
-		start="vitalpbx_create_role"
-		;;
+		start="vitalpbx_create_bascul"
+        ;;
 	17)
-		start="ceate_welcome_message"
+		start="vitalpbx_create_role"
+        ;;
+        18)
+                start="create_welcome_message"
 	;;
 esac
 jumpto $start
@@ -386,7 +391,7 @@ rename_tenant_id_in_server2:
 echo -e "************************************************************"
 echo -e "*                Remove Tenant in Server 2                 *"
 echo -e "************************************************************"
-remote_tenant_id=`ssh root@$ip_standby "ls /var//lib/vitalpbx/static/"`
+remote_tenant_id=`ssh root@$ip_standby "ls /var/lib/vitalpbx/static/"`
 ssh root@$ip_standby "rm -rf /var/lib/vitalpbx/static/$remote_tenant_id"
 echo -e "*** Done Step 3 ***"
 echo -e "3"	> step.txt
@@ -508,7 +513,6 @@ settings {
 		nodaemon   = true,
 		insist = true,
 }
-
 sync {
 		default.rsync,
 		source="/var/spool/asterisk/monitor",
@@ -518,7 +522,6 @@ sync {
 				group = true
 		}
 }
-
 sync {
 		default.rsync,
 		source="/var/lib/asterisk/",
@@ -534,7 +537,6 @@ sync {
 						}
 				}
 }
-
 sync {
 		default.rsync,
 		source="/usr/share/vitxi/backend/",
@@ -550,7 +552,6 @@ sync {
 						}
 				}
 }
-
 sync {
 		default.rsync,
 		source="/usr/share/vitxi/backend/storage/",
@@ -560,7 +561,6 @@ sync {
 				group = true
 		}
 }
-
 sync {
 		default.rsync,
 		source="/var/lib/vitxi/",
@@ -576,7 +576,6 @@ sync {
 						}
 				}
 }
-
 sync {
 		default.rsync,
 		source="/var/lib/asterisk/agi-bin/",
@@ -586,7 +585,6 @@ sync {
 				group = true
 		}
 }
-
 sync {
 		default.rsync,
 		source="/var/lib/asterisk/priv-callerintros/",
@@ -596,7 +594,6 @@ sync {
 				group = true
 		}
 }
-
 sync {
 		default.rsync,
 		source="/var/lib/asterisk/sounds/",
@@ -606,7 +603,6 @@ sync {
 				group = true
 		}
 }
-
 sync {
 		default.rsync,
 		source="/var/lib/vitalpbx",
@@ -624,7 +620,6 @@ sync {
 						}
 				}
 }
-
 sync {
 		default.rsync,
 		source="/etc/asterisk",
@@ -769,6 +764,25 @@ sync {
 		default.rsync,
 		source="/etc/asterisk",
 		target="$ip_master:/etc/asterisk",
+		rsync={
+				owner = true,
+				group = true
+		}
+
+sync {
+		default.rsync,
+		source="/etc/dnsmasq.d/dhcp.conf",
+		target="$ip_master:/etc/dnsmasq.d/dhcp.conf",
+		rsync={
+				owner = true,
+				group = true
+		}
+}
+
+sync {
+		default.rsync,
+		source="/var/lib/dnsmasq/dnsmasq.leases",
+		target="$ip_master:/var/lib/dnsmasq/dnsmasq.leases",
 		rsync={
 				owner = true,
 				group = true
@@ -936,10 +950,14 @@ systemctl disable asterisk
 systemctl stop asterisk
 systemctl disable lsyncd
 systemctl stop lsyncd
+systemctl disable dnsmasq
+systemctl stop dnsmasq
 ssh root@$ip_standby "systemctl disable asterisk"
 ssh root@$ip_standby "systemctl stop asterisk"
 ssh root@$ip_standby "systemctl disable lsyncd"
 ssh root@$ip_standby "systemctl stop lsyncd"
+ssh root@$ip_standby "systemctl disable dnsmasq"
+ssh root@$ip_standby "systemctl stop dnsmasq"
 echo -e "*** Done Step 13 ***"
 echo -e "13"	> step.txt
 
@@ -974,6 +992,19 @@ pcs -f fs_cfg constraint order asterisk then lsyncd
 pcs cluster cib-push fs_cfg --config
 echo -e "*** Done Step 15 ***"
 echo -e "15"	> step.txt
+
+create_dnsmasq_service:
+echo -e "************************************************************"
+echo -e "*             Create dnsmasq Service in Server 1            *"
+echo -e "************************************************************"
+pcs resource create dnsmasq service:dnsmasq.service op monitor interval=30s
+pcs cluster cib fs_cfg
+pcs cluster cib-push fs_cfg --config
+pcs -f fs_cfg constraint colocation add dnsmasq with virtual_ip INFINITY
+pcs -f fs_cfg constraint order dnsmasq then asterisk
+pcs cluster cib-push fs_cfg --config
+echo -e "*** Done Step 16 ***"
+echo -e "16"	> step.txt
 
 vitalpbx_create_bascul:
 echo -e "************************************************************"
@@ -1079,7 +1110,7 @@ chmod +x /usr/local/bin/bascul
 scp /usr/local/bin/bascul root@$ip_standby:/usr/local/bin/bascul
 ssh root@$ip_standby 'chmod +x /usr/local/bin/bascul'
 echo -e "*** Done Step 16 ***"
-echo -e "16"	> step.txt
+echo -e "17"	> step.txt
 
 vitalpbx_create_role:
 echo -e "************************************************************"
@@ -1153,9 +1184,9 @@ chmod +x /usr/local/bin/role
 scp /usr/local/bin/role root@$ip_standby:/usr/local/bin/role
 ssh root@$ip_standby 'chmod +x /usr/local/bin/role'
 echo -e "*** Done Step 17 ***"
-echo -e "17"	> step.txt
+echo -e "18"	> step.txt
 
-ceate_welcome_message:
+create_welcome_message:
 echo -e "************************************************************"
 echo -e "*              Creating Welcome message                    *"
 echo -e "************************************************************"
@@ -1165,7 +1196,7 @@ echo -e "*** Done ***"
 scp /etc/profile.d/vitalwelcome.sh root@$ip_standby:/etc/profile.d/vitalwelcome.sh
 ssh root@$ip_standby "chmod 755 /etc/profile.d/vitalwelcome.sh"
 echo -e "*** Done Step 18 END ***"
-echo -e "18"	> step.txt
+echo -e "19"	> step.txt
 
 vitalpbx_cluster_ok:
 echo -e "************************************************************"
